@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ddb79e6bd659d041a88b5fb5b8b60b7, type: 3}
+  m_Name: AudioData
+  m_EditorClassIdentifier: 
+  audioData:
+  - audioClip: {fileID: 8300000, guid: edcf78424442a7543b8fe6ad75895bb7, type: 3}
+    audioName: 1
+    volume: 0.25
+    pitch: 0.32
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: edcf78424442a7543b8fe6ad75895bb7, type: 3}
+    audioName: 2
+    volume: 0
+    pitch: 0.32
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: ae37203b49044da4ebd16ee7226887c8, type: 3}
+    audioName: 4
+    volume: 0.5
+    pitch: 2
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 52790f7967491ca4eb01c23dfbbe262c, type: 3}
+    audioName: 5
+    volume: 1
+    pitch: 0
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 64a90727c17603441b8fb76d511ec435, type: 3}
+    audioName: 6
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 10bf7c3684b8ba84a84c4ac330cf30b7, type: 3}
+    audioName: 11
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 54ed7a3bece78844db444f9810b3e6c7, type: 3}
+    audioName: 7
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: ca1b5a5cdabbbe9409a3aabe29a639bb, type: 3}
+    audioName: 9
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 91df9a2aad6effb4783a79bbcbd0ef9b, type: 3}
+    audioName: 10
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 4aaffb9d9a134d841949f9a707702c47, type: 3}
+    audioName: 13
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 1d4d064259321084ea24e73dee23ae8a, type: 3}
+    audioName: 12
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 70f6c5dd17ee9af4dbe801df3b0fc081, type: 3}
+    audioName: 14
+    volume: 0.25
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 5b4b255dcccca4a429ffa11c244b7a68, type: 3}
+    audioName: 3
+    volume: 0.25
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: f077400020e9fcb478df50d57ea889b0, type: 3}
+    audioName: 15
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: dddf336baa4c0fa498e3339e19d5dcad, type: 3}
+    audioName: 0
+    volume: 0.1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: c255ebeada7b2e444be31d024b4a4430, type: 3}
+    audioName: 16
+    volume: 0.2
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 560f3c7ef6803cc4c92df219d593f2ee, type: 3}
+    audioName: 17
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 210c2c80d6856954f977ce586d11d028, type: 3}
+    audioName: 18
+    volume: 1
+    pitch: 1
+    mute: 0
+  - audioClip: {fileID: 8300000, guid: 462e669095b77a04faad7c25c7b26876, type: 3}
+    audioName: 19
+    volume: 0.1
+    pitch: 1
+    mute: 0

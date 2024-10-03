@@ -1,0 +1,586 @@
+{
+    "Data":[
+		{	
+			"Name": "TeenPatti",
+			"Id":1,
+			"IsEnable":true,
+			"GoldGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			
+			],
+			"SilverGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			]
+		},{	
+			"Name": "Joker",
+			"Id":2,
+			"IsEnable":true,
+			"GoldGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			
+			],
+			"SilverGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			]
+		},{	
+			"Name": "NoLimit",
+			"Id":3,
+			"IsEnable":true,
+			"GoldGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":-1,
+					"ChaalLimit":-1,
+					"BootAmount":1,
+					"PotLimit":-1
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":-1,
+					"ChaalLimit":-1,
+					"BootAmount":5,
+					"PotLimit":-1
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":-1,
+					"ChaalLimit":-1,
+					"BootAmount":1,
+					"PotLimit":-1
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":-1,
+					"ChaalLimit":-1,
+					"BootAmount":20,
+					"PotLimit":-1
+					
+				}
+			
+			],
+			"SilverGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":-1,
+					"ChaalLimit":-1,
+					"BootAmount":1,
+					"PotLimit":-1
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":-1,
+					"ChaalLimit":-1,
+					"BootAmount":5,
+					"PotLimit":-1
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":-1,
+					"ChaalLimit":-1,
+					"BootAmount":10,
+					"PotLimit":-1
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":-1,
+					"ChaalLimit":-1,
+					"BootAmount":20,
+					"PotLimit":-1
+					
+				}
+			]
+		},{	
+			"Name": "Zandu",
+			"Id":5,
+			"IsEnable":true,
+			"GoldGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			
+			],
+			"SilverGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			]
+		},{	
+			"Name": "AK47",
+			"Id":6,
+			"IsEnable":true,
+			"GoldGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			
+			],
+			"SilverGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			]
+		},{	
+			"Name": "Muflis",
+			"Id":7,
+			"IsEnable":true,
+			"GoldGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			
+			],
+			"SilverGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			]
+		},{	
+			"Name": "Crorepatti",
+			"Id":8,
+			"IsEnable":true,
+			"GoldGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			
+			],
+			"SilverGames":[
+				{
+					"Name":"Rookie",
+					"Id":1,
+					"IsEnable":true,
+					"BlindLimit":2,
+					"ChaalLimit":25,
+					"BootAmount":1,
+					"PotLimit":100
+					
+				},{
+					"Name":"Primary",
+					"Id":2,
+					"IsEnable":true,
+					"BlindLimit":5,
+					"ChaalLimit":500,
+					"BootAmount":5,
+					"PotLimit":1000
+					
+				},{
+					"Name":"Middle",
+					"Id":3,
+					"IsEnable":true,
+					"BlindLimit":8,
+					"ChaalLimit":2500,
+					"BootAmount":10,
+					"PotLimit":5000
+					
+				},{
+					"Name":"High",
+					"Id":4,
+					"IsEnable":true,
+					"BlindLimit":10,
+					"ChaalLimit":5000,
+					"BootAmount":20,
+					"PotLimit":10000
+					
+				}
+			]
+		}
+	]
+}
