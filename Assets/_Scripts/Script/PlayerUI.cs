@@ -523,7 +523,7 @@ namespace TP.Poker
         
 
 
-        public void DealCard(int numCard)
+       /* public void DealCard(int numCard)
         {
             int tempIndex = numCard;
             tempIndex = GameController.Instance.CurrentGameMode == GameMode.OMAHAPOKER ? tempIndex : (tempIndex + 1);
@@ -535,9 +535,9 @@ namespace TP.Poker
 
          
 
-        }
+        }*/
 
-        public IEnumerator SetCard()
+        /*public IEnumerator SetCard()
         {
             //Debug.LogError("test card open");
             int numberOfCard = GameController.Instance.CurrentGameMode == GameMode.OMAHAPOKER ? 4 : 2;
@@ -553,7 +553,7 @@ namespace TP.Poker
                     yield return new WaitForSeconds(0.1f);
                 }
             }
-        }
+        }*/
 
         //void ApplyCardComponents(string)
         //{
@@ -573,7 +573,7 @@ namespace TP.Poker
 
 
 
-        public void SeeCard(CardData card, int numCard)
+        /*public void SeeCard(CardData card, int numCard)
         {
             if (GameController.Instance.CurrentGameMode != GameMode.OMAHAPOKER)
                 numCard++;
@@ -594,7 +594,7 @@ namespace TP.Poker
           
 
 
-        }
+        }*/
 
         
 

@@ -86,7 +86,7 @@ public class SettingsPanelHandler : MonoBehaviour
         PanelTransform?.DOKill();
         PanelTransform.GetComponent<CanvasGroup>().DOFade(1, 0.1f);
         PanelTransform.gameObject.SetActive(true);
-        PanelTransform.DOAnchorPosX(533, 0.1f);
+        PanelTransform.DOAnchorPosX(640, 0.1f);
     }
     public void HideSettings()
     {

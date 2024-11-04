@@ -1229,28 +1229,22 @@ namespace TP
         [Command]
         private void CmdValidateSession(string playerID, string token, string gamename, string operatorname, string session_token, bool isBlock)
         {
-            
 
             if (isBlock)
             {
-                TargetValidateSession(true);
+                //TargetValidateSession("");
                 return;
             }
-           
-            APIController.instance.ValidateSession(playerID, token, gamename, operatorname, session_token,isBlock, (success) => TargetValidateSession(success));
+
+            APIController.instance.ValidateSession(playerID, token, gamename, operatorname, session_token, isBlock, (jsonBody) => TargetValidateSession(jsonBody));
         }
         [TargetRpc]
-        private void TargetValidateSession(bool success)
+        private void TargetValidateSession(string jsonBody)
         {
-            Debug.Log("TARGET valide Session Called ===================> " + success);
-            APIController.instance.isValidateSession = false;
-            if (success)
-                return;
-#if UNITY_WEBGL && !UNITY_EDITOR
-            APIController.DisconnectGame("Session expired. Account active in another device.");
-            Debug.Log("Invalide Session ===================> ");
-#endif
+
+            APIController.instance.ValidateSessionResponce(jsonBody);
         }
+
 
 
 

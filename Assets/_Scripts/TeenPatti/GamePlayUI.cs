@@ -535,7 +535,7 @@ namespace TP
 			cardToChange.suitImageBig.ConvertAll(x => x.color = cardColor);
 		}
 
-		public void HukamSetCard(CardData card)
+		/*public void HukamSetCard(CardData card)
 		{
 			if (card.rankCard > 10)
 			{
@@ -610,7 +610,7 @@ namespace TP
 			DebugHelper.LogError("zanthu details");
 			hukamCards.SetActive(true);
 
-		}
+		}*/
 
 
 		public void EnableBottomNotificationPannel(string textToDisplay)
@@ -943,8 +943,8 @@ namespace TP
 		{
 			if (see)
 			{
-				if (GameController.Instance.CurrentGameMode == GameMode.POTBLIND)
-					return;
+				/*if (GameController.Instance.CurrentGameMode == GameMode.POTBLIND)
+					return;*/
 				if (GameManager.localInstance.gameState.currentState < 2 || !GameManager.localInstance.isdistributCard || !GameManager.localInstance.isdistributCardEnd)
 				{
 					seeButton.SetActive(!see);

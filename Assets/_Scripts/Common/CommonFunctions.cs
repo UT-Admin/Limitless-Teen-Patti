@@ -402,7 +402,7 @@ namespace TP
             return GetXpAtLevel(levelVal + 1) - xpVal;
         }
 
-        public string GetGameNameFromEnum(GameMode val)
+       /* public string GetGameNameFromEnum(GameMode val)
         {
             string returnVal = string.Empty;
             switch (val)
@@ -438,7 +438,7 @@ namespace TP
             }
             return returnVal;
         }
-
+*/
         public char SetToUpper(char c)
         {
             return char.ToUpper(c);

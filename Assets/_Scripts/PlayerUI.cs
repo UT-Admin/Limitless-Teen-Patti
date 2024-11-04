@@ -397,11 +397,11 @@ namespace TP
                         GamePlayUI.instance.Show.color = GamePlayUI.instance.Inactive;
                         GamePlayUI.instance.showButton.interactable = false;
                         GamePlayUI.instance.showButtonText.text = "Side Show";
-                        if (GameController.Instance.CurrentGameMode == GameMode.POTBLIND)
+                       /* if (GameController.Instance.CurrentGameMode == GameMode.POTBLIND)
                         {
                             //  GlowShow.gameObject.SetActive(false);
                             GamePlayUI.instance.showButton.interactable = false;
-                        }
+                        }*/
                     }
                 }
 
@@ -480,7 +480,7 @@ namespace TP
         {
             if (isMine) GamePlayUI.instance.SeeButtonActive(false);
             playerAvatar.color = Color.white;
-            if (myPlayerState.hasSeenCard && GameController.Instance.CurrentGameMode != GameMode.POTBLIND)
+            if (myPlayerState.hasSeenCard /*&& GameController.Instance.CurrentGameMode != GameMode.POTBLIND*/)
             {
 
                 if (myPlayerState.hasSeenCardBoolCheck)
@@ -1586,10 +1586,10 @@ namespace TP
 
                 GamePlayUI.instance.SeeButtonActive(false);
             }
-            if (GameController.Instance.CurrentGameMode == GameMode.JOKER && numCard == 2)
+           /* if (GameController.Instance.CurrentGameMode == GameMode.JOKER && numCard == 2)
             {
                 jokerCard.SetActive(true);
-            }
+            }*/
             else
             {
                 jokerCard.SetActive(false);

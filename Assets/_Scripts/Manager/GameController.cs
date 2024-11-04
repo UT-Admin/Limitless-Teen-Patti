@@ -91,6 +91,8 @@ namespace TP
 
         //============================================================================================//
         [Header("=======STRING=========")]
+        public string CurrentServerHost;
+        public string CurrentServerPort;
         public string currentLobbyName;
         public string currentRoomName;
         public string privateRoomName;
@@ -133,6 +135,7 @@ namespace TP
         {
             Debug.Log("<=========== BUILD VERSION ===========> 0.3");
             Instance = this;
+            CurrentGameMode = GameMode.NOLIMITS;
 #if UNITY_EDITOR
             LoggerUtils.ToogleLogOnDevice(true);
             LoggerUtils.SetLogProfile(LogProfile.UnityDebug);
@@ -324,9 +327,9 @@ namespace TP
         /// <summary>
         ///  Runs based on network status ( offline / online ) and has its Subcription in start
         /// </summary>
-        public void GetNetworkStatusActionCall(string data)
+        public void GetNetworkStatusActionCall(NetworkStatus data)
         {
-            if (data == "true")
+            if (data == NetworkStatus.Active)
             {
                 isConnectedtoInternet = true;
                 if (!APIController.instance.userDetails.isBlockApiConnection && isAudioPlayStarted)
@@ -335,9 +338,28 @@ namespace TP
                 }
                 StopCoroutine(nameof(CheckInternet));
             }
-            else
+            else if (data == NetworkStatus.NetworkIssue)
             {
+                if (NetworkClient.isConnected)
+                {
+                    NetworkClient.Disconnect();
+                }
+                MirrorManager.instance.gameObject.SetActive(false);
                 StartCoroutine(nameof(CheckInternet));
+
+            }
+            else if (data == NetworkStatus.ServerIssue)
+            {
+                APIController.instance.CheckMirrorGameAvaliblity(CurrentServerHost, CurrentServerPort, (success, message) =>
+                {
+                    if (!success)
+                    {
+                        UIController.Instance.ConnectionIssue.SetActive(true);
+                    }
+
+                });
+
+
             }
         }
 

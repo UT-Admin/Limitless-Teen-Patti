@@ -10,7 +10,7 @@ public class InternetChecking : MonoBehaviour
 
     private void Start()
     {
-        APIController.instance.OnInternetStatusChange += GetNetworkStatus;
+        /*APIController.instance.OnInternetStatusChange += GetNetworkStatus;*/
 
     }
     //IEnumerator Start()
@@ -26,9 +26,9 @@ public class InternetChecking : MonoBehaviour
     //    }
     //}
 
-    public void GetNetworkStatus(string data)
+   /* public void GetNetworkStatus(string data)
     {
         connectionPanel.SetActive(data == "true" ? false:true);
-    }
+    }*/
 }
 

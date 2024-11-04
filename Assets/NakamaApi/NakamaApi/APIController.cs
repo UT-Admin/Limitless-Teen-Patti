@@ -11,6 +11,9 @@ using Random = UnityEngine.Random;
 using static WebApiManager;
 using TP;
 using Mirror;
+using UnityEngine.UI;
+using System.Net;
+using System.Linq;
 
 [Serializable]
 public class BetRequest
@@ -55,11 +58,12 @@ public class APIController : MonoBehaviour
     [Header("==============================================")]
 
     #endregion
+    public bool IsLiveGame;
     public Action OnUserDetailsUpdate;
     public Action OnUserBalanceUpdate;
     public Action OnUserDeposit;
     public Action<bool> OnCancelDepositPopup;
-    public Action<string> OnInternetStatusChange;
+    public Action<NetworkStatus> OnInternetStatusChange;
     public Action<bool> OnSwitchingTab;
     public bool isWin = false;
     public bool IsBotInGame = true;
@@ -77,6 +81,7 @@ public class APIController : MonoBehaviour
     public string DefaultHostSchema;
     public int DefaultHostPort;
     public List<APIRequestList> apiRequestList;
+    public BackendAPI backendAPIURL = new();
 
     //public List<ApiResponse> apiResponse;
     //    public List<ApiRequest> apis = new List<ApiRequest>();
@@ -149,7 +154,7 @@ public class APIController : MonoBehaviour
     }
     public void UpdateBalanceResponse(double data)
     {
-        if(string.IsNullOrEmpty(userDetails.Id)) return;
+        if (string.IsNullOrEmpty(userDetails.Id)) return;
         if (userDetails.isBlockApiConnection) return;
         DebugHelper.Log("Balance Updated response  :::::::----::: " + data);
         userDetails.balance = data;
@@ -157,11 +162,11 @@ public class APIController : MonoBehaviour
         if (isClickDeopsit)
         {
             OnUserDeposit?.Invoke();
-            
+
         }
     }
     [HideInInspector] public bool isOnline = true;
-   public bool isInFocus = true;
+    public bool isInFocus = true;
     public bool isNeedToPauseWhileSwitchingTab = false;
     public void GetNetworkStatus(string data)
     {
@@ -180,15 +185,38 @@ public class APIController : MonoBehaviour
 
             }
         }
-        OnInternetStatusChange?.Invoke(data);
+        if (isOnline)
+        {
+            OnInternetStatusChange?.Invoke(NetworkStatus.Active);
+        }
+        else
+        {
+
+
+            string val = IsLiveGame ? APIController.instance.userDetails.serverInfo.server_host : "test.gameservers.utwebapps.com";
+            CheckInternetForButtonClick((status) => {
+                if (status)
+                {
+                    WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_FORMDATA
+                 ,
+                 "https://waekhvdxviqdmzdzo6hisjqsli0bvajw.lambda-url.ap-south-1.on.aws/?requestType=ServerInactive&Id&Message",
+                 new List<KeyValuePojo>() { new KeyValuePojo { keyId = "requestType", value = "ServerInactive" }, new KeyValuePojo { keyId = "Id", value = userDetails.gameId }, new KeyValuePojo { keyId = "Message", value = "Server connection issue " + val } },
+                 (bool isSuccess, string error, string body) =>
+                 {
+                 }, 2);
+                    OnInternetStatusChange?.Invoke(NetworkStatus.ServerIssue);
+                }
+                else
+                    OnInternetStatusChange?.Invoke(NetworkStatus.NetworkIssue);
+            });
+        }
 
     }
-   
+
     public async void CheckInternetForButtonClick(Action<bool> action)
     {
         WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_FORMDATA
-                 ,
-                 StaticStrings.checkInternetUrl,
+                 , backendAPIURL.LootrixInternetCheckAPI,
                  new List<KeyValuePojo>(),
                  (bool isSuccess, string error, string body) =>
                  {
@@ -332,7 +360,7 @@ public class APIController : MonoBehaviour
     }
     #endregion
 
-        public void ExecuteExternalAPI(string data)
+    public void ExecuteExternalAPI(string data)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(data);
         string encryptedData = Convert.ToBase64String(bytes);
@@ -402,7 +430,7 @@ public class APIController : MonoBehaviour
     public void OnClickDepositBtn()
     {
         isClickDeopsit = true;
-        #if UNITY_WEBGL
+#if UNITY_WEBGL
         ShowDeposit();
 #endif
     }
@@ -425,14 +453,14 @@ public class APIController : MonoBehaviour
         }
     }
 
-    public void GetServerDetails(Action<ServerInfo,string> action)
+    public void GetServerDetails(Action<ServerInfo, string> action)
     {
         ApiRequest apiRequest = new ApiRequest();///?requestType=GetGameServer&game_name=carrom
         apiRequest.url = "https://sijnoejayed2n2hodo3cot5st40ndsxd.lambda-url.ap-south-1.on.aws";
         List<KeyValuePojo> param = new List<KeyValuePojo>();
         param.Add(new KeyValuePojo { keyId = "requestType", value = "GetGameServer" });
         Debug.Log(userDetails.game_Id);
-        param.Add(new KeyValuePojo { keyId = "&game_name", value = userDetails.game_Id.Split("_")[1]});
+        param.Add(new KeyValuePojo { keyId = "&game_name", value = userDetails.game_Id.Split("_")[1] });
         apiRequest.param = param;
         apiRequest.action = (success, error, body) => {
             if (success)
@@ -440,11 +468,11 @@ public class APIController : MonoBehaviour
                 ApiResponse response = JsonUtility.FromJson<ApiResponse>(body);
                 if (response.code == 200)
                 {
-                    action.Invoke(JsonUtility.FromJson<ServerInfo>(response.message),"success");
+                    action.Invoke(JsonUtility.FromJson<ServerInfo>(response.message), "success");
                 }
                 else
                 {
-                    action.Invoke(new ServerInfo(),response.message);
+                    action.Invoke(new ServerInfo(), response.message);
                 }
                 Debug.Log(response.message);
             }
@@ -456,7 +484,7 @@ public class APIController : MonoBehaviour
         };
 
         ExecuteAPI(apiRequest);
-  
+
 
     }
 
@@ -490,7 +518,7 @@ public class APIController : MonoBehaviour
         {
             userDetails = new UserGameData();
             userDetails.balance = 5000;
-           // userDetails.balance = amount;
+            // userDetails.balance = amount;
 
             userDetails.currency_type = "USD";
             userDetails.Id = DateTime.UtcNow.ToString() + "----" + Random.Range(1, 100000000);
@@ -528,7 +556,7 @@ public class APIController : MonoBehaviour
                       ValidateSession();
                //     CheckOnline();
 #endif
-        },3);
+        }, 3);
 
         //GetServerDetails((serverinfo, info) =>
         //{
@@ -575,14 +603,79 @@ public class APIController : MonoBehaviour
 #endif
     }
 
-    public void ValidateSession(string playerID, string token, string gamename, string operatorname, string session_token, bool isBlocked,Action<bool> action)
+    int defaultDelay = 3;
+    string PlayNextGameMsg;
+    public void ValidateSessionResponce(string body)
+    {
+#if !UNITY_SERVER
+        isValidateSession = false;
+        bool success = false;
+        JObject jsonObject = JObject.Parse(body);
+        if ((int)(jsonObject["code"]) == 200)
+        {
+            Debug.Log("online true 1");
+            defaultDelay = (int)(jsonObject["data"]);
+            isOnline = true;
+            PlayNextGameMsg = "";
+            success = true;
+        }
+        else if ((int)(jsonObject["code"]) == 203)
+        {
+            Debug.Log("online true 1.5");
+            isOnline = true;
+            PlayNextGameMsg = (string)jsonObject["message"];
+        }
+        else if ((int)(jsonObject["code"]) != 200)
+        {
+            Debug.Log("online true 2");
+            isOnline = true;
+            PlayNextGameMsg = "";
+            DisconnectGame((string)jsonObject["message"]);
+        }
+        else
+        {
+            Debug.Log("online false 1");
+            isOnline = false;
+        }
+
+
+        Debug.Log("TARGET valide Session Called ===================> " + success);
+
+#endif
+        //        if (success)
+        //            return;
+        //#if UNITY_WEBGL && !UNITY_EDITOR
+        //            APIController.DisconnectGame("Session expired. Account active in another device.");
+        //            Debug.Log("Invalide Session ===================> ");
+        //#endif
+
+    }
+
+    public bool IsAbleToPlayGame()
+    {
+        if (string.IsNullOrEmpty(PlayNextGameMsg))
+        {
+            return true;
+        }
+        else
+        {
+#if !UNITY_SERVER
+            DisconnectGame(PlayNextGameMsg);
+#endif
+            return false;
+        }
+    }
+
+
+
+    public void ValidateSession(string playerID, string token, string gamename, string operatorname, string session_token, bool isBlocked, Action<string> action)
     {
 
-       
+
 
         if (isBlocked)
         {
-           // action.Invoke(true);
+            // action.Invoke(true);
             return;
         }
         List<KeyValuePojo> param = new List<KeyValuePojo>();
@@ -593,24 +686,65 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "session_token", value = session_token });
         param.Add(new KeyValuePojo { keyId = "requestType", value = "validateSession" });
 
-        
 
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, "https://xpxpmhpjldqvjulexwx34z7jca0kdxzf.lambda-url.ap-south-1.on.aws/", param, (success, error, body) =>
+
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixTransactionAPI, param, (success, error, body) =>
         {
+
+            action.Invoke(body);
+
+        });
+    }
+
+    public void CheckMirrorGameAvaliblity(string host, string port, Action<bool, string> action)
+    {
+        Debug.Log("Mirror Server check ==========> Check Once " + host + port);
+        var param = new List<KeyValuePojo>();
+        param.Add(new KeyValuePojo { keyId = "requestType", value = "CheckMirrorServer" });
+        param.Add(new KeyValuePojo { keyId = "host", value = host });
+        param.Add(new KeyValuePojo { keyId = "port", value = port });
+
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixValidateServerAPI, param, (success, error, body) =>
+        {
+            Debug.Log("Mirror Server check ==========> BODY " + body);
             if (success)
             {
-                JObject jsonObject = JObject.Parse(body);
-                if ((int)(jsonObject["code"]) != 200)
+
+                ApiResponse response = JsonUtility.FromJson<ApiResponse>(body);
+                Debug.Log("Mirror Server check ==========> IsACTIVE " + response.code + "**************" + response.message);
+                action.Invoke(response.code == 200, response.message);
+            }
+            else
+            {
+                Debug.Log("Mirror Server check ==========> " + " Not IsACTIVE");
+                if (body.Contains("timeout"))
                 {
-                    
-                    action.Invoke(false);
+                    UIController.Instance.ConnectionIssue.SetActive(true);
                 }
                 else
                 {
-                    
-                    action.Invoke(true);
-
+                    action.Invoke(false, "error");
                 }
+
+                CheckMirrorInActive(GameController.Instance.CurrentServerHost, userDetails.serverInfo.instance_id, userDetails.gameId);
+            }
+        }, 1);
+    }
+
+    public void CheckMirrorInActive(string host, string ip, string gameid)
+    {
+        Debug.Log("CheckMirrorInActive ==========> Check Once " + host + ip);
+        var param = new List<KeyValuePojo>();
+        param.Add(new KeyValuePojo { keyId = "requestType", value = "ServerInactive" });
+        param.Add(new KeyValuePojo { keyId = "Id", value = gameid });
+        param.Add(new KeyValuePojo { keyId = "Host", value = host });
+        param.Add(new KeyValuePojo { keyId = "Ip", value = ip });
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_FORMDATA, backendAPIURL.LootrixServerInactiveAPI, param, (success, error, body) =>
+        {
+            Debug.Log("CheckMirrorInActive ==========> BODY " + body);
+            if (success)
+            {
+                Debug.Log("CheckMirrorInActive ====>");
             }
         });
     }
@@ -618,7 +752,7 @@ public class APIController : MonoBehaviour
     public bool isValidateSession = false;
     public async void ValidateSession()
     {
-        
+
 #if !UNITY_SERVER
         while (true)
         {
@@ -628,19 +762,15 @@ public class APIController : MonoBehaviour
                 isValidateSession = true;
                 Debug.Log("Validate Session called CLIENT PLAYERMANAGER ===================> ");
                 PlayerManager.localPlayer.ValidateSession(userDetails.Id, userDetails.token, userDetails.game_Id.Split("_")[1], userDetails.game_Id.Split("_")[0], userDetails.session_token, userDetails.isBlockApiConnection);
-                await UniTask.Delay(5000);
+                await UniTask.Delay(defaultDelay * 1000);
                 Debug.Log("Need to show disconnect popup " + isValidateSession.ToString());
                 if (isValidateSession)
                 {
-                    if (NetworkClient.isConnected)
-                    {
-                        NetworkClient.Disconnect();
-                    }
-                    MirrorManager.instance.gameObject.SetActive(false);
+
                 }
                 continue;
             }
-            await UniTask.Delay(5000);
+            await UniTask.Delay(defaultDelay * 1000);
         }
 #endif
     }
@@ -653,7 +783,7 @@ public class APIController : MonoBehaviour
         {
             isCheckOnline = true;
             PlayerManager.localPlayer.CMD_CheckOnline();
-        }  
+        }
         else
         {
             isOnline = false;
@@ -669,7 +799,7 @@ public class APIController : MonoBehaviour
     }
 
 
-    public void GetAutoscaleServerDetail(bool isRejoin, Action action,int Count)
+    public void GetAutoscaleServerDetail(bool isRejoin, Action action, int Count)
     {
         var param = new List<KeyValuePojo>();
         param.Add(new KeyValuePojo { keyId = "isRejoin", value = isRejoin ? "1" : "0" });
@@ -677,7 +807,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "operator", value = userDetails.game_Id.Split("_")[0] });
         param.Add(new KeyValuePojo { keyId = "playerId", value = userDetails.Id });
 
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, "https://htatuqjumsb7qhv3yvmfx6jlza0pdwyg.lambda-url.ap-south-1.on.aws/", param, (success, error, body) =>
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixGetServerAPI, param, (success, error, body) =>
         {
 
             if (success)
@@ -687,18 +817,25 @@ public class APIController : MonoBehaviour
 
                 if (response.code != 200)
                 {
-                    if(Count > 0)
+                    if (Count > 0)
                     {
                         Count--;
                         GetAutoscaleServerDetail(isRejoin, action, Count);
-  
+
                     }
                     else
                     {
-                        UIController.Instance.ConnectionIssue.SetActive(true);
+                        APIController.instance.CheckMirrorGameAvaliblity(GameController.Instance.CurrentServerHost, GameController.Instance.CurrentServerPort, (success, message) =>
+                        {
+                            if (!success)
+                            {
+                                UIController.Instance.ConnectionIssue.SetActive(true);
+                            }
+
+                        });
                     }
-                   
-                 
+
+
                 }
                 else
                 {
@@ -711,8 +848,12 @@ public class APIController : MonoBehaviour
                         server_scheme = "https",
                         server_cpu_usage = (float)server.cpuUsage,
                     };
-                  /* Mirror.NetworkManager.singleton.networkAddress = server.domainName;
-                    Debug.Log(JsonUtility.ToJson(userDetails.serverInfo));*/
+                    if (APIController.instance.IsLiveGame)
+                    {
+                        Mirror.NetworkManager.singleton.networkAddress = server.domainName;
+                    }
+
+                    Debug.Log(JsonUtility.ToJson(userDetails.serverInfo));
                 }
 
                 Debug.Log(body);
@@ -727,7 +868,14 @@ public class APIController : MonoBehaviour
                 }
                 else
                 {
-                    UIController.Instance.ConnectionIssue.SetActive(true);
+                    APIController.instance.CheckMirrorGameAvaliblity(GameController.Instance.CurrentServerHost, GameController.Instance.CurrentServerPort, (success, message) =>
+                    {
+                        if (!success)
+                        {
+                            UIController.Instance.ConnectionIssue.SetActive(true);
+                        }
+
+                    });
                 }
 
             }
@@ -746,14 +894,17 @@ public class APIController : MonoBehaviour
     public void GetLoginDataResponseFromWebGL(string data)
     {
     }
+
+
     void Start()
     {
+        GetLambdaURL(IsLiveGame);
+
 #if UNITY_WEBGL && !UNITY_EDITOR
         GetLoginData();
         //CheckInternetStatus();
-#elif UNITY_EDITOR
+#elif UNITY_EDITOR && !UNITY_SERVER
         SetUserData("");
-        //CheckInternetStatus();
 #endif
     }
 
@@ -808,16 +959,16 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "Id", value = matchToken });
         param.Add(new KeyValuePojo { keyId = "requestType", value = "TerminateMatch" });
 
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, LootrixMatchAPIPath, param, (success, error, body) =>
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixMatchAPI, param, (success, error, body) =>
         {
             if (success)
             {
                 JObject jsonObject = JObject.Parse(body);
                 Debug.Log($"TerminateMatch: {jsonObject}");
-                if ((int)(jsonObject["code"]) == 200 )
+                if ((int)(jsonObject["code"]) == 200)
                 {
 
-                       
+
                 }
                 else
                 {
@@ -982,7 +1133,7 @@ public class APIController : MonoBehaviour
 
     }
 
-    public void CreateMatch(string lobbyName, Action<CreateMatchResponse> action, string gamename, string operatorname, string playerId, bool isBlockAPI ,string server)
+    public void CreateMatch(string lobbyName, Action<CreateMatchResponse> action, string gamename, string operatorname, string playerId, bool isBlockAPI, string server)
     {
         CreateMatchResponse matchResponse = new CreateMatchResponse();
         //if (isBlockAPI)
@@ -992,8 +1143,9 @@ public class APIController : MonoBehaviour
         //    action.Invoke(matchResponse);
         //    return;
         //}
+        string serverIPAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.First(f => f.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToString();
         List<KeyValuePojo> param = new List<KeyValuePojo>();
-        param.Add(new KeyValuePojo { keyId = "Created_By", value = server});
+        param.Add(new KeyValuePojo { keyId = "Created_By", value = serverIPAddress });
         param.Add(new KeyValuePojo { keyId = "Game_Name", value = gamename == "" ? userDetails.game_Id.Split()[1] : gamename });
         param.Add(new KeyValuePojo { keyId = "Operator", value = operatorname == "" ? userDetails.game_Id.Split()[0] : operatorname });
         param.Add(new KeyValuePojo { keyId = "requestType", value = "CreateMatch" });
@@ -1001,7 +1153,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "GameName", value = gamename == "" ? userDetails.game_Id.Split()[1] : gamename });
 
 
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, LootrixMatchAPIPath, param, (success, error, body) =>
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixMatchAPI, param, (success, error, body) =>
         {
             if (success)
             {
@@ -1065,7 +1217,7 @@ public class APIController : MonoBehaviour
 
     public void APICallBack(string url, int code, string body, string error)
     {
-         Debug.Log($"API_ Response :-  URL{url} -- Code {code} -- Body {body} -- Error {error}");
+        Debug.Log($"API_ Response :-  URL{url} -- Code {code} -- Body {body} -- Error {error}");
         foreach (var item in apiRequestList)
         {
             if (item.url == url)
@@ -1091,7 +1243,7 @@ public class APIController : MonoBehaviour
 
     public async void CheckAPICallBack(string url)
     {
-      
+
         await UniTask.Delay(7000);
         Debug.Log($"API_ Response :-  URL{url} ");
         foreach (var item in apiRequestList)
@@ -1113,7 +1265,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "requestType", value = "RandomPrediction" });
         param.Add(new KeyValuePojo { keyId = "gameName", value = gamename == "" ? userDetails.game_Id.Split()[1] : gamename });
 
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, LootrixAPIPath, param, (success, error, body) =>
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixMatchAPI, param, (success, error, body) =>
         {
             if (success)
             {
@@ -1138,32 +1290,32 @@ public class APIController : MonoBehaviour
     public void CheckInternetStatus(int tryCount = 0)
     {
         return;
-#if !UNITY_SERVER
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, "https://google.com/", new List<KeyValuePojo>(), async (success, error, body) =>
-        {
-            if (success)
-            {
-                OnInternetStatusChange?.Invoke(success.ToString());
-                await UniTask.Delay(2500);
-                CheckInternetStatus();
-            }
-            else
-            {
-                tryCount += 1;
-                if (tryCount > 4)
-                {
-                    OnInternetStatusChange?.Invoke(success.ToString());
-                    await UniTask.Delay(500);
-                    CheckInternetStatus(tryCount);
-                }
-                else
-                {
-                    CheckInternetStatus(tryCount);
-                }
+        //#if !UNITY_SERVER
+        //        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, "https://google.com/", new List<KeyValuePojo>(), async (success, error, body) =>
+        //        {
+        //            if (success)
+        //            {
+        //                OnInternetStatusChange?.Invoke(success.ToString());
+        //                await UniTask.Delay(2500);
+        //                CheckInternetStatus();
+        //            }
+        //            else
+        //            {
+        //                tryCount += 1;
+        //                if (tryCount > 4)
+        //                {
+        //                    OnInternetStatusChange?.Invoke(success.ToString());
+        //                    await UniTask.Delay(500);
+        //                    CheckInternetStatus(tryCount);
+        //                }
+        //                else
+        //                {
+        //                    CheckInternetStatus(tryCount);
+        //                }
 
-            }
-        }, 2);
-#endif
+        //            }
+        //        }, 2);
+        //#endif
     }
 
     public void AddMatchLog(string matchToken, string action, string metadata, string PlayerId = "")
@@ -1179,7 +1331,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "PlayerId", value = PlayerId == "" ? userDetails.Id : PlayerId });
         param.Add(new KeyValuePojo { keyId = "requestType", value = "AddMatchLog" });
 
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, LootrixMatchAPIPath, param, (success, error, body) =>
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixMatchAPI, param, (success, error, body) =>
         {
             if (success)
             {
@@ -1208,7 +1360,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "unclaim_amount", value = amount.ToString() });
         param.Add(new KeyValuePojo { keyId = "requestType", value = "AddUnclaimAmount" });
 
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, LootrixMatchAPIPath, param, (success, error, body) =>
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixMatchAPI, param, (success, error, body) =>
         {
             if (success)
             {
@@ -1235,7 +1387,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "Players", value = JsonConvert.SerializeObject(players) });
         param.Add(new KeyValuePojo { keyId = "requestType", value = "AddPlayers" });
 
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, LootrixMatchAPIPath, param, (success, error, body) =>
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixMatchAPI, param, (success, error, body) =>
         {
             if (success)
             {
@@ -1277,12 +1429,38 @@ public class APIController : MonoBehaviour
         }, 15);
     }
 
-    string LootrixMatchAPIPath = "https://aezmien2odhv7hkrbmdzy2csoe0dagnw.lambda-url.ap-south-1.on.aws/";
-    string RumbleBetsAPIPath = "https://rumblebets.utwebapps.com:7350/v2/rpc/";
-    string LootrixAPIPath = "https://xpxpmhpjldqvjulexwx34z7jca0kdxzf.lambda-url.ap-south-1.on.aws/";
+    //string LootrixMatchAPIPath = "https://aezmien2odhv7hkrbmdzy2csoe0dagnw.lambda-url.ap-south-1.on.aws/";
+    //string RumbleBetsAPIPath = "https://rumblebets.utwebapps.com:7350/v2/rpc/";
+    //string LootrixAPIPath = "https://xpxpmhpjldqvjulexwx34z7jca0kdxzf.lambda-url.ap-south-1.on.aws/";
     bool isRunApi = false;
 
-    public void GetABotAPI(List<string> botId, Action<BotDetails> action ,string domainURL)
+    /// API url Live Create Match, Add Player, create and join game
+    string LiveLootrixAPIPathCreateAddJoinGame = "https://56ebdif5s4aqltb74xhkvnnrai0sxaey.lambda-url.ap-south-1.on.aws/";
+
+    /// API url Dev Create Match, Add Player, create and join game
+    string DevLootrixAPIPathCreateAddJoinGame = "https://b465kezbry2ssew2w6w56x3jhi0ennyi.lambda-url.ap-south-1.on.aws/";
+
+    /// API url Live Init Bet, add Bet ,Winning Bet
+    string LiveLootrixAPIPathInitAddWinningBet = "https://xpxpmhpjldqvjulexwx34z7jca0kdxzf.lambda-url.ap-south-1.on.aws/";
+
+    /// API url Dev Init Bet, add Bet ,Winning Bet
+    string DevLootrixAPIPathInitAddWinningBet = "https://vbklyx2pq3nh6xf3vr55vmrwem0ldawq.lambda-url.ap-south-1.on.aws/";
+
+    /// API url Live getserver 
+    string LiveLootrixAPIPathgetserver = "https://ahw3tps3cf6a7xjmykrdlaq5ta0xggdq.lambda-url.ap-south-1.on.aws/";
+
+    /// API url Dev getserver
+    string DevLootrixAPIPathgetserver = "https://4stgpkclxjbxwkx6xyqkgguwj40etlbm.lambda-url.ap-south-1.on.aws/";
+
+
+
+
+
+
+
+
+
+    public void GetABotAPI(List<string> botId, Action<BotDetails> action, string domainURL)
     {
         List<KeyValuePojo> param = new List<KeyValuePojo>();
         param.Add(new KeyValuePojo { keyId = "player", value = JsonConvert.SerializeObject(botId) });
@@ -1322,6 +1500,7 @@ public class APIController : MonoBehaviour
 
     public async void WinningsBetMultiplayerAPI(int betIndex, string betId, double win_amount_with_comission, double spend_amount, double pot_amount, TransactionMetaData metadata, Action<bool> action, string playerId, bool isBot, bool isWinner, string gameName, string operatorName, string gameId, float commission, string matchToken, string domainUrl)
     {
+        await UniTask.Delay(3000);
         Debug.Log($"BetIndex: {betIndex}, playerId: {playerId}, matchToken: {matchToken}");
         BetRequest request = betRequest.Find(x => x.betId == betIndex && x.PlayerId == playerId && x.MatchToken.Equals(matchToken));
         Debug.Log($"Request data is {JsonUtility.ToJson(request)}");
@@ -1373,7 +1552,7 @@ public class APIController : MonoBehaviour
                     new KeyValuePojo { keyId = "requestType", value = "winningBet" }
             };
 
-                    string url1 = LootrixAPIPath;
+                    string url1 = backendAPIURL.LootrixTransactionAPI;
                     ApiRequest apiRequest1 = new ApiRequest();
                     apiRequest1.action = (success, error, body) =>
                     {
@@ -1410,7 +1589,7 @@ public class APIController : MonoBehaviour
 
 
     }
-    public async void CancelBetMultiplayerAPI(int betIndex, string betId, double amount, TransactionMetaData metadata, Action<bool> action, string playerId, bool isBot, bool isWinner, string gameName, string operatorName, string gameId, string matchToken ,string domainURL)
+    public async void CancelBetMultiplayerAPI(int betIndex, string betId, double amount, TransactionMetaData metadata, Action<bool> action, string playerId, bool isBot, bool isWinner, string gameName, string operatorName, string gameId, string matchToken, string domainURL)
     {
         BetRequest request = betRequest.Find(x => x.betId == betIndex && x.PlayerId == playerId && x.MatchToken.Equals(matchToken));
         while (request.BetId != betId)
@@ -1442,7 +1621,7 @@ public class APIController : MonoBehaviour
                     new KeyValuePojo { keyId = "isBot", value = isBot ? "1" : "0" },
                     new KeyValuePojo { keyId = "requestType", value = "cancelBet" }
                 };
-                    string url1 = LootrixAPIPath;
+                    string url1 = backendAPIURL.LootrixTransactionAPI;
                     ApiRequest apiRequest1 = new ApiRequest();
                     apiRequest1.action = (success, error, body) =>
                     {
@@ -1478,8 +1657,10 @@ public class APIController : MonoBehaviour
         ExecuteAPI(apiRequest);
     }
 
-    public async void AddBetMultiplayerAPI(int index, string BetId, TransactionMetaData metadata, double amount, Action<bool> action, string playerId, bool isBot, string gameName, string operatorName, string gameId, string matchToken ,string domainURL)
+    public async void AddBetMultiplayerAPI(int index, string BetId, TransactionMetaData metadata, double amount, Action<bool> action, string playerId, bool isBot, string gameName, string operatorName, string gameId, string matchToken, string domainURL)
     {
+
+        Debug.Log($"ADD BET MULTIPLAYER API ===>  BetIndex: {index}, playerId: {playerId}, matchToken: {matchToken} , betRequestCount: {betRequest.Count}");
         BetRequest request = betRequest.Find(x => x.betId == index && x.PlayerId == playerId && x.MatchToken.Equals(matchToken));
         while (request.BetId != BetId)
         {
@@ -1513,7 +1694,7 @@ public class APIController : MonoBehaviour
                     param1.Add(new KeyValuePojo { keyId = "requestType", value = "addBet" });
                     param1.Add(new KeyValuePojo { keyId = "MetaData", value = JsonUtility.ToJson(metadata) });
 
-                    string url1 = LootrixAPIPath;
+                    string url1 = backendAPIURL.LootrixTransactionAPI;
                     ApiRequest apiRequest1 = new ApiRequest();
                     apiRequest1.action = (success, error, body) =>
                     {
@@ -1549,7 +1730,9 @@ public class APIController : MonoBehaviour
         ExecuteAPI(apiRequest);
     }
 
-    public int InitBetMultiplayerAPI(int index, double amount, TransactionMetaData metadata, bool isAbleToCancel, Action<bool> action, string playerId, bool isBot, Action<string> betIdAction, string gameName, string operatorName, string gameID, string matchToken ,string domainURL)
+
+
+    public int InitBetMultiplayerAPI(int index, double amount, TransactionMetaData metadata, bool isAbleToCancel, Action<bool> action, string playerId, string playerName, bool isBot, Action<string> betIdAction, string gameName, string operatorName, string gameID, string matchToken, string domainURL)
     {
         Debug.Log($"<color=orange>Initializing bet for player {playerId}, index is {index}</color>");
 
@@ -1575,22 +1758,23 @@ public class APIController : MonoBehaviour
                 if (nakamaApi.Code == 200)
                 {
                     List<KeyValuePojo> param1 = new List<KeyValuePojo>
-                {
-                    new KeyValuePojo { keyId = "Game_Id", value = gameID},
-                    new KeyValuePojo { keyId = "GameName", value = gameName },
-                    new KeyValuePojo { keyId = "Operator", value = operatorName },
-                    new KeyValuePojo { keyId = "Game_user_Id", value = playerId },
-                    new KeyValuePojo { keyId = "Status", value = isAbleToCancel.ToString() },
-                    new KeyValuePojo { keyId = "IsAbleToCancel", value = isAbleToCancel.ToString() },
-                    new KeyValuePojo { keyId = "isBot", value = isBot ? "1" : "0" },
-                    new KeyValuePojo { keyId = "Index", value = index.ToString() },
-                    new KeyValuePojo { keyId = "Bet_amount", value = amount.ToString() },
-                    new KeyValuePojo { keyId = "requestType", value = "initBet" },
-                    new KeyValuePojo { keyId = "MatchToken", value = matchToken },
-                    new KeyValuePojo { keyId = "MetaData", value = JsonUtility.ToJson(metadata) }
-                };
+             {
+                 new KeyValuePojo { keyId = "Game_Id", value = gameID},
+                 new KeyValuePojo { keyId = "GameName", value = gameName },
+                 new KeyValuePojo { keyId = "Operator", value = operatorName },
+                 new KeyValuePojo { keyId = "PlayerName", value = playerName },
+                 new KeyValuePojo { keyId = "Game_user_Id", value = playerId },
+                 new KeyValuePojo { keyId = "Status", value = isAbleToCancel.ToString() },
+                 new KeyValuePojo { keyId = "IsAbleToCancel", value = isAbleToCancel.ToString() },
+                 new KeyValuePojo { keyId = "isBot", value = isBot ? "1" : "0" },
+                 new KeyValuePojo { keyId = "Index", value = index.ToString() },
+                 new KeyValuePojo { keyId = "Bet_amount", value = amount.ToString() },
+                 new KeyValuePojo { keyId = "requestType", value = "initBet" },
+                 new KeyValuePojo { keyId = "MatchToken", value = matchToken },
+                 new KeyValuePojo { keyId = "MetaData", value = JsonUtility.ToJson(metadata) }
+             };
                     GameWinningStatus _winningStatus;
-                    string url1 = LootrixAPIPath;
+                    string url1 = backendAPIURL.LootrixTransactionAPI;
                     ApiRequest apiRequest1 = new ApiRequest();
                     apiRequest1.action = (success, error, body) =>
                     {
@@ -1632,6 +1816,8 @@ public class APIController : MonoBehaviour
         ExecuteAPI(apiRequest);
         return index;
     }
+
+
 
     public void WinningsBetMultiplayer(int betIndex, string betId, double win_amount_with_comission, double spend_amount, double pot_amount, TransactionMetaData metadata, Action<bool> action = null, string playerId = "", bool isBot = false, bool isWinner = true)
     {
@@ -1734,7 +1920,56 @@ public class APIController : MonoBehaviour
         }
         return BetProcess.Failed;
     }
+
+    public void GetLambdaURL(bool isLive)
+    {
+        Debug.Log("GetLambdaURL Is Live Game========> " + isLive);
+        ApiRequest apiRequest = new();
+        apiRequest.url = "https://qllb52jc5pxturffykekbtewn40osanl.lambda-url.ap-south-1.on.aws/";
+        List<KeyValuePojo> param = new List<KeyValuePojo>();
+        param.Add(new KeyValuePojo { keyId = "LoginType", value = isLive ? "1" : "0" });
+        param.Add(new KeyValuePojo { keyId = "GameName", value = defaultGameName });
+        apiRequest.param = param;
+        apiRequest.action = (success, error, body) =>
+        {
+            if (success)
+            {
+                ApiResponse response = JsonUtility.FromJson<ApiResponse>(body);
+                if (response.code == 200)
+                {
+
+                    backendAPIURL = JsonUtility.FromJson<BackendAPI>(response.message);
+                    Debug.Log("LootrixMatchAPI===========> " + backendAPIURL.LootrixMatchAPI);
+                    Debug.Log("LootrixTransactionAPI===========> " + backendAPIURL.LootrixTransactionAPI);
+                    Debug.Log("LootrixGetServerAPI===========> " + backendAPIURL.LootrixGetServerAPI);
+                    Debug.Log("LootrixInternetCheckAPI===========> " + backendAPIURL.LootrixInternetCheckAPI);
+                    Debug.Log("LootrixValidateServerAPI===========> " + backendAPIURL.LootrixValidateServerAPI);
+                    Debug.Log("LootrixServerInactiveAPI===========> " + backendAPIURL.LootrixServerInactiveAPI);
+                }
+            }
+        };
+        ExecuteAPI(apiRequest);
+    }
     #endregion
+}
+
+[System.Serializable]
+public class BackendAPI
+{
+    //dev https://b465kezbry2ssew2w6w56x3jhi0ennyi.lambda-url.ap-south-1.on.aws/
+    //live https://56ebdif5s4aqltb74xhkvnnrai0sxaey.lambda-url.ap-south-1.on.aws/
+    public string LootrixMatchAPI = "https://b465kezbry2ssew2w6w56x3jhi0ennyi.lambda-url.ap-south-1.on.aws/";
+    //live https://xpxpmhpjldqvjulexwx34z7jca0kdxzf.lambda-url.ap-south-1.on.aws/
+    //dev https://vbklyx2pq3nh6xf3vr55vmrwem0ldawq.lambda-url.ap-south-1.on.aws/
+    public string LootrixTransactionAPI = "https://vbklyx2pq3nh6xf3vr55vmrwem0ldawq.lambda-url.ap-south-1.on.aws/";
+    //live https://htatuqjumsb7qhv3yvmfx6jlza0pdwyg.lambda-url.ap-south-1.on.aws/
+    public string LootrixGetServerAPI = "https://htatuqjumsb7qhv3yvmfx6jlza0pdwyg.lambda-url.ap-south-1.on.aws/";
+    // https://6rugffwb323fkm7j7umild4vjm0hfcfm.lambda-url.ap-south-1.on.aws/
+    public string LootrixInternetCheckAPI = "https://6rugffwb323fkm7j7umild4vjm0hfcfm.lambda-url.ap-south-1.on.aws/";
+    // https://vbklyx2pq3nh6xf3vr55vmrwem0ldawq.lambda-url.ap-south-1.on.aws/
+    public string LootrixValidateServerAPI = "https://vbklyx2pq3nh6xf3vr55vmrwem0ldawq.lambda-url.ap-south-1.on.aws/";
+    // https://uyqcil3sz6qt6pus23vizk2k5i0dlfcx.lambda-url.ap-south-1.on.aws/
+    public string LootrixServerInactiveAPI = "https://uyqcil3sz6qt6pus23vizk2k5i0dlfcx.lambda-url.ap-south-1.on.aws/";
 }
 
 [System.Serializable]
@@ -1866,4 +2101,11 @@ public class CreateMatchResponse
     public string MatchToken;
     public int MatchCount;
     public double WinChance;
+}
+
+public enum NetworkStatus
+{
+    Active = 0,
+    NetworkIssue = 1,
+    ServerIssue = 2
 }

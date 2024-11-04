@@ -167,7 +167,19 @@ namespace TP
             currentDeck = new List<CardData>();
             int suit = 1;
             int rank = 1;
-            if(gameController.CurrentGameMode == GameMode.ROYAL)
+
+            for (int i = 0; i < deckCount; i++)
+            {
+                if (rank % 14 == 0)
+                {
+                    suit++;
+                    rank = 1;
+                }
+                currentDeck.Add(new CardData(suit, rank, true));
+                rank++;
+            }
+
+           /* if (gameController.CurrentGameMode == GameMode.ROYAL)
             {
                
                 for (int j=1;j<=4;j++)
@@ -176,7 +188,7 @@ namespace TP
                     currentDeck.Add(new CardData(j, 1, true));
                     for (int i = 10; i < 14; i++)
                     {
-                       /* RoyalMode = true;*/
+                       *//* RoyalMode = true;*//*
                         Debug.Log("Print the log");
                         currentDeck.Add(new CardData(j, i, true));
                        
@@ -196,7 +208,7 @@ namespace TP
                     currentDeck.Add(new CardData(suit, rank, true));
                     rank++;
                 }
-            }
+            }*/
         }
         public int GetSeenPlayerCount()
         {
@@ -254,8 +266,8 @@ namespace TP
             NewDeck();
             if (gameController.CurrentGameMode.ToString() == "ZANDU")
                 InitZanduMode();
-            else if (gameController.CurrentGameMode == GameMode.HUKAM)
-                InitHUKAMMode();
+            /*else if (gameController.CurrentGameMode == GameMode.HUKAM)
+                InitHUKAMMode();*/
 
             players.RemoveAll(x => x.disconnectTime > 0);
             foreach (PlayerState ps in players)

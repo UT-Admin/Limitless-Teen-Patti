@@ -128,7 +128,7 @@ namespace TP
                         return 2;
                     }
                 }
-                else
+                /*else
                 {
                     if (gm.gameController.CurrentGameMode == GameMode.ZANDU && gm.gameState.players[gm.GetCurrentPlayingPlayerIndex()].turnCount <= 3)
                     {
@@ -139,7 +139,7 @@ namespace TP
                        DebugHelper.LogError("bot play 7");
                         return PackOrChallBot();
                     }
-                }
+                }*/
             }
            DebugHelper.LogError("bot play 8");
             return 1;
@@ -148,7 +148,20 @@ namespace TP
         {
             if (gm.gameState.players[gm.GetCurrentPlayingPlayerIndex()].playerData.playerID != gm.botPlayer.rankDetails[0])
             {
-                if ((gm.gameController.CurrentGameMode == GameMode.MUFLIS && botCardCombination == CardsCombination.HighCard || botCardCombination == CardsCombination.Pair) || (gm.gameController.CurrentGameMode != GameMode.MUFLIS && botCardCombination == CardsCombination.Trail || botCardCombination == CardsCombination.StraightFlush))
+
+
+                int rand = UnityEngine.Random.Range(1, 5);
+                if (rand != 3)
+                {
+                    if (UnityEngine.Random.Range(1, 4) == 2)
+                        gm.isBotIncressBet = true;
+                    return 2;
+                }
+                else
+                {
+                    return 1;
+                }
+                /*if ((gm.gameController.CurrentGameMode == GameMode.MUFLIS && botCardCombination == CardsCombination.HighCard || botCardCombination == CardsCombination.Pair) || (gm.gameController.CurrentGameMode != GameMode.MUFLIS && botCardCombination == CardsCombination.Trail || botCardCombination == CardsCombination.StraightFlush))
                 {
                     if (UnityEngine.Random.Range(1, 3) == 2)
                     {
@@ -172,7 +185,7 @@ namespace TP
                     {
                         return 1;
                     }
-                }
+                }*/
             }
             else
             {

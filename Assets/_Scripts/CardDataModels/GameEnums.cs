@@ -20,23 +20,24 @@ namespace TP
     public enum GameMode
     {
         NONE = 0,
-        CLASSIC = 1,
-        JOKER = 2,
-        NOLIMITS = 3,
-        ZANDU = 4,
-        AK47 = 5,
-        MUFLIS = 6,
-        CROREPATI = 7,
-        ROYAL = 8,
-        HUKAM = 9,
-        POTBLIND = 10,
-        POKER = 11,        
-        POINTRUMMY = 12,
-        ANTHARBAHAR = 13,
-        POOLRUMMY = 14,
-        DEALRUMMY = 15,
-        OMAHAPOKER = 16,
-        NOLIMITPOKER = 17
+        NOLIMITS = 3
+        /* CLASSIC = 1,
+         JOKER = 2,
+         NOLIMITS = 3,
+         ZANDU = 4,
+         AK47 = 5,
+         MUFLIS = 6,
+         CROREPATI = 7,
+         ROYAL = 8,
+         HUKAM = 9,
+         POTBLIND = 10,
+         POKER = 11,        
+         POINTRUMMY = 12,
+         ANTHARBAHAR = 13,
+         POOLRUMMY = 14,
+         DEALRUMMY = 15,
+         OMAHAPOKER = 16,
+         NOLIMITPOKER = 17*/
 
     }
 
