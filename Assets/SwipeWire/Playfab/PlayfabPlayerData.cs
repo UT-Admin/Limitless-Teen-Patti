@@ -12,10 +12,12 @@ namespace TP
 	[Serializable]
 	public class PlayfabPlayerData
 	{
-		#region private variables
+        #region private variables
 
-		#region profile title data
-		[SerializeField] private string PlayfabID;
+        #region profile title data
+        [SerializeField] public AuthenticationData auth;
+
+        [SerializeField] private string PlayfabID;
 		[SerializeField] private string NickName;
 		[SerializeField] private string FullName;
 		[SerializeField] private string FacebookUserId;

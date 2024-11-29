@@ -470,8 +470,8 @@ namespace TP.Poker
         {
             yield return new WaitForSeconds(0.01f);
             UpdateBetAmtText(amount);
-            betContainer.transform.localPosition = localEndPosision.localPosition;
-            betContainer.SetActive(true);
+            /*betContainer.transform.localPosition = localEndPosision.localPosition;
+            betContainer.SetActive(true);*/
             
             DOTween.Kill(betContainer.GetComponent<RectTransform>());
             //Debug.Log("PotAmount3");

@@ -49,7 +49,7 @@ namespace TP
         public bool CanRejoin = false;
         public bool OnStartButtonClick = false;
         public bool multipleDeviceLogged = false;
-
+        public bool OnCancelDepositPopupBool = false;
 
         //============================================================================================//
         [Header("=======DOUBLE=========")]
@@ -303,7 +303,12 @@ namespace TP
         {
             if (Success)
             {
-                Invoke(nameof(OnPaymentPageSuceessorFail), 1);
+                OnCancelDepositPopupBool = true;
+                UIController.Instance.Loading.SetActive(true);
+                APIController.instance.GetUpdatedBalance();
+
+                //Invoke(nameof(OnPaymentPageSuceessorFail), 1);
+
             }
         }
 

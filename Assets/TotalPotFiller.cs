@@ -40,7 +40,7 @@ public class TotalPotFiller : MonoBehaviour
                 PlayerMe[i].gameObject.transform.SetParent(PlayerMePostionForCoin.transform, true);
                 PlayerMe[i].gameObject.transform.SetAsFirstSibling();
                 PlayerMe[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f,36f,0f);
-                playerMEUI.CoinAnimation.Add(PlayerMe[PlayerMe.Count - 1]);
+               // playerMEUI.CoinAnimation.Add(PlayerMe[PlayerMe.Count - 1]);
                 PlayerMe.RemoveAt(PlayerMe.Count - 1);
             }
         }
@@ -127,7 +127,7 @@ public class TotalPotFiller : MonoBehaviour
                 Player1[i].gameObject.transform.SetParent(Player1PostionForCoin.transform, true);
                 Player1[i].gameObject.transform.SetAsFirstSibling();
                 Player1[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 36f, 0f);
-                player1UI.CoinAnimation.Add(Player1[Player1.Count - 1]);
+               // player1UI.CoinAnimation.Add(Player1[Player1.Count - 1]);
                 Player1.RemoveAt(Player1.Count - 1);
             }
         }
@@ -145,7 +145,7 @@ public class TotalPotFiller : MonoBehaviour
                 Player2[i].gameObject.transform.SetParent(Player2PostionForCoin.transform, true);
                 Player2[i].gameObject.transform.SetAsFirstSibling();
                 Player2[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 36f, 0f);
-                player2UI.CoinAnimation.Add(Player2[Player2.Count - 1]);
+               // player2UI.CoinAnimation.Add(Player2[Player2.Count - 1]);
                 Player2.RemoveAt(Player2.Count - 1);
             }
         }
@@ -164,7 +164,7 @@ public class TotalPotFiller : MonoBehaviour
                 Player4[i].gameObject.transform.SetParent(Player4PostionForCoin.transform, true);
                 Player4[i].gameObject.transform.SetAsFirstSibling();
                 Player4[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 36f, 0f);
-                player4UI.CoinAnimation.Add(Player4[Player4.Count - 1]);
+                //player4UI.CoinAnimation.Add(Player4[Player4.Count - 1]);
                 Player4.RemoveAt(Player4.Count - 1);
             }
         }
@@ -183,7 +183,7 @@ public class TotalPotFiller : MonoBehaviour
                 Player5[i].gameObject.transform.SetParent(Player5PostionForCoin.transform, true);
                 Player5[i].gameObject.transform.SetAsFirstSibling();
                 Player5[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 36f, 0f);
-                player5UI.CoinAnimation.Add(Player5[Player5.Count - 1]);
+               // player5UI.CoinAnimation.Add(Player5[Player5.Count - 1]);
                 Player5.RemoveAt(Player5.Count - 1);
             }
         }
@@ -203,8 +203,8 @@ public class TotalPotFiller : MonoBehaviour
             PlayerMe[i].gameObject?.SetActive(false);
             PlayerMe[i].gameObject?.transform.SetParent(PlayerMePostionForCoin.transform, true);
             PlayerMe[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 36f, 0f);
-            if (playerMEUI.CoinAnimation.Count < 6)
-                playerMEUI.CoinAnimation?.Add(PlayerMe[i]);
+           /* if (playerMEUI.CoinAnimation.Count < 6)
+                playerMEUI.CoinAnimation?.Add(PlayerMe[i]);*/
             PlayerMe.RemoveAt(i);
         }
 
@@ -218,8 +218,8 @@ public class TotalPotFiller : MonoBehaviour
             Player1[i].gameObject?.SetActive(false);
             Player1[i].gameObject?.transform.SetParent(Player1PostionForCoin.transform, true);
             Player1[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 36f, 0f);
-            if (player1UI.CoinAnimation.Count < 6)
-                player1UI.CoinAnimation?.Add(Player1[i]);
+            /*if (player1UI.CoinAnimation.Count < 6)
+                player1UI.CoinAnimation?.Add(Player1[i]);*/
             Player1.RemoveAt(i);
         }
     }
@@ -234,8 +234,8 @@ public class TotalPotFiller : MonoBehaviour
             Player2[i].gameObject?.SetActive(false);
             Player2[i].gameObject?.transform.SetParent(Player2PostionForCoin.transform, true);
             Player2[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 36f, 0f);
-            if (player2UI.CoinAnimation.Count < 6)
-                player2UI.CoinAnimation?.Add(Player2[i]);
+           /* if (player2UI.CoinAnimation.Count < 6)
+                player2UI.CoinAnimation?.Add(Player2[i]);*/
             Player2.RemoveAt(i);
         }
 
@@ -250,8 +250,8 @@ public class TotalPotFiller : MonoBehaviour
             Player4[i].gameObject?.SetActive(false);
             Player4[i].gameObject?.transform.SetParent(Player4PostionForCoin.transform, true);
             Player4[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 36f, 0f);
-            if (player4UI.CoinAnimation.Count < 6)
-                player4UI.CoinAnimation?.Add(Player4[i]);
+            /*if (player4UI.CoinAnimation.Count < 6)
+                player4UI.CoinAnimation?.Add(Player4[i]);*/
             Player4.RemoveAt(i);
         }
     }
@@ -263,8 +263,8 @@ public class TotalPotFiller : MonoBehaviour
             Player5[i].gameObject?.SetActive(false);
             Player5[i].gameObject?.transform.SetParent(Player5PostionForCoin.transform, true);
             Player5[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 36f, 0f);
-            if (player5UI.CoinAnimation.Count < 6)
-                player5UI.CoinAnimation?.Add(Player5[i]);
+            /*if (player5UI.CoinAnimation.Count < 6)
+                player5UI.CoinAnimation?.Add(Player5[i]);*/
             Player5.RemoveAt(i);
         }
     }

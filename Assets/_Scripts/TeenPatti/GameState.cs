@@ -342,6 +342,7 @@ namespace TP
         public int handsWonCount;
         public int currentTableGamesWon;
         public double currentTableChipsWon;
+        public AuthenticationData auth;
     }
 
     [System.Serializable]

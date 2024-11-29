@@ -82,6 +82,9 @@ namespace TP
         public TMP_Text Plus;
         public TMP_Text Minus;
         public TMP_Text ChaalAmount;
+		public TMP_Text PlusTXT;
+		public TMP_Text MinusTXT;
+		
         [SerializeField] private TMP_Text bottomTextTemp;
 		[SerializeField] private TMP_Text gameMode;
 
@@ -115,6 +118,7 @@ namespace TP
         public GameObject ParentCoinsStack;
         public GameObject[] StartTimerObjects;
         public GameObject[] zanduCards;
+        public GameObject[] PotChipsStack;
 
 
         //============================================================================================//
@@ -166,7 +170,14 @@ namespace TP
         public Color PlusMinus;
         public Color InactiveButtonColor;
         public Color activeButtonColor;
+        public Color NormalTxtColor;
+        public Color DisableTxtColor;
 
+
+
+        //============================================================================================//
+        [Header("=======BOOL=========")]
+        public bool FirstCoinAnim = false;
 
         //============================================================================================//
         [Header("=======REFERANCE=========")]

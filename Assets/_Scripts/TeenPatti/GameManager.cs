@@ -159,6 +159,7 @@ namespace TP
         private void Awake()
         {
             localInstance = this;
+            GamePlayUI.instance.MinusTXT.color = GamePlayUI.instance.DisableTxtColor;
         }
 
         private void Start()
@@ -1196,7 +1197,7 @@ namespace TP
             else
                 return false;
         }
-       
+
         public void LostGameBotServer(double Amount, string PlayerId)
         {
             Debug.Log("LostGameBotServer Called");
@@ -1209,7 +1210,7 @@ namespace TP
 
                     GetActivePlayerManager().SetBotWinnerAPI(ps.BetIndex, 0, Amount, "LossGameBot", ps.playerData.playerID, gameState.totalPot);
                 }
-               
+
             }
             else
             {
@@ -1217,38 +1218,39 @@ namespace TP
                 val.Amount = 0;
                 val.Info = "LossGameBot";
 
-                if(!OnlyBotExsist)
+                if (!OnlyBotExsist)
                 {
-                    APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex, ps.BetId, 0, ps.CurrentGameSpend, gameState.totalPot, val, null, ps.playerData.playerID, true, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission, gameState.currentMatchToken,gameController.domainURL);
+                    APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex, ps.BetId, 0, ps.CurrentGameSpend, gameState.totalPot, val, null, ps.playerData.playerID, true, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
                 }
 
             }
-       
-            
+
+
 
         }
 
-        public void LossGamePlayerServer(double Amount,string PlayerId)
+        public void LossGamePlayerServer(double Amount, string PlayerId)
         {
-   
+
             Debug.Log("LossGamePlayerServer Called");
             PlayerState ps = GetPlayerState(PlayerId);
 
-            if(gameController.isBlockedAPI)
+            if (gameController.isBlockedAPI)
             {
                 CheckWinnerAndLooser(ps.BetIndex, 0, ps.CurrentGameSpend, "LossGamePlayer", ps.playerData.playerID, "", gameState.totalPot);
-            }else
+            }
+            else
             {
                 TransactionMetaData val = new();
                 val.Amount = 0;
                 val.Info = "LossGamePlayer";
 
-               // ShowServerAnimation(0, ps.playerData.money, ps.playerData.playerID);
-                APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex,ps.BetId, 0, ps.CurrentGameSpend, gameState.totalPot, val, (x) => { if (x) { ClientUpdateBalance(); } }, ps.playerData.playerID, false, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission,gameState.currentMatchToken, gameController.domainURL);
+                // ShowServerAnimation(0, ps.playerData.money, ps.playerData.playerID);
+                APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex, ps.BetId, 0, ps.CurrentGameSpend, gameState.totalPot, val, (x) => { if (x) { ClientUpdateBalance(); } }, ps.playerData.playerID, false, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
 
             }
-   
-           
+
+
         }
 
         public void LostGame()
@@ -1576,7 +1578,7 @@ namespace TP
             }
         }
 
-        public void ChallWithoutNextturnMaster(string playerId, bool isStakeDoubled ,bool ShowMasterCheck =false)
+        public void ChallWithoutNextturnMaster(string playerId, bool isStakeDoubled, bool ShowMasterCheck = false)
         {
             Debug.Log("===================> Show Card 5");
             int currentPlayerIndex = GetPlayerIndex(playerId);
@@ -1585,7 +1587,7 @@ namespace TP
                 Debug.Log("===================> Show Card 6");
                 double myMoney = (gameState.players[currentPlayerIndex].playerData.money);
 
-               Debug.Log($"TotalPot =>>>>> Before --- {gameState.totalPot}");
+                Debug.Log($"TotalPot =>>>>> Before --- {gameState.totalPot}");
 
                 gameState.totalPot += myMoney;
 
@@ -1598,9 +1600,9 @@ namespace TP
                 {
                     Debug.Log($"SendChall 1 --- ");
 
-                    if(gameController.isBlockedAPI)
+                    if (gameController.isBlockedAPI)
                     {
-                       // SendChall(playerId, myMoney, gameState.players[currentPlayerIndex].playerData.money, false);
+                        // SendChall(playerId, myMoney, gameState.players[currentPlayerIndex].playerData.money, false);
                         ChallAmountBot(myMoney, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
                     }
                     else
@@ -1609,27 +1611,28 @@ namespace TP
                         TransactionMetaData _metaData = new TransactionMetaData();
                         _metaData.Amount = myMoney;
                         _metaData.Info = "Second Bet";
-                        ShowServerAnimation(myMoney, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID,false);
+                        ShowServerAnimation(myMoney, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
 
-                       if(!OnlyBotExsist)
+                        if (!OnlyBotExsist)
                         {
-                            APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, myMoney, (x) => { if (x) { ClientUpdateBalance(); if (ShowMasterCheck) { ShowAndEndGame(); } Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).playerData.playerName); } }, playerId, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL);
+                            PlayerState ps = gameState.players[currentPlayerIndex];
+                            APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, myMoney, (x) => { if (x) { ClientUpdateBalance(); if (ShowMasterCheck) { ShowAndEndGame(); } Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).playerData.playerName); } }, playerId, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
                         }
                         else
                         {
                             ShowAndEndGame();
                         }
-                
+
                     }
 
-                    
+
                 }
                 else
                 {
                     Debug.Log($"SendChall 1 --- ");
                     if (gameController.isBlockedAPI)
                     {
-                        SendChall(playerId, myMoney, gameState.players[currentPlayerIndex].playerData.money, false,false);
+                        SendChall(playerId, myMoney, gameState.players[currentPlayerIndex].playerData.money, false, false);
                         ChallAmount(myMoney, playerId);
                     }
                     else
@@ -1637,10 +1640,11 @@ namespace TP
                         TransactionMetaData _metaData = new TransactionMetaData();
                         _metaData.Amount = myMoney;
                         _metaData.Info = "Second Bet";
-                        ShowServerAnimation(myMoney, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID,false);
-                        APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, myMoney, (x) => { if (x) { ClientUpdateBalance(); if (ShowMasterCheck) { ShowAndEndGame(); } Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).playerData.playerName); } }, playerId, false, gameController.gameName, gameController.operatorName, gameController.gameId,gameState.currentMatchToken, gameController.domainURL);
+                        PlayerState ps = gameState.players[currentPlayerIndex];
+                        ShowServerAnimation(myMoney, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
+                        APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, myMoney, (x) => { if (x) { ClientUpdateBalance(); if (ShowMasterCheck) { ShowAndEndGame(); } Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).playerData.playerName); } }, playerId, false, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
                     }
-         
+
                 }
             }
             else
@@ -1665,7 +1669,7 @@ namespace TP
                 Debug.Log($"TotalPot =>>>>> After --- {gameState.totalPot}");
 
 
-                if (currentTableModel.PotLimit <= gameState.totalPot && gameController.CurrentGameMode != GameMode.NOLIMITS)
+                if (currentTableModel.PotLimit <= gameState.totalPot)
                 {
 
                     Debug.Log("SET WINNER FROM ChallWithoutNextturnMaster");
@@ -1680,8 +1684,8 @@ namespace TP
                 if (gameState.players[currentPlayerIndex].playerData.isBot)
                 {
                     Debug.Log($"case for Bot 2 SendChall 2 --- ");
-                   
-                    if(gameController.isBlockedAPI)
+
+                    if (gameController.isBlockedAPI)
                     {
                         //SendChall(playerId, newStake, gameState.players[currentPlayerIndex].playerData.money, false);
                         ChallAmountBot(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
@@ -1693,27 +1697,28 @@ namespace TP
                         TransactionMetaData _metaData = new TransactionMetaData();
                         _metaData.Amount = newStake;
                         _metaData.Info = "Second Bet";
-                        ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID,false);
+                        ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
 
-                        if(!OnlyBotExsist)
+                        if (!OnlyBotExsist)
                         {
-                            APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x) => { if (x) { ClientUpdateBalance(); if (ShowMasterCheck) { ShowAndEndGame(); } Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).CurrentGameSpend); } }, playerId, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL);
+                            PlayerState ps = gameState.players[currentPlayerIndex];
+                            APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x) => { if (x) { ClientUpdateBalance(); if (ShowMasterCheck) { ShowAndEndGame(); } Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).CurrentGameSpend); } }, playerId, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
                         }
                         else
                         {
                             ShowAndEndGame();
                         }
-       
+
                     }
-    
+
                 }
                 else
                 {
                     Debug.Log($"SendChall 2 --- ");
-          
+
                     if (gameController.isBlockedAPI)
                     {
-                        SendChall(playerId, newStake, gameState.players[currentPlayerIndex].playerData.money, false,false);
+                        SendChall(playerId, newStake, gameState.players[currentPlayerIndex].playerData.money, false, false);
                         ChallAmount(newStake, playerId);
                     }
                     else
@@ -1722,10 +1727,12 @@ namespace TP
                         TransactionMetaData _metaData = new TransactionMetaData();
                         _metaData.Amount = newStake;
                         _metaData.Info = "Second Bet";
-                        ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID,false);
-                        APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x) => { if (x) { ClientUpdateBalance(); if (ShowMasterCheck) { ShowAndEndGame(); } Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).CurrentGameSpend); } }, playerId, false, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL);
+                        PlayerState ps = gameState.players[currentPlayerIndex];
+                        ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
+                        APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x) => { if (x) { ClientUpdateBalance(); if (ShowMasterCheck) { ShowAndEndGame(); } Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).CurrentGameSpend); } }, playerId, false, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL
+                            , ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
                     }
-      
+
                 }
             }
             UpdateGameStateToServer();
@@ -2324,6 +2331,7 @@ namespace TP
                     LinkPlayerManagerToUI();
                     GamePlayUI.instance.HideHud();
                     GamePlayUI.instance.ParentCoinsStack.SetActive(false);
+                    GamePlayUI.instance.FirstCoinAnim = false;
                     break;
 
                 case 1:
@@ -2347,6 +2355,7 @@ namespace TP
                     GamePlayUI.instance.strengthMeterList.fillAmount = 0;
                     IsFirstBet = false;
                     GamePlayUI.instance.ParentCoinsStack.SetActive(false);
+                    GamePlayUI.instance.FirstCoinAnim = false;
 
 
 
@@ -3024,10 +3033,11 @@ namespace TP
 
         public void WinningGamePlayerServer(double amount, string playerid)
         {
-   
-            Debug.Log("WinningGamePlayerServer Called");
+
+
             double val = ((gameController.CurrentAmountType == (CashType.CASH) && !gameController.IsTournament) ? ((amount)) : amount);
             PlayerState ps = GetPlayerState(playerid);
+            Debug.Log("WinningGamePlayerServer Called" + ps.playerData.auth.currency_type + " " + ps.playerData.auth.platform + " " + ps.playerData.auth.session_token);
             if (!gameController.IsTournament)
             {
                 ps.playerData.currentTableChipsWon += val;
@@ -3046,11 +3056,11 @@ namespace TP
                 val1.Amount = val;
                 val1.Info = "WinningGamePlayer";
                 //ShowServerAnimation(val, ps.CurrentGameSpend, ps.playerData.playerID);
-                APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex,ps.BetId, val, ps.CurrentGameSpend, gameState.totalPot, val1, (x)=> { if (x) { ClientUpdateBalance();  } }, ps.playerData.playerID, false, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission,gameState.currentMatchToken, gameController.domainURL);
+                APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex, ps.BetId, val, ps.CurrentGameSpend, gameState.totalPot, val1, (x) => { if (x) { ClientUpdateBalance(); } }, ps.playerData.playerID, false, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
             }
         }
 
-      
+
 
 
         public List<PlayerState> WinnerList()
@@ -3293,6 +3303,8 @@ namespace TP
             GamePlayUI.instance.GlowMinusButton.SetActive(false);
             GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.activeButtonColor;
             GamePlayUI.instance.increaseBet.image.sprite = GamePlayUI.instance.ActivePlusMinus;
+            GamePlayUI.instance.PlusTXT.color = GamePlayUI.instance.NormalTxtColor;
+            GamePlayUI.instance.MinusTXT.color = GamePlayUI.instance.DisableTxtColor;
             GamePlayUI.instance.Plus.color = GamePlayUI.instance.PlusMinus;
             GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
             //  GamePlayUI.instance.decreaseBet.image.sprite = GamePlayUI.instance.InActivePlusMinus;
@@ -3320,6 +3332,8 @@ namespace TP
                 GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.activeButtonColor;
                 GamePlayUI.instance.decreaseBet.image.sprite = GamePlayUI.instance.ActivePlusMinus;
                 GamePlayUI.instance.Minus.color = GamePlayUI.instance.PlusMinus;
+                GamePlayUI.instance.PlusTXT.color = GamePlayUI.instance.DisableTxtColor;
+                GamePlayUI.instance.MinusTXT.color = GamePlayUI.instance.NormalTxtColor;
                 GamePlayUI.instance.increaseBet.interactable = false;
                 GamePlayUI.instance.decreaseBet.interactable = true;
                 GamePlayUI.instance.isStakeDoubled = true;
@@ -3444,7 +3458,7 @@ namespace TP
             int currentPlayerIndex = GetCurrentPlayingPlayerIndex();
             Debug.Log(" ALL IN MASTER --- >  " + gameState.players[currentPlayerIndex].playerData.playerName);
             Debug.Log(" ALL IN MASTER --- >  " + gameState.players[currentPlayerIndex].playerData.money);
-           
+
             if (gameState.players[currentPlayerIndex].playerData.money <= (gameState.players[currentPlayerIndex].hasSeenCard ? gameState.currentStake : (gameState.currentStake / 2)))
             {
                 double myMoney = gameState.players[currentPlayerIndex].playerData.money;
@@ -3464,19 +3478,20 @@ namespace TP
                 gameState.players[currentPlayerIndex].allinPosition = AllinPerformCount();
 
 
-                if (currentTableModel.PotLimit <= gameState.totalPot && gameController.CurrentGameMode != GameMode.NOLIMITS)
+                if (currentTableModel.PotLimit <= gameState.totalPot)
                 {
-                     
-                    if(gameController.isBlockedAPI)
+
+                    if (gameController.isBlockedAPI)
                     {
                         if (currentTableModel.PotLimit <= gameState.totalPot)
                         {
                             Debug.Log("SET WINNER FROM CHALL");
                             Debug.Log($"Pot Limit =>>>>> --- {gameState.totalPot}");
+                            Debug.Log("AllinMaster ==================> STATE SET 4");
                             gameState.forceSee = false;
                             gameState.currentState = 4;
                             Debug.Log(" GAME STATE SET TO FOUR");
-                            
+
                         }
                     }
 
@@ -3505,17 +3520,18 @@ namespace TP
                         TransactionMetaData _metaData = new TransactionMetaData();
                         _metaData.Amount = myMoney;
                         _metaData.Info = "Second Bet";
-                        ShowServerAnimation(myMoney, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID,false);
+                        ShowServerAnimation(myMoney, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
 
-                        if(!OnlyBotExsist)
+                        if (!OnlyBotExsist)
                         {
-                            APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, myMoney, (x) => { if (x) { ClientUpdateBalance(); Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).CurrentGameSpend); SetTostateFour(); } }, gameState.players[currentPlayerIndex].playerData.playerID, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL);
+                            PlayerState ps = gameState.players[currentPlayerIndex];
+                            APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, myMoney, (x) => { if (x) { ClientUpdateBalance(); Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).CurrentGameSpend); SetTostateFour(); } }, gameState.players[currentPlayerIndex].playerData.playerID, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
                         }
                         else
                         {
                             SetTostateFour();
                         }
-                 
+
                     }
 
                 }
@@ -3524,7 +3540,7 @@ namespace TP
                     Debug.Log($"SendChall 3 --- ");
                     if (gameController.isBlockedAPI)
                     {
-                        SendChall(playerID, newStake, gameState.players[currentPlayerIndex].playerData.money, false,false);
+                        SendChall(playerID, newStake, gameState.players[currentPlayerIndex].playerData.money, false, false);
                     }
                     else
                     {
@@ -3532,19 +3548,18 @@ namespace TP
                         TransactionMetaData _metaData = new TransactionMetaData();
                         _metaData.Amount = myMoney;
                         _metaData.Info = "Second Bet";
-                        ShowServerAnimation(myMoney, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID,false);
-                        APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, myMoney, (x) => { if (x) { ClientUpdateBalance(); Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).CurrentGameSpend); SetTostateFour(); } }, gameState.players[currentPlayerIndex].playerData.playerID, false, gameController.gameName, gameController.operatorName, gameController.gameId,gameState.currentMatchToken, gameController.domainURL);
+                        ShowServerAnimation(myMoney, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
+                        PlayerState ps = gameState.players[currentPlayerIndex];
+                        APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, myMoney, (x) => { if (x) { ClientUpdateBalance(); Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).CurrentGameSpend); SetTostateFour(); } }, gameState.players[currentPlayerIndex].playerData.playerID, false, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
                     }
 
-                   
+
                 }
-                Debug.Log("ALL IN MASTER ======================== > " +gameState.players[currentPlayerIndex].playerData.playerName + " ************** " + gameState.players[currentPlayerIndex].playerData.money);
+                Debug.Log("ALL IN MASTER ======================== > " + gameState.players[currentPlayerIndex].playerData.playerName + " ************** " + gameState.players[currentPlayerIndex].playerData.money);
                 GlobalMessage((CommonFunctions.Instance.GetTruncatedPlayerName(gameState.players[currentPlayerIndex].playerData.playerName) + " played All-In of " + CommonFunctions.Instance.GetAmountDecimalSeparator(myMoney)));
-               
+
             }
             UpdateGameStateToServer();
-
-
         }
 
 
@@ -3584,7 +3599,7 @@ namespace TP
                         {
                             BetCheck = true;
                             Debug.Log(" **************** " + gameState.currentStake);
-                            newStake = gameState.currentStake < 320 ? gameState.currentStake * 2 : gameState.currentStake;
+                            newStake = gameState.currentStake < gameState.players[currentPlayerIndex].playerData.auth.challLimit ? gameState.currentStake * 2 : gameState.currentStake;
                             Debug.Log("&&&&&**************** " + newStake);
                         }
                         else
@@ -3622,9 +3637,9 @@ namespace TP
                 if (!gameState.players[currentPlayerIndex].hasSeenCard)
                 {
                     newStake /= 2;
-                    
+
                 }
-                
+
                 gameState.players[currentPlayerIndex].playerData.money -= newStake;
                 gameState.players[currentPlayerIndex].CurrentGameSpend += newStake;
 
@@ -3639,7 +3654,7 @@ namespace TP
                     if (gameController.isBlockedAPI)
                     {
 
-                        ChallAmountBot(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false,BetCheck);
+                        ChallAmountBot(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false, BetCheck);
                     }
                     else
                     {
@@ -3649,10 +3664,12 @@ namespace TP
                         _metaData.Info = "Second Bet";
                         ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, BetCheck);
 
-                        if(!OnlyBotExsist)
+                        if (!OnlyBotExsist)
                         {
-                            APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x) => { if (x) { ClientUpdateBalance(); AddWinnerAfterChaal(); Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).playerData.playerName); } }, gameState.players[currentPlayerIndex].playerData.playerID, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL);
-                        }else
+                            PlayerState ps = gameState.players[currentPlayerIndex];
+                            APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x) => { if (x) { ClientUpdateBalance(); AddWinnerAfterChaal(); Debug.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).playerData.playerName); } }, gameState.players[currentPlayerIndex].playerData.playerID, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
+                        }
+                        else
                         {
                             AddWinnerAfterChaal();
                         }
@@ -3666,16 +3683,17 @@ namespace TP
 
                 PlayerState currentPlayerState = gameState.players[GetCurrentPlayingPlayerIndex()];
                 GlobalMessage((CommonFunctions.Instance.GetTruncatedPlayerName(currentPlayerState.playerData.playerName) + " played a " + (currentPlayerState.hasSeenCard ? "chaal" : "blind") + " of " + CommonFunctions.Instance.GetAmountDecimalSeparator(newStake)));
-                if (currentTableModel.PotLimit <= gameState.totalPot && gameController.CurrentGameMode != GameMode.NOLIMITS)
+                if (currentTableModel.PotLimit <= gameState.totalPot)
                 {
-                    if(gameController.isBlockedAPI)
+                    if (gameController.isBlockedAPI)
                     {
                         Debug.Log("SET WINNER FROM CHALL BUTTON LOOTRIX ");
                         Debug.Log($"Pot Limit CHALL BUTTON =>>>>> LOOTRIX --- {gameState.totalPot}");
+                        Debug.Log("Chaal ==================> STATE SET 4");
                         gameState.forceSee = false;
                         gameState.currentState = 4;
                     }
-  
+
                 }
                 else
                 {
@@ -3697,14 +3715,15 @@ namespace TP
                         _metaData.Amount = newStake;
                         _metaData.Info = "Second Bet";
                         Debug.Log("AddBetCAlled Player " + newStake + " *********************************** " + " *********************************************################################################################################### " + playerID);
+                        PlayerState ps = gameState.players[currentPlayerIndex];
                         ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, BetCheck);
-                        APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x) => { if (x) { ClientUpdateBalance(); AddWinnerAfterChaal(); Debug.Log(" CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).playerData.playerName); } }, gameState.players[currentPlayerIndex].playerData.playerID, false, gameController.gameName, gameController.operatorName, gameController.gameId,gameState.currentMatchToken, gameController.domainURL);
-                    }   
+                        APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x) => { if (x) { ClientUpdateBalance(); AddWinnerAfterChaal(); Debug.Log(" CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).playerData.playerName); } }, gameState.players[currentPlayerIndex].playerData.playerID, false, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
+                    }
                 }
 
                 Debug.Log("CHALL --- >  " + gameState.players[currentPlayerIndex].playerData.playerName);
                 Debug.Log("CHALL --- >  " + gameState.players[currentPlayerIndex].playerData.money);
-               
+
             }
             UpdateGameStateToServer();
         }
@@ -4705,10 +4724,10 @@ namespace TP
                 UpdateGameStateToServer();
 
                 gameState.NewDeck();
-               /* if (gameController.CurrentGameMode.ToString() == "ZANDU")
-                    gameState.InitZanduMode();*/
-               /* else if (gameController.CurrentGameMode == GameMode.HUKAM)
-                    gameState.InitHUKAMMode();*/
+                /*  if (gameController.CurrentGameMode.ToString() == "ZANDU")
+                      gameState.InitZanduMode();
+                  else if (gameController.CurrentGameMode == GameMode.HUKAM)
+                      gameState.InitHUKAMMode();*/
 
 
                 gameState.players = gameState.players.OrderBy(x => x.ui).ToList();
@@ -4780,7 +4799,7 @@ namespace TP
                             {
                                 ps.BetId = Betid;
                                 UpdateGameStateToServer();
-                            }, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL);
+                            }, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
 
                             ps.BetIndex = betIndex;
 
@@ -4840,7 +4859,7 @@ namespace TP
                                 {
                                     ps.BetId = Betid;
                                     UpdateGameStateToServer();
-                                }, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL);
+                                }, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
 
                                 ps.BetIndex = betIndex;
                             }
@@ -5493,7 +5512,7 @@ namespace TP
 
                     GetActivePlayerManager().SetBotWinnerAPI(ps.BetIndex, val, ps.CurrentGameSpend, "WinningGameBotPlayer", ps.playerData.playerID, gameState.totalPot);
                 }
-               
+
             }
             else
             {
@@ -5501,13 +5520,13 @@ namespace TP
                 val1.Amount = 0;
                 val1.Info = "WinningGameBotPlayer";
 
-                if(!OnlyBotExsist)
+                if (!OnlyBotExsist)
                 {
-                    APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex, ps.BetId, val, ps.CurrentGameSpend, gameState.totalPot, val1, null, ps.playerData.playerID, true, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission, gameState.currentMatchToken, gameController.domainURL);
+                    APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex, ps.BetId, val, ps.CurrentGameSpend, gameState.totalPot, val1, null, ps.playerData.playerID, true, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission, gameState.currentMatchToken, gameController.domainURL, ps.playerData.auth.session_token, ps.playerData.auth.currency_type, ps.playerData.auth.platform);
                 }
 
             }
-            
+
         }
 
         IEnumerator BotTurn()

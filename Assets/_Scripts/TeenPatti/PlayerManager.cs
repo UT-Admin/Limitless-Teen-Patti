@@ -1238,6 +1238,57 @@ namespace TP
 
             APIController.instance.ValidateSession(playerID, token, gamename, operatorname, session_token, isBlock, (jsonBody) => TargetValidateSession(jsonBody));
         }
+
+
+
+
+        public void StartGameAuthentication(string data)
+        {
+            CmdStartGameAuthentication(data);
+        }
+
+        [Command]
+        private void CmdStartGameAuthentication(string data)
+        {
+            Debug.Log("StartAuthenticationServerSideCall  data============> " + data);
+            APIController.instance.authentication = JsonUtility.FromJson<AuthenticationData>(data);
+            List<KeyValuePojo> param = new List<KeyValuePojo>();
+            param.Add(new KeyValuePojo { keyId = "requestType", value = "auth" });
+            param.Add(new KeyValuePojo { keyId = "user_token", value = APIController.instance.authentication.token });
+            param.Add(new KeyValuePojo { keyId = "platform", value = APIController.instance.authentication.platform });
+            param.Add(new KeyValuePojo { keyId = "currency", value = APIController.instance.authentication.currency_type });
+            param.Add(new KeyValuePojo { keyId = "gamename", value = APIController.instance.authentication.gamename });
+            param.Add(new KeyValuePojo { keyId = "operatorname", value = APIController.instance.authentication.operatorname });
+            param.Add(new KeyValuePojo { keyId = "url", value = APIController.instance.authentication.operatorDomainUrl + "api/auth/" });
+
+            string url1 = "https://lyxe2jeadj3flpckuuja4c2yra0eppik.lambda-url.ap-south-1.on.aws/";
+            ApiRequest apiRequest1 = new ApiRequest();
+            apiRequest1.action = (success, error, body) =>
+            {
+                if (success)
+                {
+                    Debug.Log("StartAuthenticationServerSideCall success ================> " + success);
+                }
+                else
+                {
+                    Debug.Log("StartAuthenticationServerSideCall error ================> " + error);
+                }
+                TargetStartAuthenticationClientSideCall(body, error, success);
+            };
+            apiRequest1.url = url1;
+            apiRequest1.param = param;
+            apiRequest1.callType = NetworkCallType.GET_METHOD;
+            APIController.instance.ExecuteAPI(apiRequest1);
+        }
+
+        [TargetRpc]
+        public void TargetStartAuthenticationClientSideCall(string body, string error, bool success)
+        {
+            APIController.instance.StartAuthenticationClientSideCall(body, error, success);
+        }
+
+
+
         [TargetRpc]
         private void TargetValidateSession(string jsonBody)
         {
@@ -1245,8 +1296,46 @@ namespace TP
             APIController.instance.ValidateSessionResponce(jsonBody);
         }
 
+        public void GetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string OperatorURL)
+        {
+            CmdGetUpdatedBalance(Id, SessionToken, CurrencyType, OperatorURL);
+        }
 
 
+        [Command]
+        private void CmdGetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string OperatorURL)
+        {
+            List<KeyValuePojo> param = new List<KeyValuePojo>();
+            param.Add(new KeyValuePojo { keyId = "requestType", value = "info" });
+            param.Add(new KeyValuePojo { keyId = "user_id", value = Id });
+            param.Add(new KeyValuePojo { keyId = "session_token", value = SessionToken });
+            param.Add(new KeyValuePojo { keyId = "currency", value = CurrencyType });
+            param.Add(new KeyValuePojo { keyId = "url", value = OperatorURL + "api/info/" });
+
+            string url1 = "https://lyxe2jeadj3flpckuuja4c2yra0eppik.lambda-url.ap-south-1.on.aws/";
+            ApiRequest apiRequest1 = new ApiRequest();
+            apiRequest1.action = (success, error, body) =>
+            {
+                if (success)
+                {
+                    Debug.Log("StartAuthenticationServerSideCall success ================> " + success);
+                }
+                else
+                {
+                    Debug.Log("StartAuthenticationServerSideCall error ================> " + error);
+                }
+                TargetGetUpdatedBalanceClientSideCall(body, error, success);
+            };
+            apiRequest1.url = url1;
+            apiRequest1.param = param;
+            apiRequest1.callType = NetworkCallType.GET_METHOD;
+            APIController.instance.ExecuteAPI(apiRequest1);
+        }
+        [TargetRpc]
+        public void TargetGetUpdatedBalanceClientSideCall(string body, string error, bool success)
+        {
+            APIController.instance.GetUpdatedBalanceClientSideCall(body, error, success);
+        }
 
     }
 }
