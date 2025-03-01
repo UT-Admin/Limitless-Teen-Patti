@@ -5,6 +5,7 @@ using Mirror;
 using System;
 using TP;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace TP
 
@@ -31,7 +32,7 @@ namespace TP
 
     public class PlayerManager : NetworkBehaviour
     {
-     
+
         [Header("======================================================================")]
 
         [Header("NetworkVariables")]
@@ -116,11 +117,11 @@ namespace TP
 
         public IEnumerator InitPlayerManager(bool reset = false)
         {
-         
-             
+
+
             if (string.IsNullOrEmpty(playerID))
             {
-               
+
                 yield break;
             }
             while (!GameManager.localInstance.FindPlayerInGame(playerID))
@@ -168,10 +169,10 @@ namespace TP
         {
             myPlayerState = JsonUtility.FromJson<PlayerState>(newStr);
 
-           
+
             if (myPlayerState.playerData.playerID == GameController.Instance.CurrentPlayerData.GetPlayfabID())
             {
-               
+
                 localPlayer = this;
                 isLocalPlayer = true;
             }
@@ -183,7 +184,7 @@ namespace TP
 
         public override void OnStartClient()
         {
-            
+
 
 
             if (isLocalPlayer)
@@ -201,8 +202,8 @@ namespace TP
 
         public override void OnStopClient()
         {
-           
-    
+
+
 
             ClientDisconnect();
         }
@@ -214,7 +215,7 @@ namespace TP
                 DebugHelper.LogError("gm null " + playerID);
             if (gameManager && !isDuplicate)
                 gameManager.SetDisconnectedPlayer(playerID);
-            DebugHelper.Log($"Client Stopped on Server "+myPlayerState.playerData.isBot);
+            DebugHelper.Log($"Client Stopped on Server " + myPlayerState.playerData.isBot);
             ServerDisconnect();
         }
 
@@ -245,29 +246,29 @@ namespace TP
 
         public void AddFriend(string playerId)
         {
-            if (GameManager.localInstance.GetPlayerState(playerId).playerData.isBot) 
+            if (GameManager.localInstance.GetPlayerState(playerId).playerData.isBot)
             {
                 return;
             }
             CmdAddFriend(playerId);
         }
- 
+
         public void AddSenderFriend(string playerId, string senderId)
         {
             CmdAddSenderFriend(playerId, senderId);
         }
-     
+
         public void InvitePlayerToGame(string playerId, string roomCode)
         {
-            DebugHelper.Log(playerID+this.GetComponent<NetworkIdentity>().hasAuthority);
+            DebugHelper.Log(playerID + this.GetComponent<NetworkIdentity>().hasAuthority);
             CmdInviteToGame(playerId, roomCode);
         }
-       
+
         public void JoinLobby()
         {
             CmdJoinLobby();
         }
-    
+
         public void ExitLobby()
         {
             isInLobby = false;
@@ -294,7 +295,7 @@ namespace TP
             gameManager.RemoveFromGame(playerID, true);
 
         }
-    
+
         public void ServerDisconnect()
         {
             try
@@ -347,9 +348,9 @@ namespace TP
                 UIController.Instance.teenPattiGameUIPanel.ShowMe();
                 UIController.Instance.Loading.SetActive(false);
             }
-            if(isMine)
+            if (isMine)
             {
-              
+
                 UIController.Instance.ShowGameHUD();
             }
             while (GamePlayUI.instance == null)
@@ -362,21 +363,21 @@ namespace TP
             if (isMine)
             {
                 localPlayer = this;
-              
+
                 CheckJoinStatus();
             }
             else
             {
-                
+
             }
-            
+
             StartCoroutine(WaitForPlayerInGameState());
         }
 
         public IEnumerator WaitForPlayerInGameState()
         {
             bool isAddedToGameState = false;
-            int tryCount= 0;
+            int tryCount = 0;
             while (!isAddedToGameState)
             {
 
@@ -388,12 +389,12 @@ namespace TP
                 {
                     yield return new WaitForSeconds(0.2f);
                     tryCount++;
-                    if (tryCount > 5&&isLocalPlayer)
+                    if (tryCount > 5 && isLocalPlayer)
                     {
                         CheckJoinStatus();
                     }
                 }
-                    
+
                 if (gameManager.gameState.players.Exists(x => x.playerData.playerID == GameController.Instance.CurrentPlayerData.GetPlayfabID()))
                 {
 
@@ -423,14 +424,14 @@ namespace TP
             GameManager.localInstance.myPlayer = this;
             GameManager.localInstance.myPlayerID = playerID;
 
-            GameManager.localInstance.CheckJoinStatus(gameManager.gameState.players.Exists(x=>x.playerData.playerID == myPlayerState.playerData.playerID) || gameManager.gameState.waitingPlayers.Exists(x => x.playerData.playerID == myPlayerState.playerData.playerID));
+            GameManager.localInstance.CheckJoinStatus(gameManager.gameState.players.Exists(x => x.playerData.playerID == myPlayerState.playerData.playerID) || gameManager.gameState.waitingPlayers.Exists(x => x.playerData.playerID == myPlayerState.playerData.playerID));
 
             foreach (PlayerState playerState in gameManager.gameState.players)
             {
                 if (playerState.playerData.playerID == myPlayerState.playerData.playerID)
                 {
                     myPlayerState = playerState;
-            
+
                     CmdRejoinGame(playerID);
 
                     GameManager.localInstance.AddPlayerManager(this);
@@ -482,7 +483,7 @@ namespace TP
 
         }
 
-        void InitializePlayerData(string playerDataRaw, bool isCash,string playerId)
+        void InitializePlayerData(string playerDataRaw, bool isCash, string playerId)
         {
             PlayfabPlayerData playerData = JsonUtility.FromJson<PlayfabPlayerData>(playerDataRaw);
             isBot = false;
@@ -492,6 +493,18 @@ namespace TP
             myPlayerData.currentCards = new CardData[3];
             myPlayerData.silver = playerData.GetSilverVal();
             myPlayerData.gold = playerData.GetGoldVal();
+            myPlayerData.token = playerData.token;
+            myPlayerData.session_token = playerData.session_token;
+            myPlayerData.currency_type = playerData.currency_type;
+            myPlayerData.gamename = playerData.gamename;
+            myPlayerData.operatorname = playerData.operatorname;
+            myPlayerData.operatorDomainUrl = playerData.operatorDomainUrl;
+            myPlayerData.platform = playerData.platform;
+            myPlayerData.comission = playerData.comission;
+            myPlayerData.environment = playerData.environment;
+            myPlayerData.balance = playerData.balance;
+
+
 
             if (!isCash)
                 myPlayerData.money = playerData.GetSilverVal();
@@ -506,6 +519,7 @@ namespace TP
             myPlayerData.currentTableChipsWon = 0;
             myPlayerState = new PlayerState();
             myPlayerState.playerData = myPlayerData;
+
 
         }
 
@@ -547,7 +561,7 @@ namespace TP
             GamePlayUI.instance.strengthMeterActive(true);
             myUI.SetSeeBool();
         }
-        
+
 
 
         [TargetRpc]
@@ -622,9 +636,9 @@ namespace TP
             if (success)
             {
                 roomName = _matchID;
-               
+
                 GameController.Instance.currentRoomName = _matchID;
-         
+
                 PlayerPrefs.SetString("LastEnteredRoom", _matchID);
                 StartCoroutine(WaitAndCheckJoinStatus(true));
             }
@@ -658,7 +672,7 @@ namespace TP
             roomName = _matchID;
             if (!success)
             {
-               HostGame(_gameType, lobbyName);
+                HostGame(_gameType, lobbyName);
             }
             else
             {
@@ -707,30 +721,30 @@ namespace TP
         [ClientRpc]
         void RpcKickedOutGame(string message)
         {
-           
+
             if (isLocalPlayer)
             {
 
-               
+
                 if (message == StaticStrings.EnoughBalanceServerKick + (GameController.Instance.CurrentAmountType == CashType.SILVER ? StaticStrings.Chip : StaticStrings.Cash))
                 {
-                
-                        GameController.Instance.isInGame = false;
-                        if(APIController.instance.userDetails.isBlockApiConnection)
-                        {
-                            UIController.Instance.InsufficientDemo.SetActive(true);
+
+                    GameController.Instance.isInGame = false;
+                    if (APIController.instance.userDetails.isBlockApiConnection)
+                    {
+                        UIController.Instance.InsufficientDemo.SetActive(true);
                         UIController.Instance.Loading.SetActive(false);
                     }
-                        else
-                        {
-                            UIController.Instance.Insufficient.SetActive(true);
+                    else
+                    {
+                        UIController.Instance.Insufficient.SetActive(true);
                         UIController.Instance.Loading.SetActive(false);
                     }
-              
-                        GamePlayUI.instance.ClearAllUI();
-                        GameController.Instance.DisconnectClient();
-                        return;
-                    
+
+                    GamePlayUI.instance.ClearAllUI();
+                    GameController.Instance.DisconnectClient();
+                    return;
+
                 }
                 GamePlayUI.instance.ClearAllUI();
                 UIController.Instance.PlayAgain.SetActive(true);
@@ -749,11 +763,11 @@ namespace TP
         }
 
         [ClientRpc]
-       public void SetBotInializeAPI(string playerID ,double Amount ,double balance,bool isinitialize ,bool check)
+        public void SetBotInializeAPI(string playerID, double Amount, double balance, bool isinitialize, bool check)
         {
             if (isLocalPlayer)
             {
- 
+
                 if (isinitialize)
                 {
                     TransactionMetaData val = new();
@@ -764,17 +778,17 @@ namespace TP
 
                     botval = APIController.instance.InitlizeBet(Amount, val, false, (success) =>
                     {
-                
+
                         if (success)
                         {
-                           
 
-                          
+
+
 
                         }
                         else
                         {
-                           
+
                         }
 
                     }, playerID, true, (BetId) => {
@@ -785,7 +799,7 @@ namespace TP
 
                     });
 
-                   
+
                     SetBetIndex(botval, playerID);
 
                 }
@@ -795,26 +809,26 @@ namespace TP
                     val.Amount = Amount;
                     val.Info = "Second Bet";
 
-                   
-                    APIController.instance.AddBet(GameManager.localInstance.GetPlayerState(playerID).BetIndex, GameManager.localInstance.GetPlayerState(playerID).BetId, val,Amount, (success) =>
+
+                    APIController.instance.AddBet(GameManager.localInstance.GetPlayerState(playerID).BetIndex, GameManager.localInstance.GetPlayerState(playerID).BetId, val, Amount, (success) =>
                     {
-                        
+
                         if (success)
                         {
 
                         }
                         else
                         {
-                            
+
                         }
 
-                    }, playerID,true);
+                    }, playerID, true);
                 }
             }
 
             PlayerUI myUI = GameManager.localInstance.GetPlayerUI(playerID);
             if (myUI != null)
-                myUI.GiveAmountToPot(Amount, balance,check);
+                myUI.GiveAmountToPot(Amount, balance, check);
             Invoke(nameof(checkSound), 0.5f);//1
         }
 
@@ -825,30 +839,30 @@ namespace TP
         }
 
         [ClientRpc]
-        public void SetBotWinnerAPI(int _index, double winAmount, double amountSpend, string metaData, string BotID,double totalPot)
+        public void SetBotWinnerAPI(int _index, double winAmount, double amountSpend, string metaData, string BotID, double totalPot)
         {
-            
+
             TransactionMetaData val = new();
             val.Amount = winAmount;
             val.Info = metaData;
 
-            
+
             if (isLocalPlayer)
             {
-                APIController.instance.WinningsBetMultiplayer(_index,GameManager.localInstance.GetPlayerState(BotID).BetId, winAmount, amountSpend, totalPot, val, (success) =>
+                APIController.instance.WinningsBetMultiplayer(_index, GameManager.localInstance.GetPlayerState(BotID).BetId, winAmount, amountSpend, totalPot, val, (success) =>
                 {
-                   
+
 
                     if (success)
                     {
-                       
+
                     }
                     else
                     {
-                       
+
                     }
 
-                }, BotID, true,true);
+                }, BotID, true, true);
 
             }
 
@@ -869,17 +883,17 @@ namespace TP
 
 
         [Command]
-        public void CmdSetAmountFormAPI(double Val ,string PlayerID)
+        public void CmdSetAmountFormAPI(double Val, string PlayerID)
         {
 
-            if(PlayerID == playerID)
+            if (PlayerID == playerID)
             {
                 PlayerState playerState = gameManager.GetPlayerState(PlayerID);
                 playerState.playerData.money = Val;
                 UpdatePlayerState(playerState);
                 gameManager.UpdateGameStateToServer();
             }
-          
+
         }
 
 
@@ -1061,13 +1075,13 @@ namespace TP
         }
 
         [Command]
-        public void SetBetIndex(int Index ,string playeridval)
+        public void SetBetIndex(int Index, string playeridval)
         {
             DebugHelper.Log(" Bet Index >>>>>>>>>>>>>>" + Index + playeridval);
 
             gameManager.GetPlayerState(playeridval).BetIndex = Index;
             UpdatePlayerState(gameManager.GetPlayerState(playeridval));
-       
+
 
 
         }
@@ -1212,7 +1226,7 @@ namespace TP
         [Command]
         public void setBoolIsWinnerPlayer(bool isWin)
         {
-       
+
             //gameManager.SetWinner(isWin);
             //DebugHelper.Log("init bet response :::::::----:::  " + gameManager.isBotWin);
         }
@@ -1223,9 +1237,84 @@ namespace TP
 
         public void ValidateSession(string playerID, string token, string gamename, string operatorname, string session_token, bool isBlock)
         {
-           
+
             CmdValidateSession(playerID, token, gamename, operatorname, session_token, isBlock);
         }
+
+
+        public void StartGameAuthentication(string data)
+        {
+            CmdStartGameAuthentication(data);
+        }
+
+
+        [Command]
+        private void CmdStartGameAuthentication(string data)
+        {
+            LoggerUtils.Log("StartAuthenticationServerSideCall  data============> " + data);
+            AuthenticationData authentication = JsonUtility.FromJson<AuthenticationData>(data);
+            JObject json = JObject.Parse(data);
+            List<KeyValuePojo> param = new List<KeyValuePojo>();
+            param.Add(new KeyValuePojo { keyId = "request_type", value = "auth" });
+            param.Add(new KeyValuePojo { keyId = "user_token", value = authentication.token });
+            param.Add(new KeyValuePojo { keyId = "platform", value = authentication.platform });
+            param.Add(new KeyValuePojo { keyId = "currency", value = authentication.currency_type });
+            param.Add(new KeyValuePojo { keyId = "game_name", value = authentication.gamename });
+            param.Add(new KeyValuePojo { keyId = "operator", value = authentication.operatorname });
+            string url1 = StaticStrings.GetLambdaUrl(authentication.environment);
+            ApiRequest apiRequest1 = new ApiRequest();
+            apiRequest1.action = (success, error, body) =>
+            {
+                JObject jsonObject = JObject.Parse(body);
+                if (success)
+                {
+                    LoggerUtils.Log("StartAuthenticationServerSideCall success ================> " + success);
+                }
+                else
+                {
+                    LoggerUtils.Log("StartAuthenticationServerSideCall error ================> " + error);
+                }
+                TargetStartAuthenticationClientSideCall(body, error, success);
+            };
+            apiRequest1.url = url1;
+            apiRequest1.param = param;
+            apiRequest1.callType = NetworkCallType.POST_METHOD_USING_JSONDATA;
+            APIController.instance.ExecuteAPI(apiRequest1);
+        }
+
+
+        [TargetRpc]
+        public void TargetStartAuthenticationClientSideCall(string body, string error, bool success)
+        {
+            APIController.instance.StartAuthenticationClientSideCall(body, error, success);
+        }
+
+
+        /*[Command]
+        private void CmdValidateSession(string playerID, string token, string gamename, string operatorname, string session_token, bool isBlock)
+        {
+            
+
+            if (isBlock)
+            {
+                TargetValidateSession(true);
+                return;
+            }
+           
+            APIController.instance.ValidateSession(playerID, token, gamename, operatorname, session_token,isBlock, (success) => TargetValidateSession(success));
+        }
+        [TargetRpc]
+        private void TargetValidateSession(bool success)
+        {
+            Debug.Log("TARGET valide Session Called ===================> " + success);
+            APIController.instance.isValidateSession = false;
+            if (success)
+                return;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            APIController.DisconnectGame("Session expired. Account active in another device.");
+            Debug.Log("Invalide Session ===================> ");
+#endif
+        }*/
         [Command]
         private void CmdValidateSession(string playerID, string token, string gamename, string operatorname, string session_token, bool isBlock)
         {
@@ -1236,59 +1325,8 @@ namespace TP
                 return;
             }
 
-            APIController.instance.ValidateSession(playerID, token, gamename, operatorname, session_token, isBlock, (jsonBody) => TargetValidateSession(jsonBody));
+            //  APIController.instance.ValidateSession(playerID, token, gamename, operatorname, session_token, isBlock, (jsonBody) => TargetValidateSession(jsonBody));
         }
-
-
-
-
-        public void StartGameAuthentication(string data)
-        {
-            CmdStartGameAuthentication(data);
-        }
-
-        [Command]
-        private void CmdStartGameAuthentication(string data)
-        {
-            Debug.Log("StartAuthenticationServerSideCall  data============> " + data);
-            APIController.instance.authentication = JsonUtility.FromJson<AuthenticationData>(data);
-            List<KeyValuePojo> param = new List<KeyValuePojo>();
-            param.Add(new KeyValuePojo { keyId = "requestType", value = "auth" });
-            param.Add(new KeyValuePojo { keyId = "user_token", value = APIController.instance.authentication.token });
-            param.Add(new KeyValuePojo { keyId = "platform", value = APIController.instance.authentication.platform });
-            param.Add(new KeyValuePojo { keyId = "currency", value = APIController.instance.authentication.currency_type });
-            param.Add(new KeyValuePojo { keyId = "gamename", value = APIController.instance.authentication.gamename });
-            param.Add(new KeyValuePojo { keyId = "operatorname", value = APIController.instance.authentication.operatorname });
-            param.Add(new KeyValuePojo { keyId = "url", value = APIController.instance.authentication.operatorDomainUrl + "api/auth/" });
-
-            string url1 = "https://lyxe2jeadj3flpckuuja4c2yra0eppik.lambda-url.ap-south-1.on.aws/";
-            ApiRequest apiRequest1 = new ApiRequest();
-            apiRequest1.action = (success, error, body) =>
-            {
-                if (success)
-                {
-                    Debug.Log("StartAuthenticationServerSideCall success ================> " + success);
-                }
-                else
-                {
-                    Debug.Log("StartAuthenticationServerSideCall error ================> " + error);
-                }
-                TargetStartAuthenticationClientSideCall(body, error, success);
-            };
-            apiRequest1.url = url1;
-            apiRequest1.param = param;
-            apiRequest1.callType = NetworkCallType.GET_METHOD;
-            APIController.instance.ExecuteAPI(apiRequest1);
-        }
-
-        [TargetRpc]
-        public void TargetStartAuthenticationClientSideCall(string body, string error, bool success)
-        {
-            APIController.instance.StartAuthenticationClientSideCall(body, error, success);
-        }
-
-
-
         [TargetRpc]
         private void TargetValidateSession(string jsonBody)
         {
@@ -1296,46 +1334,53 @@ namespace TP
             APIController.instance.ValidateSessionResponce(jsonBody);
         }
 
-        public void GetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string OperatorURL)
+
+        public void GetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string userToken, string operatorName, string gameName, string environment)
         {
-            CmdGetUpdatedBalance(Id, SessionToken, CurrencyType, OperatorURL);
+            CmdGetUpdatedBalance(Id, SessionToken, CurrencyType, userToken, operatorName, gameName, environment);
         }
 
 
         [Command]
-        private void CmdGetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string OperatorURL)
+        private void CmdGetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string userToken, string operatorName, string gameName, string environment)
         {
             List<KeyValuePojo> param = new List<KeyValuePojo>();
-            param.Add(new KeyValuePojo { keyId = "requestType", value = "info" });
+            param.Add(new KeyValuePojo { keyId = "request_type", value = "info" });
             param.Add(new KeyValuePojo { keyId = "user_id", value = Id });
             param.Add(new KeyValuePojo { keyId = "session_token", value = SessionToken });
             param.Add(new KeyValuePojo { keyId = "currency", value = CurrencyType });
-            param.Add(new KeyValuePojo { keyId = "url", value = OperatorURL + "api/info/" });
+            param.Add(new KeyValuePojo { keyId = "user_token", value = userToken });
+            param.Add(new KeyValuePojo { keyId = "operator", value = operatorName });
+            param.Add(new KeyValuePojo { keyId = "game_name", value = gameName });
 
-            string url1 = "https://lyxe2jeadj3flpckuuja4c2yra0eppik.lambda-url.ap-south-1.on.aws/";
+            string url1 = StaticStrings.GetLambdaUrl(environment);
+
             ApiRequest apiRequest1 = new ApiRequest();
             apiRequest1.action = (success, error, body) =>
             {
+                JObject jsonObject = JObject.Parse(body);
                 if (success)
                 {
-                    Debug.Log("StartAuthenticationServerSideCall success ================> " + success);
+                    LoggerUtils.Log("StartAuthenticationServerSideCall success ================> " + success);
                 }
                 else
                 {
-                    Debug.Log("StartAuthenticationServerSideCall error ================> " + error);
+                    LoggerUtils.Log("StartAuthenticationServerSideCall error ================> " + error);
                 }
                 TargetGetUpdatedBalanceClientSideCall(body, error, success);
             };
             apiRequest1.url = url1;
             apiRequest1.param = param;
-            apiRequest1.callType = NetworkCallType.GET_METHOD;
+            apiRequest1.callType = NetworkCallType.POST_METHOD_USING_JSONDATA;
             APIController.instance.ExecuteAPI(apiRequest1);
         }
+
         [TargetRpc]
         public void TargetGetUpdatedBalanceClientSideCall(string body, string error, bool success)
         {
             APIController.instance.GetUpdatedBalanceClientSideCall(body, error, success);
         }
+
 
     }
 }

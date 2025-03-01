@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 
+
 namespace TP
 {
     public class PlayerUI : MonoBehaviour
@@ -34,8 +35,10 @@ namespace TP
         [SerializeField] private Image avatharTimer;
         [SerializeField] private GameObject[] lifes;
         [SerializeField] private GameObject[] cards;
+
+
         [SerializeField] private TextMeshProUGUI betAmount;
-        [SerializeField] private Image betChip, ProfileBalanceChip, amountChip;
+        [SerializeField] private Image /*betChip,*/ ProfileBalanceChip, amountChip;
         [SerializeField] private GameObject poolcards;
         [SerializeField] private GameObject jokerCard;
         [SerializeField] private AudioSource warnclip;
@@ -64,9 +67,9 @@ namespace TP
         [Header("Public")]
         public Image playerAvatar;
         public TextMeshProUGUI playerName;
-        public GameObject winnerBanner;
-       /* public GameObject winnerBannerGlow;
-        public GameObject winnerBannerGlow2;*/
+        //public GameObject winnerBanner;
+        public GameObject winnerBannerGlow;
+        public GameObject winnerBannerGlow2;
         public TextMeshProUGUI playerAmount;
         public GameObject invite, inviteDuluxe, gift;
         public GameObject playerImage, profilePictureGlow, playerBalance, profilebg;
@@ -74,11 +77,11 @@ namespace TP
         public PlayerState myPlayerState;
         public string playerID = "";
         public bool isMine;
-        
+        public bool isSeen;
         public Animator PlayerHandAC;
         public Image BetAmountSpritePic;
         public Image PlayerAmountSpritePic;
-       // public List<GameObject> CoinAnimation;GiveAmountToPotTutorial
+        // public List<GameObject> CoinAnimation;
         public int UIIndex;
 
         public GameObject playerMeGlow1;
@@ -89,11 +92,8 @@ namespace TP
         public Image PotSecondShowSplit;
         public Image PotChipImage;
         public TMP_Text TimerCountDownTxt;
-        public Sprite BlindIcon;
-        public Sprite SeenIcon;
-        public Image IconHolder;
         public GameObject[] BackCardGlow;
-        public GameObject[] ProfileHighlight;
+        public GameObject[] AmountGlow;
         [SerializeField] public Vector3 MovePostion;
         [SerializeField] public Vector3 StartPostion;
         [SerializeField] public Vector3 PotSplitPositionStart;
@@ -105,9 +105,9 @@ namespace TP
         }
         public void CloseWinnerBanner()
         {
-            /*winnerBannerGlow2.SetActive(false);
-            winnerBannerGlow.SetActive(false);*/
-            winnerBanner.SetActive(false);
+            winnerBannerGlow2.SetActive(false);
+            winnerBannerGlow.SetActive(false);
+            // winnerBanner.SetActive(false);
         }
         private void OnEnable()
         {
@@ -155,7 +155,10 @@ namespace TP
             StopCoroutine(nameof(StartTimer));
             StopCoroutine(nameof(StartCountdown));
             avatharTimer.enabled = false;
+
+
             BackCardGlowAnim(false);
+            Debug.Log("======================> StartTimer Check222");
             TimerCountDown.SetActive(false);
 
         }
@@ -178,19 +181,30 @@ namespace TP
 
         }
 
+        public void ProfileHilight(bool check)
+        {
 
+            foreach (var item in AmountGlow)
+            {
+                item.gameObject.SetActive(check);
+            }
+
+
+        }
         IEnumerator StartTimer()
         {
             avatharTimer.enabled = true;
             BackCardGlowAnim(true);
+            Debug.Log("======================> StartTimer Check111");
+            avatharTimer.color = new Color(0f, 1f, 0f, .6f);
 
-            avatharTimer.color = Color.green;
 
             avatharTimer.fillAmount = 0;
             double myTurnTime = myPlayerState.myTurnTime;
-            Debug.Log("======================> StartTimer Check" + myPlayerState.lives + " =============> " + myPlayerState.isMyTurn);
+            /* Debug.Log("======================> StartTimer Check" + myPlayerState.lives + " =============> " + myPlayerState.isMyTurn);*/
             while (/*myPlayerState.lives > 0 &&*/ myPlayerState.isMyTurn)
             {
+                Debug.Log("======================> StartTimer Check333....111");
                 bool playedSound = false;
                 bool playedVibration = false;
                 float timerVal = 0f;
@@ -203,8 +217,9 @@ namespace TP
                     avatharTimer.enabled = true;
                     avatharTimer.fillAmount = 1 - timerVal;
                     BackCardGlowAnim(true);
+                    Debug.Log("======================> StartTimer Check333" + timerVal);
                     // Color col = CommonFunctions.Instance.ReMapColor(0.6f, 0.8f, Color.green, Color.red, timerVal);
-                    Color col = Color.green;
+                    Color col = new Color(0f, 1f, 0f, .6f);
                     avatharTimer.color = col;
 
 
@@ -227,7 +242,7 @@ namespace TP
 
                     if (timerVal > 0.7)
                     {
-                        Color color1 = Color.red;
+                        Color color1 = new Color(1f, 0f, 0f, .6f);
                         avatharTimer.color = color1;
 
                     }
@@ -287,6 +302,9 @@ namespace TP
         {
             isSeeClicked = true;
             GamePlayUI.instance.increaseBet.interactable = false;
+           
+
+
         }
 
 
@@ -322,6 +340,7 @@ namespace TP
                 {
                     if (APIController.instance.userDetails.balance <= (myPlayerState.hasSeenCard ? GameManager.localInstance.gameState.currentStake : (GameManager.localInstance.gameState.currentStake / 2)))
                     {
+                        Debug.Log("Auto Card Trun Seen  ===>6");
                         Debug.Log("CHECK ALL IN ==============>");
                         GamePlayUI.instance.allinButton.gameObject.SetActive(true);
                         GamePlayUI.instance.allinAmountText.text = CommonFunctions.Instance.GetAmountDecimalSeparator(APIController.instance.userDetails.balance);
@@ -340,7 +359,7 @@ namespace TP
                         GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.activeButtonColor;
                         GamePlayUI.instance.Plus.color = GamePlayUI.instance.PlusMinus;
                         GamePlayUI.instance.increaseBet.interactable = true;
-
+                       
                         if (GamePlayUI.instance.ChaalIncrease == GameManager.localInstance.gameState.currentStake && isSeeClicked)
                         {
                             GamePlayUI.instance.GlowMinusButton.SetActive(true);
@@ -350,23 +369,33 @@ namespace TP
                             GamePlayUI.instance.decreaseBet.interactable = true;
                             GamePlayUI.instance.GlowPlusButton.SetActive(false);
                             GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
-                            GamePlayUI.instance.Plus.color = GamePlayUI.instance.Inactive;
+                            
                             GamePlayUI.instance.increaseBet.interactable = false;
+                           
+                            // GamePlayUI.instance.Plus.color = 
                         }
                     }
                     else
                     {
                         GamePlayUI.instance.GlowPlusButton.SetActive(false);
                         GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
-                        //  GamePlayUI.instance.increaseBet.image.sprite = GamePlayUI.instance.InActivePlusMinus;
-                        GamePlayUI.instance.Plus.color = GamePlayUI.instance.Inactive;
                         GamePlayUI.instance.increaseBet.interactable = false;
+                        
                     }
 
                     if (((GameManager.localInstance.GetSeenPlayerCount() > 1 && GameManager.localInstance.myPlayerState.hasSeenCard) || (GameManager.localInstance.GetContestingPlayers().Count <= 2)))
                     {
+
+
+
+                        Debug.Log("Auto Card Trun Seen Auto Card Trun SeenAuto Card Trun SeenAuto Card Trun Seen====>5");
                         GamePlayUI.instance.showButton.image.sprite = GamePlayUI.instance.ActiveShowPic;
                         GamePlayUI.instance.Show.color = GamePlayUI.instance.ActiveChaal;
+                        /*GamePlayUI.instance.showButtonText.text = "Show";*/
+                        /*foreach (var item in GamePlayUI.instance.showButtonText)
+                        {
+                            item.text = "Show";
+                        }*/
                         GamePlayUI.instance.showButtonText.text = "Show";
                         GamePlayUI.instance.GlowShowButton.SetActive(true);
                         GamePlayUI.instance.showButton.interactable = true;
@@ -386,15 +415,24 @@ namespace TP
                         GamePlayUI.instance.showButton.image.sprite = GamePlayUI.instance.ActiveShowPic;
                         GamePlayUI.instance.Show.color = GamePlayUI.instance.ActiveChaal;
                         GamePlayUI.instance.showButton.interactable = true;
-                        GamePlayUI.instance.showButtonText.text = "Side Show";
+                        /*foreach (var item in GamePlayUI.instance.showButtonText)
+                        {
+                            item.text = "side Show";
+                        }*/
+                        GamePlayUI.instance.showButtonText.text = "side Show";
+                        /*GamePlayUI.instance.showButtonText.text = "Side Show";*/
 
                     }
                     else if (GameManager.localInstance.GetContestingPlayers().Count == 2 && GameManager.localInstance.myPlayerState.hasSeenCard)
                     {
+
+                        Debug.Log("Auto Card Trun Seen ===>1");
                         GamePlayUI.instance.GlowShowButton.SetActive(true);
                         GamePlayUI.instance.showButton.image.sprite = GamePlayUI.instance.ActiveShowPic;
                         GamePlayUI.instance.Show.color = GamePlayUI.instance.ActiveChaal;
                         GamePlayUI.instance.showButton.interactable = true;
+                        /* GamePlayUI.instance.showButtonText.text = "Show";*/
+                        isSeen = true;
                         GamePlayUI.instance.showButtonText.text = "Show";
                     }
                     else
@@ -404,12 +442,13 @@ namespace TP
                         //  GamePlayUI.instance.showButton.image.sprite = GamePlayUI.instance.InActiveCommon;
                         GamePlayUI.instance.Show.color = GamePlayUI.instance.Inactive;
                         GamePlayUI.instance.showButton.interactable = false;
-                        GamePlayUI.instance.showButtonText.text = "Side Show";
-                       /* if (GameController.Instance.CurrentGameMode == GameMode.POTBLIND)
-                        {
-                            //  GlowShow.gameObject.SetActive(false);
-                            GamePlayUI.instance.showButton.interactable = false;
-                        }*/
+                        GamePlayUI.instance.showButtonText.text = "side Show";
+                        /* GamePlayUI.instance.showButtonText.text = "Side Show";*/
+                        /*  if (GameController.Instance.CurrentGameMode == GameMode.POTBLIND)
+                          {
+                              //  GlowShow.gameObject.SetActive(false);
+                              GamePlayUI.instance.showButton.interactable = false;
+                          }*/
                     }
                 }
 
@@ -429,7 +468,7 @@ namespace TP
                     playerMeGlow3.SetActive(false);
                     GamePlayUI.instance.DisableButtonColor();
                 }
-        
+
                 isTimerRunning = false;
                 MasterAudioController.instance.StopAudio(AudioEnum.TIMER);
 
@@ -448,7 +487,7 @@ namespace TP
 
             }
 
-                if (myPlayerState.hasPacked && isMine)
+            if (myPlayerState.hasPacked && isMine)
             {
                 setRaiseOf();
             }
@@ -488,30 +527,36 @@ namespace TP
         {
             if (isMine) GamePlayUI.instance.SeeButtonActive(false);
             playerAvatar.color = Color.white;
-            if (myPlayerState.hasSeenCard /*&& GameController.Instance.CurrentGameMode != GameMode.POTBLIND*/)
+            if (myPlayerState.hasSeenCard/* && GameController.Instance.CurrentGameMode != GameMode.POTBLIND*/)
             {
-                Debug.Log(isMine+ "CHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH11111111");
-                if (isMine) 
-                {
-
-                    Debug.Log("CHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-                }
-
-
 
                 if (myPlayerState.hasSeenCardBoolCheck)
                 {
                     Debug.Log("Check For SEE");
                     playerStatusShow();
                     profilePictureGlow.SetActive(true);
-                    Debug.Log(isMine +"Ismineeeeeeeeeeeee1");
-                    if (!isMine)
-                        IconHolder.gameObject.SetActive(true);
-                    IconHolder.sprite = SeenIcon;
                     playerStatus.text = "Seen";
-                    playerStatus.color = new Color(.9f,.75f,.6f,1);
+                    playerStatus.color = Color.white;
+                    playerStatus.enableVertexGradient = true;
+
+                    VertexGradient gradient = new VertexGradient(
+          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+          new Color32(114, 255, 242, 255), // Bottom color: #6FF881FF
+          new Color32(114, 255, 242, 255)  // Bottom color: #6FF881FF
+      );
+
+
+                    playerStatus.colorGradient = gradient;
+
+
+
+
+
+
+                    /* playerStatus.color = color1;*/
                     ImageStatusColor.gameObject.SetActive(true);
-                  //  ImageStatusColor.color = color1;
+                    //  ImageStatusColor.color = color1;
 
                 }
                 else if (myPlayerState.hasAllin)
@@ -519,19 +564,48 @@ namespace TP
 
                     playerStatusShow();
                     profilePictureGlow.SetActive(true);
+
+
+
                     playerStatus.text = "All in";
-                    playerStatus.color = color2;
+
+                    playerStatus.color = Color.white;
+                    playerStatus.enableVertexGradient = true;
+
+                    VertexGradient gradient = new VertexGradient(
+          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+          new Color32(135, 175, 254, 255), // Bottom color: #6FF881FF
+          new Color32(135, 175, 254, 255)  // Bottom color: #6FF881FF
+      );
+
+
+                    playerStatus.colorGradient = gradient;
+
+
+
+
+                    /* playerStatus.color = color2;*/
                     ImageStatusColor.gameObject.SetActive(true);
-                    IconHolder.gameObject.SetActive(false);
                     //ImageStatusColor.color = color2;
                 }
                 else
                 {
-                    IconHolder.gameObject.SetActive(false);
                     playerStatusShow();
                     profilePictureGlow.SetActive(true);
                     playerStatus.text = "Chaal";
-                    playerStatus.color = new Color(.6f,1 , .57f ,1);
+                    playerStatus.color = Color.white;
+                    playerStatus.enableVertexGradient = true;
+
+                    VertexGradient gradient = new VertexGradient(
+          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+          new Color32(111, 248, 129, 255), // Bottom color: #6FF881FF
+          new Color32(111, 248, 129, 255)  // Bottom color: #6FF881FF
+      );
+
+
+                    playerStatus.colorGradient = gradient;
                     ImageStatusColor.gameObject.SetActive(true);
                     //ImageStatusColor.color = color1;
                 }
@@ -554,23 +628,48 @@ namespace TP
                     {
 
                         playerStatus.text = "Boot";
+
+                        playerStatus.color = Color.white;
+                        playerStatus.enableVertexGradient = true;
+
+                        VertexGradient gradient = new VertexGradient(
+              new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+              new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+              new Color32(254, 155, 133, 255), // Bottom color: #6FF881FF
+              new Color32(254, 155, 133, 255)  // Bottom color: #6FF881FF
+          );
+
+
+                        playerStatus.colorGradient = gradient;
+
+
                         ImageStatusColor.gameObject.SetActive(true);
-                        IconHolder.gameObject.SetActive(false);
-                        playerStatus.color = color2;
-                      //  ImageStatusColor.color = color2;
+                        /* playerStatus.color = color2;*/
+                        //  ImageStatusColor.color = color2;
                         TempHolderForBoot = false;
                     }
-   
+
                     else
                     {
-                        Debug.Log(isMine + "Ismineeeeeeeeeeeee2");
-                        if(!isMine)
-                        IconHolder.gameObject.SetActive(true);
-                        IconHolder.sprite = BlindIcon;
                         playerStatus.text = "Blind";
                         playerStatus.color = Color.white;
+                        playerStatus.enableVertexGradient = true;
+
+                        VertexGradient gradient = new VertexGradient(
+              new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+              new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+              new Color32(153, 153, 153, 255), // Bottom color: #6FF881FF
+              new Color32(153, 153, 153, 255)  // Bottom color: #6FF881FF
+          );
+
+
+                        playerStatus.colorGradient = gradient;
+
+
+
+                        /*playerStatus.color = color3;*/
                         ImageStatusColor.gameObject.SetActive(false);
-                      //  ImageStatusColor.color = color2;
+                        //  ImageStatusColor.color = color2;
                     }
 
                 }
@@ -586,14 +685,27 @@ namespace TP
 
 
                 playerAvatar.color = colorPacked;
-
+                foreach (var item in AmountGlow)
+                {
+                    item.SetActive(false);
+                }
 
 
                 playerStatusShow();
                 profilePictureGlow.SetActive(true);
-                playerStatus.color = new Color(1f,.57f,.57f,1);
+                playerStatus.color = Color.white;
+                playerStatus.enableVertexGradient = true;
+
+                VertexGradient gradient = new VertexGradient(
+      new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+      new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+      new Color32(255, 114, 119, 255), // Bottom color: #6FF881FF
+      new Color32(255, 114, 119, 255)  // Bottom color: #6FF881FF
+  );
+
+
+                playerStatus.colorGradient = gradient;
                 playerStatus.text = "Packed";
-                IconHolder.gameObject.SetActive(false);
                 ImageStatusColor.gameObject.SetActive(false);
                 if (isMine)
                 {
@@ -609,7 +721,10 @@ namespace TP
             {
 
                 playerAvatar.color = colorPacked;
-                IconHolder.gameObject.SetActive(false);
+                foreach (var item in AmountGlow)
+                {
+                    item.SetActive(false);
+                }
                 playerStatusShow();
                 profilePictureGlow.SetActive(true);
                 playerStatus.text = "Waiting";
@@ -630,7 +745,10 @@ namespace TP
 
 
                 playerAvatar.color = colorPacked;
-
+                foreach (var item in AmountGlow)
+                {
+                    item.SetActive(false);
+                }
                 playerStatusShow();
                 profilePictureGlow.SetActive(true);
                 ImageStatusColor.gameObject.SetActive(false);
@@ -650,6 +768,7 @@ namespace TP
                 sitButton.SetActive(false);
                 if (!GameManager.localInstance.gameState.waitingPlayers.Exists(x => x.playerData.playerID == playerID) && !myPlayerState.hasSeenCard && !myPlayerState.hasPacked && GameManager.localInstance.gameState.currentState == 2 && GameManager.localInstance.gameState.isDealCard)
                 {
+                    Debug.Log("Auto Card Trun Seen ===>2");
                     GamePlayUI.instance.SeeButtonActive(true);
                 }
                 else
@@ -694,15 +813,16 @@ namespace TP
             avatharTimer.enabled = true;
             avatharTimer.fillAmount = 1 - value;
             BackCardGlowAnim(true);
+            Debug.Log("======================> StartTimer Check444");
         }
         public void SetWinText()
         {
 
-          //  FirstCoinAnim = false;
-            betContainer.gameObject.SetActive(false);
-           /* winnerBannerGlow2.SetActive(true);
-            winnerBannerGlow.SetActive(true);*/
-            winnerBanner.SetActive(true);
+
+            // betContainer.gameObject.SetActive(false);
+            winnerBannerGlow2.SetActive(true);
+            winnerBannerGlow.SetActive(true);
+            //winnerBanner.SetActive(true);
             if (MasterAudioController.instance.CheckSoundToggle())
                 MasterAudioController.instance.PlayAudio(AudioEnum.WINNERTEENPATTI);
         }
@@ -713,18 +833,18 @@ namespace TP
         public void InitTutorial()
         {
             ImageStatusColor.gameObject.SetActive(false);
-            betContainer.gameObject.SetActive(false);
-            /*winnerBannerGlow2.SetActive(false);
-            winnerBannerGlow.SetActive(false);*/
-            winnerBanner.SetActive(false);
+            // betContainer.gameObject.SetActive(false);
+            winnerBannerGlow2.SetActive(false);
+            winnerBannerGlow.SetActive(false);
+            // winnerBanner.SetActive(false);
             playerName.text = string.Empty;
-            playerAmount.text = string.Empty;
+            playerAmount.text = string.Empty + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>"; ;
             playerStatus.text = string.Empty;
             _chatContainer.SetActive(false);
 
 
             avatharTimer.fillAmount = 0;
-            betContainer.gameObject.SetActive(false);
+            //  betContainer.gameObject.SetActive(false);
 
             HideLife();
             playerID = "";
@@ -771,25 +891,26 @@ namespace TP
             string val = CommonFunctions.Instance.TpvAmountSeparator(betAmountVal, true);
 
             betAmount.text = val;
-            //betContainer.position = potContainer.position;
+            /* betContainer.position = potContainer.position;*/
             //betContainer.gameObject.SetActive(true);
 
             double value = 0;
             TeenPattiTutorial.Instance.tablePot_Txt.text = CommonFunctions.Instance.GetAmountDecimalSeparator(value);
 
-
-            betContainer.DOMove(dummyPosition.position, .5f, false).OnComplete(() =>
-            {
-
-                string val = betcoinImage + CommonFunctions.Instance.TpvAmountSeparator(profileAmountVal, true);
+            string vall = betcoinImage + CommonFunctions.Instance.TpvAmountSeparator(profileAmountVal, true);
 
 
-                // playerAmount.text = val;
+            // playerAmount.text = val;
 
-                TeenPattiTutorial.Instance.tablePot_Obj.SetActive(false);
+            TeenPattiTutorial.Instance.tablePot_Obj.SetActive(false);
 
-                betContainer.gameObject.SetActive(false);
-            });
+            /* betContainer.DOMove(dummyPosition.position, .5f, false).OnComplete(() =>
+             {
+
+
+
+                 betContainer.gameObject.SetActive(false);
+             });*/
 
 
         }
@@ -801,6 +922,7 @@ namespace TP
             isTimerRunning = false;
             avatharTimer.enabled = false;
             BackCardGlowAnim(false);
+            Debug.Log("======================> StartTimer Check555");
             string valAmount = CommonFunctions.Instance.TpvAmountSeparator(betAmountVal, true);
             betAmount.text = valAmount;
 
@@ -882,16 +1004,16 @@ namespace TP
         public void ClearUI(bool isforce = false)
         {
             Debug.Log("Clear UI called");
-
+            isSeen = false;
             isTimerRunning = false;
             //if (isMine)
             //    Debug.LogError("your ui is deleted");
             playerID = "";
             betContainer.gameObject.SetActive(false);
             RaiseUp.SetActive(false);
-            /*winnerBannerGlow2.SetActive(false);
-            winnerBannerGlow.SetActive(false);*/
-            winnerBanner.SetActive(false);
+            winnerBannerGlow2.SetActive(false);
+            winnerBannerGlow.SetActive(false);
+            // winnerBanner.SetActive(false);
             if (!isMine)
                 playerBalance.SetActive(false);
             ShowInviteIcon();
@@ -906,7 +1028,7 @@ namespace TP
             betContainer.gameObject.SetActive(false);
             HideLife();
             myPlayerState = null;
-            
+
             IsInitialized = false;
             ResetCard(true);
             EndTurn();
@@ -925,6 +1047,10 @@ namespace TP
 
 
             playerAvatar.color = colorPacked;
+            foreach (var item in AmountGlow)
+            {
+                item.SetActive(false);
+            }
 
         }
 
@@ -941,7 +1067,7 @@ namespace TP
 
             if (GameManager.localInstance.gameState.currentState == 1)
             {
-               // GamePlayUI.instance.isRaisedBet = false;
+                // GamePlayUI.instance.isRaisedBet = false;
             }
 
             SetSpectator(false);
@@ -952,7 +1078,7 @@ namespace TP
             {
                 string val = betcoinImage + CommonFunctions.Instance.TpvAmountSeparator(APIController.instance.userDetails.balance, true);
                 Debug.Log("*** InitUI  ----->" + val);
-                playerAmount.text = val;
+                playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
                 playerName.text = "You";
             }
             else
@@ -1083,34 +1209,6 @@ namespace TP
                 {
 
 
-
-                    if (GamePlayUI.instance.FirstCoinAnim)
-                    {
-                        int index = GameManager.localInstance.playerManagersList.Count - 1;
-
-                        if (index >= 0 && index < GamePlayUI.instance.PotChipsStack.Length)
-                        {
-                            // Calculate the MovePosition Y-coordinate based on the index
-                            float baseY = 660f;
-                            float[] indexOffsets = { 0f, 0f, 0f, 10f, 17f, 25f }; // Offsets for indices 3, 4, and 5
-
-                            if (index >= 3 && index < indexOffsets.Length)
-                            {
-                                MovePostion = new Vector3(-7.5f, baseY + indexOffsets[index], 0);
-                            }
-                            else
-                            {
-                                MovePostion = new Vector3(-7.5f, baseY, 0); // Default Y position
-                            }
-                        }
-                        else
-                        {
-                            MovePostion = new Vector3(-7.5f, 660f, 0); // Fallback position
-                        }
-                    }
-
-
-
                     if (BootCollection)
                     {
                         RaiseUp.SetActive(true);
@@ -1120,28 +1218,31 @@ namespace TP
                     {
                         PotChipImage.gameObject.SetActive(false);
                         StartCoroutine(PotChipAssign());
+                        /*  GamePlayUI.instance.PotHolderGlow.SetActive(true);*/
+
+                        GamePlayUI.instance.PotGlowAnim();
                         GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
                         .SetEase(Ease.OutQuad)
                         .OnComplete(() =>
                         {
-                            GamePlayUI.instance.GlowPotAmount.SetActive(false);
+
+                            /* GamePlayUI.instance.GlowPotAmount.SetActive(false);*/
                             GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
                                 .SetEase(Ease.InQuad);
+                            /* GamePlayUI.instance.PotGlowAnim();*/
+                            /*GamePlayUI.instance.PotHolderGlow.SetActive(false);*/
 
-                        }).OnStart(() => { GamePlayUI.instance.GlowPotAmount.SetActive(true); });
+                        }).OnStart(() => { /*GamePlayUI.instance.GlowPotAmount.SetActive(true);*/ });
 
                         double pot = GameManager.localInstance.gameState.totalPot;
                         string val = CommonFunctions.Instance.TpvAmountSeparator(APIController.instance.userDetails.balance, true);
                         Debug.Log("*** GiveAmountToPot1 ----->" + val);
-                        playerAmount.text = val;
+                        playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
 
                         if (GameManager.localInstance.gameState.totalPot != 0)
                         {
-                            GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(GameManager.localInstance.gameState.totalPot);
+                            GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(GameManager.localInstance.gameState.totalPot) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>";
                             Debug.Log(GameManager.localInstance.playerManagersList.Count + "Check the player List in The Game Manager");
-
-
-
 
                         }
 
@@ -1172,8 +1273,6 @@ namespace TP
                         // Activate or modify CoinAnimation[0] here if needed
                         // CoinAnimation[0].SetActive(true);
                     });
-
-
 
 
                     /* betContainer.DOAnchorPos(MovePostion, .5f, false).OnComplete(() =>
@@ -1244,7 +1343,7 @@ namespace TP
 
                     if (BootCollection)
                     {
-                        RaiseUp.SetActive(true);
+                        RaiseUp.SetActive(true);   
                     }
 
                     betContainer.position = dummyPosition.position;
@@ -1256,32 +1355,6 @@ namespace TP
 
                     PotChipImage.gameObject.SetActive(true);
                     // PotChipImage.transform.DOMove(potContainer.position, 1f).SetEase(Ease.InOutQuad);
-                    // Declare a flag to track if the Y value has already been updated
-                    bool isPotContainerUpdated = false;
-
-                    if (GamePlayUI.instance.FirstCoinAnim)
-                    {
-                        int val = GameManager.localInstance.playerManagersList.Count;
-
-                        // Dictionary to map val to the corresponding Y position
-                        Dictionary<int, float> yPositionMap = new Dictionary<int, float>
-                            {
-                                { 3, -44.5f },
-                                { 4, -37.1f },
-                                { 5, -30.6f }
-                            };
-
-                        // Check if the dictionary contains the key (val)
-                        if (yPositionMap.ContainsKey(val))
-                        {
-                            // Get the current anchored position
-                            Vector2 currentAnchoredPosition = potContainer.anchoredPosition;
-
-                            // Update the Y value using the dictionary
-                            potContainer.anchoredPosition = new Vector2(currentAnchoredPosition.x, yPositionMap[val]);
-                        }
-                    }
-
 
 
 
@@ -1293,27 +1366,55 @@ namespace TP
                           /* CoinAnimation[0].GetComponent<Image>().sprite = GamePlayUI.instance.Coins[0];
                            CoinAnimation[0].SetActive(true);*/
                           playerBalance.SetActive(true);
-                          playerAmount.text = "";
+                          playerAmount.text = "" + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>"; ;
 
                       })
                       .AppendCallback(() =>
                       {
                           string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
 
-                          playerAmount.text = val;
+                          playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
                       })
-                      .Append(PotChipImage.transform.DOMove(potContainer.position, .3f, false).OnComplete(() =>
+                      .Append(PotChipImage.transform.DOMove(potContainer.position, .1f, false).OnComplete(() =>
                       {
+                          /*GamePlayUI.instance.PotHolderGlow.SetActive(true);*/
                           PotChipImage.gameObject.SetActive(false);
                           StartCoroutine(PotChipAssign());
+                          GamePlayUI.instance.PotGlowAnim();
                           GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
-                               .SetEase(Ease.OutQuad)
-                                 .OnComplete(() =>
-                                 {
-                                     GamePlayUI.instance.GlowPotAmount.SetActive(false);
-                                     GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
-                                    .SetEase(Ease.InQuad);
-                                 }).OnStart(() => { GamePlayUI.instance.GlowPotAmount.SetActive(true); });
+                                    .SetEase(Ease.OutQuad)
+                                    .OnComplete(() =>
+                                    {
+                                                Debug.Log("PotAmount Val________1");
+                                        /*GamePlayUI.instance.PotGlowAnim();*/
+                                        // Fade out GlowPotAmount
+                                        /*var glowImage = GamePlayUI.instance.GlowPotAmount.GetComponent<Image>();
+                                        if (glowImage != null)
+                                        {
+                                            glowImage.DOFade(0, 0.3f).OnComplete(() =>
+                                            {
+                                                *//*GamePlayUI.instance.GlowPotAmount.SetActive(false);*//* // Optionally deactivate after fade
+                                            });
+                                        }*/
+
+                                        // Scale back potAmount
+                                        GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
+                                            .SetEase(Ease.InQuad);
+
+                                    })
+                                    .OnStart(() =>
+                                    {
+                                        Debug.Log("PotAmount Val________2");
+
+                                        // Activate and fade in GlowPotAmount
+                                        /* GamePlayUI.instance.GlowPotAmount.SetActive(true);*/
+                                       /* var glowImage = GamePlayUI.instance.GlowPotAmount.GetComponent<Image>();
+                                        if (glowImage != null)
+                                        {
+                                            glowImage.DOFade(1, 0.3f);
+                                        }*/
+                                    });
+
 
                           /*if (UIIndex == 1)
                           {
@@ -1349,7 +1450,7 @@ namespace TP
                           if (GameManager.localInstance.gameState.totalPot != 0)
                           {
 
-                              GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(GameManager.localInstance.gameState.totalPot);
+                              GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(GameManager.localInstance.gameState.totalPot) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>";
 
                           }
 
@@ -1358,9 +1459,6 @@ namespace TP
                           isGiveAmountToPot = false;
                           GamePlayUI.instance.potAmountPannel.SetActive(true);
                       }).OnStart(() => {
-
-
-
 
 
                           // CoinAnimation[0].GetComponent<CoinAnimationCheck>().SliderReset();
@@ -1412,7 +1510,7 @@ namespace TP
 
                     string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
                     Debug.Log("GiveAmountToPot3 ----->" + val);
-                    playerAmount.text = val;
+                    playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
                     playerBalance.SetActive(true);
                     CancelInvoke("HideProfileAmount");
                     Invoke("HideProfileAmount", 2);
@@ -1424,29 +1522,37 @@ namespace TP
 
             }
 
-            StartCoroutine(DelayCoinAnim());
         }
 
-        IEnumerator DelayCoinAnim() 
+        public void setRaiseOf()
         {
-          yield return new WaitForSeconds(.5f);
-            GamePlayUI.instance.FirstCoinAnim = true;
+            RaiseUp.SetActive(false);
+        }
+
+
+        public void PotAmountGlowAnim()
+        {
+
+
 
 
         }
 
+
+        public void GetAmountFromPot(float amount)
+        {
+            Debug.Log("Check pot location");
+            StartCoroutine(GetAmount(amount));
+        }
 
         IEnumerator PotChipAssign()
         {
-            yield return new WaitForSeconds(.3f);
+            yield return null;
             int PlayerListCount = GameManager.localInstance.playerManagersList.Count;
-            Debug.Log(PlayerListCount +"before");
             for (int i = 0; i < PlayerListCount; i++)
             {
-                Debug.Log(i + "==============before=========for");
                 GamePlayUI.instance.PotChipsStack[i].gameObject.SetActive(true);
             }
-            Debug.Log(PlayerListCount - 1 + "Afterbefore");
             // GamePlayUI.instance.PotChipsStack[PlayerListCount-1].gameObject.SetActive(false);
             GamePlayUI.instance.PotChipsStack[PlayerListCount - 1].gameObject.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
         .SetEase(Ease.OutQuad)
@@ -1460,52 +1566,66 @@ namespace TP
         }
 
 
-
-
-        public void setRaiseOf()
+        public void ChaalPoChipAnim()
         {
-            RaiseUp.SetActive(false);
+            if (GamePlayUI.instance.PotChipsStack.Length < 5)
+            {
+                int ChekCount = GamePlayUI.instance.PotChipsStack.Length;
+                ChekCount++;
+                Debug.Log(ChekCount + "PotChipsStack Count");
+                GamePlayUI.instance.PotChipsStack[ChekCount].gameObject.SetActive(true);
+                /* GamePlayUI.instance.PotChipsStack[ChekCount].gameObject.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
+             .SetEase(Ease.OutQuad)
+             .OnComplete(() =>
+             {
+                 GamePlayUI.instance.PotChipsStack[ChekCount].gameObject.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
+                .SetEase(Ease.OutQuad);
+
+             });*/
+
+            }
+
+
+
+
+
         }
 
-        public void GetAmountFromPot(float amount)
-        {
-            Debug.Log("Check pot location");
-            StartCoroutine(GetAmount(amount));
-        }
-       
+
+
 
         IEnumerator GetAmount(float amount)
         {
 
             switch (amount)
             {
-                case <= 10:
-                    PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
-                    break;
-                case <= 30:
-                    PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
-                    break;
-                case <= 50:
-                    PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
-                    break;
-                case <= 100:
-                    PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
-                    break;
-                case <= 150:
-                    PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
-                    break;
-                case <= 200:
-                    PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
-                    break;
-                case <= 250:
-                    PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[6];
-                    break;
-                case <= 300:
-                    PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[7];
-                    break;
-                case <= 360:
-                    PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[8];
-                    break;
+                /* case <= 10:
+                     PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
+                     break;
+                 case <= 30:
+                     PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
+                     break;
+                 case <= 50:
+                     PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
+                     break;
+                 case <= 100:
+                     PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
+                     break;
+                 case <= 150:
+                     PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
+                     break;
+                 case <= 200:
+                     PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[5];
+                     break;
+                 case <= 250:
+                     PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[6];
+                     break;
+                 case <= 300:
+                     PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[7];
+                     break;
+                 case <= 360:
+                     PotSecondShowSplit.sprite = GamePlayUI.instance.Coins[8];
+                     break;*/
             }
 
 
@@ -1515,12 +1635,12 @@ namespace TP
             string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
 
             betAmount.text = val;
-            //betContainer.position = potContainer.position;
-           // betContainer.gameObject.SetActive(true);
+            /*betContainer.position = potContainer.position;*/
+            // betContainer.gameObject.SetActive(true);
 
             double value = 0;
 
-            GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(value);
+            GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(value) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>";
 
             GamePlayUI.instance.potAmountPannel.SetActive(false);
             if (MasterAudioController.instance.CheckSoundToggle())
@@ -1540,27 +1660,34 @@ namespace TP
 
                     }
                     isGetAmountFromPot = false;
-     
+
                 });
                 Debug.Log(GameManager.localInstance.CountTemp + "Check pot location");
 
                 if (GameManager.localInstance.CountTemp == 1)
                 {
-                    GamePlayUI.instance.ParentCoinsStack.transform.DOMove(dummyPosition.position, .5f, false).OnComplete(() => {
+                    // GamePlayUI.instance.ParentCoinsStack.transform.DOMove(dummyPosition.position, .5f, false).OnComplete(() => {
 
-                        GamePlayUI.instance.ParentCoinsStack.gameObject.SetActive(false);
-                        GamePlayUI.instance.FirstCoinAnim = false;
-                        GamePlayUI.instance.ParentCoinsStack.gameObject.transform.localPosition = new Vector3(-8, 278, 0);
+                    //   GamePlayUI.instance.ParentCoinsStack.gameObject.SetActive(false);
+                    foreach (var item in GamePlayUI.instance.PotChipsStack)
+                    {
+                        item.gameObject.SetActive(false);
+                    }
+                    // GamePlayUI.instance.ParentCoinsStack.gameObject.transform.localPosition = new Vector3(-100, 235, 0);
 
 
-                    });
+
+                    /* });*/
                 }
                 else
                 {
 
-                    GamePlayUI.instance.ParentCoinsStack.gameObject.SetActive(false);
-                    GamePlayUI.instance.FirstCoinAnim = false;
-                    GamePlayUI.instance.ParentCoinsStack.gameObject.transform.localPosition = new Vector3(-8, 278, 0);
+                    // GamePlayUI.instance.ParentCoinsStack.gameObject.SetActive(false);
+                    foreach (var item in GamePlayUI.instance.PotChipsStack)
+                    {
+                        item.gameObject.SetActive(false);
+                    }
+                    // GamePlayUI.instance.ParentCoinsStack.gameObject.transform.localPosition = new Vector3(-100, 235, 0);
                     PotSecondShowSplit.transform.DOMove(dummyPosition.position, .5f, false).OnComplete(() =>
                     {
                         PotSecondShowSplit.gameObject.SetActive(false);
@@ -1583,7 +1710,7 @@ namespace TP
                 {
                     betContainer.gameObject.SetActive(false);
                     string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
-                    playerAmount.text = val;
+                    playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
                     playerBalance.SetActive(true);
                     CancelInvoke("HideProfileAmount");
                     Invoke("HideProfileAmount", 2);
@@ -1595,23 +1722,29 @@ namespace TP
                 Debug.Log(GameManager.localInstance.CountTemp + "Check pot location");
 
 
-                if(GameManager.localInstance.CountTemp == 1)
+                if (GameManager.localInstance.CountTemp == 1)
                 {
-                    GamePlayUI.instance.ParentCoinsStack.transform.DOMove(dummyPosition.position, .5f, false).OnComplete(() => {
+                    // GamePlayUI.instance.ParentCoinsStack.transform.DOMove(dummyPosition.position, .5f, false).OnComplete(() => {
 
-                        GamePlayUI.instance.ParentCoinsStack.gameObject.SetActive(false);
-                        GamePlayUI.instance.FirstCoinAnim = false;
-                        GamePlayUI.instance.ParentCoinsStack.gameObject.transform.localPosition = new Vector3(-8, 278, 0);
+                    //  GamePlayUI.instance.ParentCoinsStack.gameObject.SetActive(false);
+                    foreach (var item in GamePlayUI.instance.PotChipsStack)
+                    {
+                        item.gameObject.SetActive(false);
+                    }
+                    // GamePlayUI.instance.ParentCoinsStack.gameObject.transform.localPosition = new Vector3(-100, 235, 0);
 
 
-                    });
+                    /* });*/
                 }
                 else
                 {
 
-                    GamePlayUI.instance.ParentCoinsStack.gameObject.SetActive(false);
-                    GamePlayUI.instance.FirstCoinAnim = false;
-                    GamePlayUI.instance.ParentCoinsStack.gameObject.transform.localPosition = new Vector3(-8, 278, 0);
+                    // GamePlayUI.instance.ParentCoinsStack.gameObject.SetActive(false);
+                    //GamePlayUI.instance.ParentCoinsStack.gameObject.transform.localPosition = new Vector3(-100, 235, 0);
+                    foreach (var item in GamePlayUI.instance.PotChipsStack)
+                    {
+                        item.gameObject.SetActive(false);
+                    }
                     PotSecondShowSplit.transform.DOMove(dummyPosition.position, .5f, false).OnComplete(() =>
                     {
                         PotSecondShowSplit.gameObject.SetActive(false);
@@ -1625,7 +1758,7 @@ namespace TP
                 }
 
 
-               
+
             }
         }
 
@@ -1647,7 +1780,7 @@ namespace TP
         bool isseeCard;
         public void ResetCard(bool isforce = false)
         {
-            
+
             isseeCard = false;
             if (GameManager.localInstance != null)
             {
@@ -1674,14 +1807,14 @@ namespace TP
                 string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
 
                 betAmount.text = val;
-               /* betContainer.transform.localPosition = localEndPosision;
-                betContainer.gameObject.SetActive(true);*/
+                //  betContainer.transform.localPosition = localEndPosision;
+                // betContainer.gameObject.SetActive(true);
 
                 GamePlayUI.instance.potAmountPannel.SetActive(false);
                 double value = 0;
 
 
-                GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(value);
+                GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(value) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>";
                 if (MasterAudioController.instance.CheckSoundToggle())
                     MasterAudioController.instance.PlayAudio(AudioEnum.CHIPSOUND);
                 betContainer.GetComponent<RectTransform>().DOLocalMove(localStartPosision, .5f, false).OnComplete(() =>
@@ -1702,7 +1835,7 @@ namespace TP
 
                         string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
 
-                        playerAmount.text = val;
+                        playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
 
                         playerBalance.SetActive(true);
                         CancelInvoke("HideProfileAmount");
@@ -1781,14 +1914,14 @@ namespace TP
 
                 GamePlayUI.instance.SeeButtonActive(false);
             }
-           /* if (GameController.Instance.CurrentGameMode == GameMode.JOKER && numCard == 2)
+            /*if (GameController.Instance.CurrentGameMode == GameMode.JOKER && numCard == 2)
             {
                 jokerCard.SetActive(true);
-            }*/
+            }
             else
             {
                 jokerCard.SetActive(false);
-            }
+            }*/
             Card cardToChange = cardComponent[numCard];
             Sprite empty = GamePlayUI.instance.emptySprite;
             Sprite suitImage = GameController.Instance.currentPlayingCards.GetCardSuitSplitDesign(card.suitCard);
@@ -1887,11 +2020,12 @@ namespace TP
 
 
 
-
         public void BackCardGlowAnim(bool CheckState)
         {
-            if (!isMine)
+            Debug.Log("Auto Card Trun Seen ===>3");
+            if (!isSeen)
             {
+                Debug.Log("Auto Card Trun Seen ===>4");
                 Debug.Log($"Started yoyo fade animation===============>");
 
                 foreach (var item in BackCardGlow)
@@ -1924,14 +2058,11 @@ namespace TP
 
                 }
 
-                foreach (var item in ProfileHighlight)
-                {
-                    item.gameObject.SetActive(CheckState);
-                }
+
 
 
             }
-            /*else if (isMine && avatharTimer.enabled)
+            if (isMine && avatharTimer.enabled)
             {
                 foreach (var item in AmountGlow)
                 {
@@ -1940,13 +2071,12 @@ namespace TP
                 }
 
 
-            }*/
+            }
 
 
 
 
         }
-
     }
 
 }

@@ -112,10 +112,11 @@ namespace TP
         public GameObject GlowMinusButton;
         public GameObject GlowAllInButton;
         public GameObject GlowChaalButton;
-        public GameObject GlowPotAmount;
+       /* public GameObject GlowPotAmount;*/
         public GameObject AllPacked;
         public GameObject PotLimitReched;
         public GameObject ParentCoinsStack;
+        public GameObject GlowPotHolder;
         public GameObject[] StartTimerObjects;
         public GameObject[] zanduCards;
         public GameObject[] PotChipsStack;
@@ -169,6 +170,7 @@ namespace TP
         public Color ChaalTextandAmount;
         public Color PlusMinus;
         public Color InactiveButtonColor;
+        public Color InactiveButtonTXTColor;
         public Color activeButtonColor;
         public Color NormalTxtColor;
         public Color DisableTxtColor;
@@ -231,6 +233,7 @@ namespace TP
             packButton.image.sprite = ActivePackPic;
             chaalButton.image.sprite = ActiveChalPic;
             increaseBet.image.sprite = ActivePlusMinus;
+           
             allinButton.image.color = activeButtonColor;
             showButton.image.color = activeButtonColor;
             packButton.image.color = activeButtonColor;
@@ -245,7 +248,7 @@ namespace TP
             Pack.color = ActivePack;
             AllInAmount.color = Inactive;
             AllIn.color = Inactive;
-            Plus.color = PlusMinus;
+           
             Minus.color = Inactive;
             ChaalAmount.color = ChaalTextandAmount;
         }
@@ -263,6 +266,7 @@ namespace TP
             packButton.interactable = true;
             chaalButton.interactable = false;
             increaseBet.interactable = false;
+           
             decreaseBet.interactable = false;
             allinButton.interactable = true;
             allinButton.image.sprite = ActiveChalPic;
@@ -301,6 +305,7 @@ namespace TP
             packButton.interactable = false;
             chaalButton.interactable = false;
             increaseBet.interactable = false;
+            
             decreaseBet.interactable = false;
             allinButton.interactable = false;
 			//allinButton.image.sprite = InActiveCommon;
@@ -360,11 +365,26 @@ namespace TP
 			GameManager.localInstance.isWinnerDisplayed = false;	
 			potAmount.text = "0";
 		}
-	
+
+        public void PotGlowAnim()
+        {
+            GlowPotHolder.gameObject.SetActive(true);
+
+            Image imageComponent = GlowPotHolder.GetComponent<Image>();
+
+            imageComponent.DOFade(1f, .5f)
+                        .OnComplete(() =>
+                        {
+                            // Fade alpha from 1 to 0 after a delay
+                            imageComponent.DOFade(0f, .5f).SetDelay(.5f);
+                            /*.OnComplete(StartFadeLoop); // Loop the fading effect*/
+                        });
 
 
+        }
 
-		public static string Base64Encode(string plainText)
+
+        public static string Base64Encode(string plainText)
 		{
 			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
 			return System.Convert.ToBase64String(plainTextBytes);
@@ -534,7 +554,20 @@ namespace TP
             zanduCards[numCard].gameObject.GetComponent<Animator>().Play("zandudeal" + (numCard + 1));
 		}
 
-		public void SetCardsDetails(Card cardToChange, string rankText, Sprite smallSuitSprite, Sprite bigSpriteImage, Sprite coutSprite, Color cardColor, Color fontColor)
+
+
+        public void AssignCurrency(String currency, string money)
+        {
+            DebugHelper.Log("assingCurrency =========> " + money);
+            profileAmount.text = money;
+            //Currency_TypePot.text = currency;
+            //Currency_TypePlayer.text = currency;
+            //Currency_Commision.text = currency;
+        }
+
+
+
+        public void SetCardsDetails(Card cardToChange, string rankText, Sprite smallSuitSprite, Sprite bigSpriteImage, Sprite coutSprite, Color cardColor, Color fontColor)
 		{
 
 			cardToChange.cardRankTxt.ConvertAll(x => x.text = rankText);
@@ -795,9 +828,9 @@ namespace TP
 		public void TextCurrebyBoot(float _boot)
 		{
 			if (isStakeDoubled)
-				challAmountText.text = (_boot * 2).ToString();
+				challAmountText.text = (_boot * 2).ToString() + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>"; 
 			else
-				challAmountText.text = (_boot).ToString();
+				challAmountText.text = (_boot).ToString() + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>"; 
 		}
 		public float ChaalIncrease;
 		public void UpdateChaalText(float boot)
@@ -811,7 +844,7 @@ namespace TP
 				HideHud();
             }else
             {
-				challAmountText.text = finalBoot < 100000 ? CommonFunctions.Instance.GetAmountDecimalSeparator(finalBoot) : CommonFunctions.Instance.GetAmountAbreviation(finalBoot);
+				challAmountText.text = finalBoot < 100000 ? CommonFunctions.Instance.GetAmountDecimalSeparator(finalBoot) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>" : CommonFunctions.Instance.GetAmountAbreviation(finalBoot) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>"; ;
 
 			}
 
@@ -888,6 +921,7 @@ namespace TP
 		public bool SoundCheck;
 		public void OnSeeClicked()
 		{
+
 			SoundCheck = false;
             GameManager.localInstance.VerifyAndSeeCards();
 		

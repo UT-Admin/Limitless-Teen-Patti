@@ -15,7 +15,22 @@ namespace TP
         #region private variables
 
         #region profile title data
-        [SerializeField] public AuthenticationData auth;
+        /* [SerializeField] public AuthenticationData auth;*/
+
+
+        public string token;
+        public string session_token;
+        public string currency_type;
+        public string gamename;
+        public string operatorname;
+        public string operatorDomainUrl;
+        public string platform;
+        public float comission;
+        public string environment;
+        public float balance;
+
+
+
 
         [SerializeField] private string PlayfabID;
 		[SerializeField] private string NickName;
@@ -270,6 +285,7 @@ namespace TP
 
 		public void SetNickName(string value)
 		{
+			Debug.Log(value +"Check NickName");
 			NickName = value;
 
 		}

@@ -73,7 +73,7 @@ namespace TP
         public GameObject[] gameList;
         public GameObject DemoText;
         public GameObject Info;
-        public GameObject StartPopUp;
+       /* public GameObject StartPopUp;*/
 
         //============================================================================================//
         [Header("=======ENUMS=========")]
@@ -178,11 +178,13 @@ namespace TP
         {
             Debug.Log("API Controller ======> " + APIController.instance.userDetails.serverInfo.server_host + " <==================> " + ushort.Parse(APIController.instance.userDetails.serverInfo.server_port.ToString()));
 #if !UNITY_SERVER
-           /* NetMirrorWork.networkAddress = string.IsNullOrWhiteSpace(APIController.instance.userDetails.serverInfo.server_host) ? "gameserver.utwebapps.com" : APIController.instance.userDetails.serverInfo.server_host;
-            NetMirrorWork.GetComponent<SimpleWebTransport>().port = ushort.Parse(APIController.instance.userDetails.serverInfo.server_port.ToString());*/
+            /* NetMirrorWork.networkAddress = string.IsNullOrWhiteSpace(APIController.instance.userDetails.serverInfo.server_host) ? "gameserver.utwebapps.com" : APIController.instance.userDetails.serverInfo.server_host;
+             NetMirrorWork.GetComponent<SimpleWebTransport>().port = ushort.Parse(APIController.instance.userDetails.serverInfo.server_port.ToString());*/
 #endif
+            Debug.Log("SetDataActionCall ===> 1");
             Val.text = "10.00 " + APIController.instance.userDetails.currency_type + " will be taken as bet for this round.";
             CurrentPlayerData.SetNickName(APIController.instance.userDetails.name);
+            Debug.Log("SetDataActionCall ===> 1.1");
             if (APIController.instance.userDetails.isBlockApiConnection)
             {
                 DemoText.SetActive(true);
@@ -193,6 +195,7 @@ namespace TP
                 DemoText.SetActive(false);
                 Info.SetActive(true);
             }
+            Debug.Log("SetDataActionCall ===> 2");
             while (string.IsNullOrWhiteSpace(APIController.instance.userDetails.currency_type))
             {
                 if (!UIController.Instance.Loading.activeSelf)
@@ -201,7 +204,7 @@ namespace TP
                 }
                 return;
             }
-
+            Debug.Log("SetDataActionCall ===> 3");
             if (GameManager.localInstance == null && !UIController.Instance.PlayAgain.activeSelf)
             {
 
@@ -280,7 +283,7 @@ namespace TP
                     if (GameController.Instance.CheckAmountForPlay(11))
                     {
                         UIController.Instance.PlayAgain.SetActive(false);
-                        StartPopUp.SetActive(false);
+                        /*StartPopUp.SetActive(false);*/
                         UIController.Instance.Insufficient.SetActive(true);
                         UIController.Instance.Loading.SetActive(false);
                     }
@@ -288,7 +291,7 @@ namespace TP
                     {
                         UIController.Instance.IsRejoin = true;
                         CanRejoin = true;
-                        StartPopUp.SetActive(true);
+                      /*  StartPopUp.SetActive(true);*/
                         UIController.Instance.Loading.SetActive(false);
                     }
                 }
@@ -387,7 +390,7 @@ namespace TP
             if (GameController.Instance.CheckAmountForPlay(11))
             {
                 UIController.Instance.PlayAgain.SetActive(false);
-                StartPopUp.SetActive(false);
+               /* StartPopUp.SetActive(false);*/
                 UIController.Instance.Insufficient.SetActive(true);
                 UIController.Instance.Loading.SetActive(false);
 
@@ -401,7 +404,7 @@ namespace TP
                     UIController.Instance.Loading.SetActive(false);
                     UIController.Instance.IsRejoin = true;
                     CanRejoin = true;
-                    StartPopUp.SetActive(true);
+                   /* StartPopUp.SetActive(true);*/
                 }
                 else if (GameManager.localInstance != null && GameManager.localInstance.gameState.currentState == 2)
                 {
@@ -418,9 +421,72 @@ namespace TP
         /// </summary>
         public void EnableStartPopupAfterDelay()
         {
+            Debug.Log("EnableStartPopupAfterDelay");
             UIController.Instance.Loading.SetActive(false);
-            StartPopUp.SetActive(true);
+            /*  StartPopUp.SetActive(true);*/
+            GameStartUp();
         }
+
+
+
+
+
+        public void GameStartUp()
+        {
+#if !UNITY_SERVER
+            APIController.instance.CheckInternetForButtonClick((Success) =>
+            {
+
+                if (Success)
+                {
+                    if (PlayerManager.localPlayer != null)
+                    {
+                        SetVolumeOn();
+                        GameController.Instance.StartGameOnButtonClick();
+                        /*this.gameObject.SetActive(false);*/
+                    }
+                    else
+                    {
+                        UIController.Instance.FindGameWEBGL();
+                        GameController.Instance.SearchOnInternetCheck = true;
+                        /*this.gameObject.SetActive(false);*/
+                    }
+
+
+                }
+                else
+                {
+
+                }
+
+
+            });
+
+
+#endif
+        }
+
+
+        public void SetVolumeOn()
+        {
+            Debug.Log("AUDIO SOUND ============>");
+            GameController.Instance.isAudioPlayStarted = true;
+            AudioListener.volume = 1;
+            /* if (SoundToggle.isOn)
+                 MasterAudioController.instance.PlayAudio(AudioEnum.BUTTONCLICK);*/
+
+        }
+
+
+
+
+
+
+
+
+
+
+
 
 
         /// <summary>
@@ -436,6 +502,10 @@ namespace TP
 
             }
         }
+
+
+
+
 
         /// <summary>
         /// This method returns the current table datat the user has joined
@@ -469,10 +539,11 @@ namespace TP
             data.gameId = APIController.instance.userDetails.gameId;
             data.gameName = val[1];
             data.operatorName = val[0];
-            data.WinProbability = APIController.instance.winningStatus.WinProbablity;
+            data.WinProbability = APIController.instance.winningStatus.WinProbablity;   
             data.isBlockedAPI = APIController.instance.userDetails.isBlockApiConnection;
             data.serverInfo = APIController.instance.userDetails.serverInfo.instance_id;
             data.domainURL = APIController.instance.userDetails.operatorDomainUrl;
+            data.environment = APIController.instance.authentication.environment;
             return data;
         }
 
@@ -699,6 +770,10 @@ namespace TP
         public bool isBlockedAPI;
         public string serverInfo;
         public string domainURL;
+        public double chaalLimit;
+        public double potLimit;
+        public string environment;
+        public string currency;
 
     }
 
