@@ -39,6 +39,15 @@ AnimationClip:
         weightedMode: 1
         inWeight: 0.97535676
         outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5833333
+        value: 384
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -53,27 +62,36 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 280
-        inSlope: 19.04629
-        outSlope: 19.04629
-        tangentMode: 0
+        value: 492
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.07509588
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.33333334
+        value: 492
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.5833333
-        value: 215
-        inSlope: 1.6821527
+        value: 492
+        inSlope: 0
         outSlope: 0
-        tangentMode: 1
-        weightedMode: 1
-        inWeight: 1
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
         outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_SizeDelta.x
-    path: PlayerA/ProfilePic
+    attribute: m_AnchoredPosition.y
+    path: 
     classID: 224
     script: {fileID: 0}
     flags: 0
@@ -95,8 +113,8 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 1806569018
-      attribute: 1967290853
+      path: 0
+      attribute: 538195251
       script: {fileID: 0}
       typeID: 224
       customType: 28
@@ -147,6 +165,15 @@ AnimationClip:
         weightedMode: 1
         inWeight: 0.97535676
         outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5833333
+        value: 384
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -161,27 +188,36 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 280
-        inSlope: 19.04629
-        outSlope: 19.04629
-        tangentMode: 0
+        value: 492
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.07509588
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.33333334
+        value: 492
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.5833333
-        value: 215
-        inSlope: 1.6821527
+        value: 492
+        inSlope: 0
         outSlope: 0
-        tangentMode: 1
-        weightedMode: 1
-        inWeight: 1
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
         outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_SizeDelta.x
-    path: PlayerA/ProfilePic
+    attribute: m_AnchoredPosition.y
+    path: 
     classID: 224
     script: {fileID: 0}
     flags: 0

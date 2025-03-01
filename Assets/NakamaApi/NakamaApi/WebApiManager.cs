@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using TP;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -54,9 +55,17 @@ public class WebApiManager : MonoBehaviour
 
         if (callType == NetworkCallType.POST_METHOD_USING_JSONDATA)
             bodyJsonString = getEncodedParams(parameters);
-
+        Debug.Log(callType + " Check The CallType In the Start Game");
         GetNetWorkCall(callType, uri, bodyJsonString, parameters, callback, timeout);
     }
+    /*************  ✨ Codeium Command ⭐  *************/
+    /// <summary>
+    /// Downloads an image from a given URI and calls the callback method with the Texture2D of the image.
+    /// </summary>
+    /// <param name="uri">The URI of the image to download.</param>
+    /// <param name="callback">The method to call with the Texture2D of the image.</param>
+    /// <param name="timeout">The timeout for the download in seconds. Defaults to 20.</param>
+    /******  1d464ed6-c748-4b09-9f4a-ce2e9f899968  *******/
     public void GetDownloadImage(string uri, ReqCallbackTex callback, int timeout = timeOut)
     {
         StartCoroutine(DownloadImage(uri, callback, timeout));
@@ -64,7 +73,8 @@ public class WebApiManager : MonoBehaviour
 
     private void GetNetWorkCall(NetworkCallType callType, string uri, string bodyJsonString, List<KeyValuePojo> parameters, ReqCallback callback, int timeout = timeOut)
     {
-        Debug.Log($"<color=aqua>GetNetworkCall called with call type {callType}</color>");
+        Debug.Log("Check And Test The GetNetWorkCall");
+        Debug.Log($"<color=aqua>GetNetworkCall called with call type {callType} url {uri}</color>");
         switch (callType)
         {
             case NetworkCallType.GET_METHOD:
@@ -106,37 +116,21 @@ public class WebApiManager : MonoBehaviour
         if (!parameters.Exists(x => x.keyId == "DateTime"))
             parameters.Add(new KeyValuePojo { keyId = "DateTime", value = "Date___" + DateTime.UtcNow });
         string getParameters = getEncodedParams(parameters);
-        Debug.Log("Check $$$$$" + url + getParameters);
-        //foreach (var item in parameters)
-        //{
-        //    DebugHelper.Log(item.keyId + "____" +item.value);
-        //}
-
-#if !UNITY_WEBGL || UNITY_EDITOR
         using (UnityWebRequest www = UnityWebRequest.Get(url + getParameters))
         {
             www.timeout = timeout;
-            //www.SetRequestHeader("Access-Control-Allow-Credentials", "true");
-            //www.SetRequestHeader("Content-Type", "text/plain");
-            //www.SetRequestHeader("Access-Control-Allow-Headers", "Accept, X-Access-Token, X-Application-Name, X-Request-Sent-Time");
-            //www.SetRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-            //www.SetRequestHeader("Access-Control-Allow-Origin", "*");   //Send request
             www.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             yield return www.SendWebRequest();
             while (!www.isDone)
                 yield return www;
             //while (!www.downloadHandler.isDone)
             //    yield return null;
-            Debug.Log("Check $$$$$" + www.error);
-            Debug.Log("WWW check" + www.result);
-            Debug.Log("WWW check data" + www.downloadHandler.text);
+            DebugHelper.Log("Check $$$$$" + www.error);
+            DebugHelper.Log("WWW check" + www.result);
             //Return result
             callback(www.result == UnityWebRequest.Result.Success, www.error, www.downloadHandler.text);
             yield break;
         }
-#else
-            APIController.instance.SendApiRequest(url + getParameters,callback);
-#endif
     }
 
 
@@ -166,7 +160,7 @@ public class WebApiManager : MonoBehaviour
             callback(www.result == UnityWebRequest.Result.Success, www.error, www.downloadHandler.text);
         }
     }
-    private IEnumerator PostRequestUsingJson(string url, List<KeyValuePojo> parameters, ReqCallback callback, int timeout = timeOut)
+    private IEnumerator PostRequestUsingJson(string url, List<KeyValuePojo> parameters, ReqCallback callback, int timeout = StaticStrings.timeOut, bool check = false)
     {
         if (!parameters.Exists(x => x.keyId == "DateTime"))
             parameters.Add(new KeyValuePojo { keyId = "DateTime", value = "Date___" + DateTime.UtcNow });
@@ -175,67 +169,44 @@ public class WebApiManager : MonoBehaviour
         {
             keyValuePairs.Add(kvp.keyId, kvp.value);
         }
-
-        // Convert dictionary to JSON string
         string jsonData = JsonConvert.SerializeObject(keyValuePairs);
-
-        Debug.Log($"<color=magenta>{jsonData}\n{url}</color>");
+        if (!check)
+        {
+            DebugHelper.Log($"<color=yellow>{jsonData}\n{url}</color>");
+        }
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
-        using UnityWebRequest request = UnityWebRequest.PostWwwForm(url, "POST");
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-        request.SetRequestHeader("Accept", "application/json");
-        request.timeout = timeout;
-        yield return request.SendWebRequest();
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json");
+            request.timeout = timeout;
 
-        callback(request.result == UnityWebRequest.Result.Success, request.error, request.downloadHandler.text);
+            yield return request.SendWebRequest();
 
-        //using (UnityWebRequest www = new UnityWebRequest(url, "POST"))
-        //{
-        //    www.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        //    www.downloadHandler = new DownloadHandlerBuffer();
-        //    www.SetRequestHeader("Content-Type", "application/json");
-        //    www.SetRequestHeader("Accept", "application/json");
-        //    www.timeout = timeout;
+            callback(request.result == UnityWebRequest.Result.Success, request.error, request.downloadHandler.text);
 
-        //    yield return www.SendWebRequest();
+        } // Automatically disposes of the request here
 
-        //    while (!www.isDone)
-        //        yield return null;
-
-        //    callback(www.result == UnityWebRequest.Result.Success, www.error, www.downloadHandler.text);
-        //}
     }
 
     private IEnumerator DownloadImage(string url, ReqCallbackTex callback, int timeout = timeOut)
     {
-        //string savePath = string.Concat(Application.persistentDataPath, "/", DateTime.Now.ToString("yyyyMMddHHmmssfffffff"), ".jpg");
-        //DebugHelper.Log(savePath);
 
         using (UnityWebRequest www = UnityWebRequestTexture.GetTexture(url))
-        //using (UnityWebRequest www = UnityWebRequest.Get(url))
+
         {
-            //DownloadHandlerTexture texDl = new DownloadHandlerTexture(true);
-            //ToFileDownloadHandler texDl = new ToFileDownloadHandler(new byte[64 * 1024], savePath);
-            //www.downloadHandler = new DownloadHandlerFile(savePath);
+
             www.timeout = timeout;
             yield return www.SendWebRequest();
 
             while (!www.isDone)
                 yield return www;
-
-            //DebugHelper.Log("www.isDone");
-
             while (!www.downloadHandler.isDone)
-                //while (!texDl.IsDone)
                 yield return null;
-
-            //DebugHelper.Log("www.downloadHandler.isDone");
-            //Texture2D tex = ImageCacheUtils.Instance.TextureFromFile(savePath);
-            //yield return new WaitForSeconds(1);
             callback(www.result == UnityWebRequest.Result.Success, www.error, ((DownloadHandlerTexture)www.downloadHandler).texture);
-            //callback(www.result == UnityWebRequest.Result.Success, www.error, tex);
+
         }
     }
 

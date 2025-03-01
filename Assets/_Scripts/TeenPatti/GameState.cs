@@ -48,6 +48,7 @@ namespace TP
         public TournamentResultModel currentTournamentResultModel;
         public TeenPattiGameData gameController = new TeenPattiGameData();
         public int RoundCount;
+        public bool BetCompleted;
 
         public void ClearGameState()
         {
@@ -72,21 +73,21 @@ namespace TP
             isSideShowRequestSend = false;
             isDealCard = false;
             ShowAnimationEffect = false;
-            SenderShowval ="";
-            ReceiverShowval ="";
+            SenderShowval = "";
+            ReceiverShowval = "";
             dealerindex = 0;
             botPlayerId = "";
             currentMatchToken = "";
             CurrentGameCount = 0;
 
         }
-    public GameState()
+        public GameState()
         {
             currentTournamentResultModel = new TournamentResultModel();
         }
         public void UpdateCurrentTournamentPlayers()
         {
-            foreach(PlayerState ps in players)
+            foreach (PlayerState ps in players)
             {
                 double chip = ps.playerData.money;
                 string playerid = ps.playerData.playerID;
@@ -106,14 +107,14 @@ namespace TP
                     currentTournamentResultModel.players.Add(players);
                 }
             }
-            var  orderedList = currentTournamentResultModel.players.OrderBy(x => x.rank);
+            var orderedList = currentTournamentResultModel.players.OrderBy(x => x.rank);
             if (!gameController.CurrentTournamentModel.IsAllIn)
                 orderedList = currentTournamentResultModel.players.OrderByDescending(x => x.lastPlayedRound).ThenByDescending(x => x.chipsInHand);
-            
+
             //get sorted list of IDs
             var SortedIds = orderedList.Select(x => x.playerId).ToList();
             var updatedList = orderedList.ToList();
-            if(!gameController.CurrentTournamentModel.IsAllIn)
+            if (!gameController.CurrentTournamentModel.IsAllIn)
             {
                 updatedList.ForEach(x => x.rank = SortedIds.IndexOf(x.playerId));
             }
@@ -132,15 +133,15 @@ namespace TP
             else
             {
                 List<TeenPattiTournamentModel> tournament_data = GameController.Instance.GameModeModels.TournamentData.TeenPattiData.ToList();
-                var model = tournament_data.Find(x=>x.Name== gameController.CurrentTournamentModel.Name);
+                var model = tournament_data.Find(x => x.Name == gameController.CurrentTournamentModel.Name);
                 hasSecondPlayerWinner = model.RoundData[model.currentPlayingRound].SecondPrize > 0;
                 countOfWinners = hasSecondPlayerWinner ? 2 : 1;
             }
 
             currentTournamentResultModel.firstWinnerId = currentTournamentResultModel.players[0].playerId;
-            if(hasSecondPlayerWinner)
+            if (hasSecondPlayerWinner)
                 currentTournamentResultModel.secondWinnerId = currentTournamentResultModel.players[1].playerId;
-            for (int i = countOfWinners; i< currentTournamentResultModel.players.Count;i++)
+            for (int i = countOfWinners; i < currentTournamentResultModel.players.Count; i++)
             {
                 currentTournamentResultModel.loosersIdList.Add(currentTournamentResultModel.players[i].playerId);
             }
@@ -150,9 +151,9 @@ namespace TP
             int rank = 0;
             foreach (PlayerState ps in winerps)
             {
-                foreach(TournamentPlayers tp in currentTournamentResultModel.players)
+                foreach (TournamentPlayers tp in currentTournamentResultModel.players)
                 {
-                    if(tp.playerId == ps.playerData.playerID)
+                    if (tp.playerId == ps.playerData.playerID)
                     {
                         tp.rank = rank;
                         break;
@@ -164,14 +165,18 @@ namespace TP
         bool RoyalMode = false;
         public void NewDeck()
         {
+            
+
             currentDeck = new List<CardData>();
             int suit = 1;
             int rank = 1;
 
             for (int i = 0; i < deckCount; i++)
             {
+                Debug.Log("Print the log");
                 if (rank % 14 == 0)
                 {
+
                     suit++;
                     rank = 1;
                 }
@@ -179,36 +184,38 @@ namespace TP
                 rank++;
             }
 
-           /* if (gameController.CurrentGameMode == GameMode.ROYAL)
+            /* int suit = 1;
+             int rank = 1;*/
+            /*if (gameController.CurrentGameMode == GameMode.ROYAL)
             {
-               
-                for (int j=1;j<=4;j++)
+
+                for (int j = 1; j <= 4; j++)
                 {
-                   
+
                     currentDeck.Add(new CardData(j, 1, true));
                     for (int i = 10; i < 14; i++)
                     {
-                       *//* RoyalMode = true;*//*
+                        *//* RoyalMode = true;*//*
                         Debug.Log("Print the log");
                         currentDeck.Add(new CardData(j, i, true));
-                       
+
                     }
                 }
 
-            }
-            else
-            {
-                for (int i = 0; i < deckCount; i++)
-                {
-                    if (rank % 14 == 0)
-                    {
-                        suit++;
-                        rank = 1;
-                    }
-                    currentDeck.Add(new CardData(suit, rank, true));
-                    rank++;
-                }
             }*/
+            /* else
+             {
+                 for (int i = 0; i < deckCount; i++)
+                 {
+                     if (rank % 14 == 0)
+                     {
+                         suit++;
+                         rank = 1;
+                     }
+                     currentDeck.Add(new CardData(suit, rank, true));
+                     rank++;
+                 }
+             }*/
         }
         public int GetSeenPlayerCount()
         {
@@ -222,17 +229,17 @@ namespace TP
         }
         public CardData GetRandomCard()
         {
-            if (currentDeck == null) 
+            if (currentDeck == null)
             {
                 Debug.Log("NewDeck===========>3");
                 NewDeck();
-            
+
             }
-            if (currentDeck.Count < 2) 
+            if (currentDeck.Count < 2)
             {
                 Debug.Log("NewDeck===========>4");
                 NewDeck();
-            
+
             }
 
             int randomNum = UnityEngine.Random.Range(0, currentDeck.Count);
@@ -264,11 +271,11 @@ namespace TP
             forceSee = false;
             Debug.Log("NewDeck===========>5");
             NewDeck();
-            if (gameController.CurrentGameMode.ToString() == "ZANDU")
-                InitZanduMode();
-            /*else if (gameController.CurrentGameMode == GameMode.HUKAM)
-                InitHUKAMMode();*/
-
+            /*if (gameController.CurrentGameMode.ToString() == "ZANDU")
+                InitZanduMode();*/
+            /* else if (gameController.CurrentGameMode == GameMode.HUKAM)
+                 InitHUKAMMode();
+ */
             players.RemoveAll(x => x.disconnectTime > 0);
             foreach (PlayerState ps in players)
             {
@@ -276,7 +283,7 @@ namespace TP
             }
             if ((players.Count + waitingPlayers.Count) == 1)
             {
-                if(players.Count == 1)
+                if (players.Count == 1)
                 {
                     waitingPlayers.Add(players[0]);
                     players.Clear();
@@ -302,12 +309,12 @@ namespace TP
                 zanducards[i] = GetRandomCard();
             }
         }
-        public void InitHUKAMMode()
-        {
-            zanducards = new CardData[1];
-            zanthuCount = 0;
-            zanducards[0] = GetRandomCard();
-        }
+        /* public void InitHUKAMMode()
+         {
+             zanducards = new CardData[1];
+             zanthuCount = 0;
+             zanducards[0] = GetRandomCard();
+         }*/
         public void SetCurrentStake(float amnt)
         {
             currentStake = amnt;
@@ -342,7 +349,19 @@ namespace TP
         public int handsWonCount;
         public int currentTableGamesWon;
         public double currentTableChipsWon;
-        public AuthenticationData auth;
+        public string token;
+        public string session_token;
+        public string currency_type;
+        public string gamename;
+        public string operatorname;
+        public string operatorDomainUrl;
+        public string platform;
+        public float comission;
+        public string environment;
+        public float balance;
+
+
+        //public AuthenticationData auth;
     }
 
     [System.Serializable]
@@ -371,6 +390,10 @@ namespace TP
         public bool isSpectator = false;
         public int BetIndex;
         public string BetId;
+        public bool hasInitBet;
+        public bool CalledInitBet;
+        public string InitBetAmount;
+
         public void ResetState()
         {
             playerData.currentCards = new CardData[3];
@@ -401,6 +424,7 @@ namespace TP
             {
                 hasSeenCardBoolCheck = true;
                 hasSeenCard = true;
+
                 currentBoot *= 2;
             }
         }
@@ -427,7 +451,7 @@ namespace TP
                 hasSeenCardBoolCheck = false;
                 myTurnTime = -1;
             }
-               
+
         }
     }
 

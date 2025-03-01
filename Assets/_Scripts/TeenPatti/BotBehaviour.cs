@@ -119,49 +119,36 @@ namespace TP
                     if (rand == 3 || (gm.gameState.players[gm.GetCurrentPlayingPlayerIndex()].turnCount > 3 && (gm.gameState.players[gm.GetCurrentPlayingPlayerIndex()].playerData.playerID != rankDetails[0])))
                     {
                         gm.BotSeeCards();
-                       DebugHelper.LogError("bot play 4");
+                        DebugHelper.LogError("bot play 4");
                         return PackOrChallBot();
                     }
                     else
                     {
-                       DebugHelper.LogError("bot play 5");
+                        DebugHelper.LogError("bot play 5");
                         return 2;
                     }
                 }
-                /*else
+                else
                 {
-                    if (gm.gameController.CurrentGameMode == GameMode.ZANDU && gm.gameState.players[gm.GetCurrentPlayingPlayerIndex()].turnCount <= 3)
+                    if (/*gm.gameController.CurrentGameMode == GameMode.ZANDU && */gm.gameState.players[gm.GetCurrentPlayingPlayerIndex()].turnCount <= 3)
                     {
                         return 2;
                     }
                     else
                     {
-                       DebugHelper.LogError("bot play 7");
+                        DebugHelper.LogError("bot play 7");
                         return PackOrChallBot();
                     }
-                }*/
+                }
             }
-           DebugHelper.LogError("bot play 8");
+            DebugHelper.LogError("bot play 8");
             return 1;
         }
         int PackOrChallBot()
         {
             if (gm.gameState.players[gm.GetCurrentPlayingPlayerIndex()].playerData.playerID != gm.botPlayer.rankDetails[0])
             {
-
-
-                int rand = UnityEngine.Random.Range(1, 5);
-                if (rand != 3)
-                {
-                    if (UnityEngine.Random.Range(1, 4) == 2)
-                        gm.isBotIncressBet = true;
-                    return 2;
-                }
-                else
-                {
-                    return 1;
-                }
-                /*if ((gm.gameController.CurrentGameMode == GameMode.MUFLIS && botCardCombination == CardsCombination.HighCard || botCardCombination == CardsCombination.Pair) || (gm.gameController.CurrentGameMode != GameMode.MUFLIS && botCardCombination == CardsCombination.Trail || botCardCombination == CardsCombination.StraightFlush))
+                if ((/*gm.gameController.CurrentGameMode == GameMode.MUFLIS && */botCardCombination == CardsCombination.HighCard || botCardCombination == CardsCombination.Pair) || /*(gm.gameController.CurrentGameMode != GameMode.MUFLIS && */(botCardCombination == CardsCombination.Trail || botCardCombination == CardsCombination.StraightFlush))
                 {
                     if (UnityEngine.Random.Range(1, 3) == 2)
                     {
@@ -185,7 +172,7 @@ namespace TP
                     {
                         return 1;
                     }
-                }*/
+                }
             }
             else
             {
