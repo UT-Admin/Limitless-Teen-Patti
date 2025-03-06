@@ -10,19 +10,20 @@ namespace TP
 {
 	public class UIController : SingletonMonoBehaviour<UIController>
 	{
-	  
-		[SerializeField] private List<UIHandler> openedPages;
-		public TMP_Text CurrenyType;
-		public TMP_Text Type;
-		public TMP_Text AmountType;
-		public GameObject  alertPopUp,Loading,PlayAgain,ExitGamePopUp,Insufficient ,InternetPop, InternetPopNew, InsufficientDemo,ConnectionIssue;
 
-		public UIHandler teenPattiGameUIPanel;
-		
+        [SerializeField] private List<UIHandler> openedPages;
+        public TMP_Text CurrenyType;
+        public TMP_Text Type;
+        public TMP_Text AmountType;
+        public GameObject Connecting, Loading, PlayAgain, Insufficient, InternetPopNew, InsufficientDemo, ConnectionIssue, InternetPopInSufficient, NewGamePopUp, ByInPage, BackToMainMenuLoading, matchClosed;
+        public SettingsPanelHandler SettingsPanel;
+        public ServerKickMessagePopUp serverKick;
+        public UIHandler teenPattiGameUIPanel;
+        public string Message;
 
-		public bool IsNewUser = false;
+        public bool IsNewUser = false;
 
-		public void ResetNewUser()
+        public void ResetNewUser()
 		{
 			IsNewUser = false;
 		}
@@ -60,18 +61,35 @@ namespace TP
 #endif
 		}
 
-		public void AddMoney()
-		{
-
-			
-
+        public void AddMoney()
+        {
 #if UNITY_WEBGL
-			APIController.instance.OnClickDepositBtn();
+            APIController.instance.CheckInternetForButtonClick((Success) =>
+            {
+                if (Success)
+                {
+                    GameController.Instance.isInGame = false;
+                    NetworkClient.Shutdown();
+                    if (GameController.Instance.isREconnectonce)
+                    {
+                        GameController.Instance.isREconnectonce = false;
+                        //Invoke(nameof(), 5);
+                        StartGameAfterShutDown();
+
+                    }
+                }
+                else
+                {
+                    Loading.SetActive(false);
+                    UIController.Instance.InternetPopNew.gameObject.SetActive(true);
+                }
+            });
 #endif
-		}
+
+        }
 
 
-		public void NetworkShutDown()
+        public void NetworkShutDown()
 		{
 		  NetworkClient.Shutdown();
 		}
@@ -85,7 +103,7 @@ namespace TP
 
 		private void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.Escape) && openedPages.Count > 0 && openedPages.Count != 0 && !alertPopUp.activeInHierarchy)
+			if (Input.GetKeyDown(KeyCode.Escape) && openedPages.Count > 0 && openedPages.Count != 0)
 				openedPages[openedPages.Count - 1].OnBack();
 		}
 

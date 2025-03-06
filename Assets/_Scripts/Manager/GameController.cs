@@ -4,10 +4,12 @@ using SimpleJSON;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
 
 namespace TP
@@ -49,8 +51,9 @@ namespace TP
         public bool CanRejoin = false;
         public bool OnStartButtonClick = false;
         public bool multipleDeviceLogged = false;
+        public bool toCheckIfPlayerHasReJoined;
         public bool OnCancelDepositPopupBool = false;
-
+        public bool MoneyFlowCheck;
         //============================================================================================//
         [Header("=======DOUBLE=========")]
         public double tournamentEntry;
@@ -121,6 +124,10 @@ namespace TP
         [SerializeField] private GameTableModel _GameModeModel;
         [SerializeField] private GameModeModel _gameModeModels;
         [SerializeField] private TournamentTableModel _tournamentTableModel;
+
+
+        [Header("=========LIST==========")]
+        public BuyInScreenDataHolder BuyScreenData = new();
 
         public TextMeshProUGUI Val;
         public static GameController Instance;
@@ -258,14 +265,38 @@ namespace TP
         /// </summary>
         public void SetPlayerAmountOnUpdateActionCall()
         {
+            DebugHelper.Log("SetPlayerAmountOnUpdateActionCall ==============>  " + GameController.Instance.isInGame + " =========== " + (GameManager.localInstance != null));
             CurrentPlayerData.SetGold(APIController.instance.userDetails.balance);
             UIController.Instance.CurrenyType.text = APIController.instance.userDetails.currency_type;
             UIController.Instance.Type.text = APIController.instance.userDetails.currency_type;
             GamePlayUI.instance.profileAmount.text = APIController.instance.userDetails.balance.ToString("F2");
+
             if (GameManager.localInstance != null)
             {
                 TeenpattiGameUIHandler.instance.MyPlayerAmount.text = APIController.instance.userDetails.balance.ToString("F2");
                 PlayerManager.localPlayer.CmdSetAmountFormAPI(APIController.instance.userDetails.balance, CurrentPlayerData.GetPlayfabID());
+                OnPaymentPageSuceessorFail();
+            }
+            else
+            {
+
+                if (!GameController.Instance.isInGame && !MoneyFlowCheck && !GameController.Instance.CheckAmountForPlay((APIController.instance.userDetails.bootAmount + 1)))
+                {
+                    OnStartButtonClick = true;
+                    UIController.Instance.NewGamePopUp.SetActive(true);
+                    UIController.Instance.PlayAgain.SetActive(false);
+                    UIController.Instance.Insufficient.SetActive(false);
+                    UIController.Instance.Loading.SetActive(false);
+                    UIController.Instance.IsRejoin = false;
+                    //StartPopUp.SetActive(false);
+                    UIController.Instance.ByInPage.SetActive(false);
+                    DebugHelper.Log("SetPlayerAmountOnUpdateActionCall ==============> 1");
+                }
+
+                if (MoneyFlowCheck)
+                {
+                    MoneyFlowCheck = false;
+                }
 
             }
 
@@ -337,7 +368,7 @@ namespace TP
         /// </summary>
         public void GetNetworkStatusActionCall(NetworkStatus data)
         {
-            if (data == NetworkStatus.Active)
+            /*if (data == NetworkStatus.Active)
             {
                 isConnectedtoInternet = true;
                 if (!APIController.instance.userDetails.isBlockApiConnection && isAudioPlayStarted)
@@ -362,13 +393,13 @@ namespace TP
                 {
                     if (!success)
                     {
-                        UIController.Instance.ConnectionIssue.SetActive(true);
+                       
                     }
 
                 });
 
 
-            }
+            }*/
         }
 
 
@@ -387,32 +418,27 @@ namespace TP
         /// </summary>
         public void OnPaymentPageSuceessorFail()
         {
-            if (GameController.Instance.CheckAmountForPlay(11))
+            DebugHelper.Log("OnCancelDepositPopupBool case 1  ==============> " + APIController.instance.userDetails.balance);
+            if (GameController.Instance.CheckAmountForPlay((APIController.instance.userDetails.bootAmount + 1)) && GameManager.localInstance.gameState.currentState <= 0)
             {
                 UIController.Instance.PlayAgain.SetActive(false);
-               /* StartPopUp.SetActive(false);*/
+                //StartPopUp.SetActive(false);
+                UIController.Instance.ByInPage.SetActive(false);
                 UIController.Instance.Insufficient.SetActive(true);
                 UIController.Instance.Loading.SetActive(false);
-
+                UIController.Instance.NewGamePopUp.SetActive(false);
+                DebugHelper.Log("OnCancelDepositPopupBool case 2 ==============> " + APIController.instance.userDetails.balance);
             }
             else
             {
-                if (GameManager.localInstance == null && GameManager.localInstance.gameState.currentState >= 2)
+                if (GameManager.localInstance.gameState.currentState == 2)
                 {
-                    UIController.Instance.PlayAgain.SetActive(false);
-                    UIController.Instance.Insufficient.SetActive(false);
-                    UIController.Instance.Loading.SetActive(false);
-                    UIController.Instance.IsRejoin = true;
-                    CanRejoin = true;
-                   /* StartPopUp.SetActive(true);*/
-                }
-                else if (GameManager.localInstance != null && GameManager.localInstance.gameState.currentState == 2)
-                {
-                    if (GameController.Instance.CheckAmountForPlay(11))
+                    if (GameController.Instance.CheckAmountForPlay((APIController.instance.userDetails.bootAmount + 1)))
                     {
-
+                        DebugHelper.Log("Amount Check Success ==============> ");
                     }
                 }
+
             }
         }
 
@@ -421,10 +447,31 @@ namespace TP
         /// </summary>
         public void EnableStartPopupAfterDelay()
         {
-            Debug.Log("EnableStartPopupAfterDelay");
             UIController.Instance.Loading.SetActive(false);
-            /*  StartPopUp.SetActive(true);*/
-            GameStartUp();
+            //StartPopUp.SetActive(true);
+            if (APIController.instance.authentication.game_data.entryAmounts.Count == 1)
+            {
+                APIController.instance.userDetails.bootAmount = APIController.instance.authentication.game_data.entryAmounts[0];
+                APIController.instance.userDetails.potLimit = APIController.instance.authentication.game_data.potLimits[0];
+                APIController.instance.userDetails.challLimit = APIController.instance.authentication.game_data.chaalLimits[0];
+                APIController.instance.authentication.challLimit = APIController.instance.authentication.game_data.chaalLimits[0];
+                APIController.instance.authentication.bootAmount = APIController.instance.authentication.game_data.entryAmounts[0];
+
+                if (!UIController.Instance.NewGamePopUp.activeSelf)
+                {
+                    StartGameOnButtonClick();
+                    isAudioPlayStarted = true;
+                    AudioListener.volume = 1;
+                }
+
+            }
+            else
+            {
+                UIController.Instance.Connecting.SetActive(false);
+                UIController.Instance.ByInPage.SetActive(true);
+            }
+
+            UIController.Instance.SettingsPanel.CheckPlayerprefs();
         }
 
 
@@ -565,10 +612,11 @@ namespace TP
         public GameTableModel CurrentGameTableData()
         {
             TeenPattiTableModel _gameModelTable = new TeenPattiTableModel();
+            DebugHelper.Log("Test this  ===============> " + APIController.instance.userDetails.potLimit);
             _gameModelTable.BlindLimit = 4;
-            _gameModelTable.PotLimit = 1000;
-            _gameModelTable.ChaalLimit = 320;
-            _gameModelTable.BootAmount = 10;
+            _gameModelTable.PotLimit = (int)APIController.instance.userDetails.potLimit;
+            _gameModelTable.ChaalLimit = (int)APIController.instance.userDetails.challLimit;
+            _gameModelTable.BootAmount = (int)APIController.instance.userDetails.bootAmount;
             _gameModelTable.Id = 0;
             _gameModelTable.Name = "TPG";
             _gameModelTable.IsEnable = true;
@@ -659,7 +707,7 @@ namespace TP
             return currentAmount < minimumBalanceForPlayGame;
         }
 
-
+        int Timer1;
         /// <summary>
         ///  This method is used to join and Search game in mirror server
         /// </summary>
@@ -668,20 +716,66 @@ namespace TP
         /// <returns></returns>
         IEnumerator SearchAndJoinMirrorServer(int gameType, string lobbyName)
         {
-            yield return new WaitForSeconds(.5f);
+            DebugHelper.Log("SearchAndJoinMirrorServer1 ================>");
+
+
+            yield return new WaitForSeconds(.1f);
             if (!NetworkClient.isConnected && !NetworkClient.isConnecting)
             {
                 NetworkManager.singleton.StartClient();
             }
+            DebugHelper.Log("SearchAndJoinMirrorServer2 ================>");
+
+                    //UIController.Instance.ConnectionIssue.SetActive(true);
+            /*APIController.instance.CheckMirror(async (success) =>
+            {
+                if (!success)
+                {
+                    return;
+                }
+            });*/
+
+            DebugHelper.Log("SearchAndJoinMirrorServer3 ================>");
 
             while (!NetworkClient.isConnected)
             {
-                if (!NetworkClient.isConnecting)
+                if (!NetworkClient.isConnected && !NetworkClient.isConnecting)
+                {
+                    DebugHelper.Log("==========> " + Timer1);
                     NetworkManager.singleton.StartClient();
-                yield return null;
+                }
+
+                Timer1++;
+
+                if (Timer1 > 20)
+                {
+                    Timer1 = 0;
+
+
+                    /*APIController.instance.CheckMirror(async (success) =>
+                    {
+                        if (!success)
+                        {
+                            UIController.Instance.ConnectionIssue.SetActive(true);
+                        }
+                        else
+                        {
+                            UIController.Instance.ConnectionIssue.SetActive(false);
+                            UIController.Instance.InternetPopNew.SetActive(true);
+                        }
+                    });
+                    yield break;*/
+
+                }
+                yield return new WaitForSeconds(0.1f);
             }
+            DebugHelper.Log("SearchAndJoinMirrorServer4 ================>");
+
             if (!PlayerManager.localPlayer)
                 NetworkClient.AddPlayer();
+
+            DebugHelper.Log("SearchAndJoinMirrorServer5 ================>");
+
             while (!PlayerManager.localPlayer)
             {
                 yield return null;
@@ -689,28 +783,29 @@ namespace TP
             while (!NetworkClient.isConnected)
                 yield return null;
 
+            DebugHelper.Log("AuthValue ================>" + APIController.instance.authentication.currency_type);
 
             PlayerManager.localPlayer.UpdatePlayerData(JsonUtility.ToJson(CurrentPlayerData), CurrentAmountType == CashType.CASH, CurrentPlayerData.GetPlayfabID());
 
             if (isInGame || UIController.Instance.IsRejoin)
             {
-                Debug.Log("Rejoin ================>");
+                DebugHelper.Log("Rejoin ================>");
+
                 UIController.Instance.IsRejoin = false;
                 PlayerManager.localPlayer.SearchGame((int)CurrentGameMode, currentLobbyName, true);
-            
-               // PlayerManager.localPlayer.JoinGame(currentRoomName);
+
             }
 
             if (GameController.Instance.SearchOnInternetCheck)
             {
-                Debug.Log("Start Game ================>");
+                DebugHelper.Log("Start Game ================>");
                 PlayerManager.localPlayer.SearchGame((int)CurrentGameMode, currentLobbyName, false);
                 GameController.Instance.SearchOnInternetCheck = false;
             }
 
             if (OnStartButtonClick)
             {
-                Debug.Log("Start Game ================>  2");
+                DebugHelper.Log("Start Game ================>  2");
                 OnStartButtonClick = false;
                 PlayerManager.localPlayer.SearchGame((int)CurrentGameMode, currentLobbyName, false);
             }
@@ -777,5 +872,54 @@ namespace TP
 
     }
 
+
+    [Serializable]
+    public class BuyInScreenDataHolder
+    {
+        public List<SelectedAmountData> selectedAmountData = new List<SelectedAmountData>();
+    }
+
+    [Serializable]
+    public class SelectedAmountData
+    {
+        public float Commission;
+        public float entryFee;
+        public float ChaalAmount;
+        public float potAmount;
+        public string Currency;
+
+
+    }
+
+    [Serializable]
+    public class Card
+    {
+        [NonReorderable]
+        public List<TextMeshProUGUI> cardRankTxt;
+        [NonReorderable]
+        [Space(1)]
+        public List<Image> suitImageSmall;
+        [NonReorderable]
+        [Space(1)]
+        public List<Image> suitImageBig;
+        [NonReorderable]
+        [Space(1)]
+        public List<Image> courtImage;
+
+        public Image backImage;
+        public Image packedImage;
+        public GameObject glowImage;
+
+        [HideInInspector]
+        public int cardIndex;
+
+        public void Intialize(int index)
+        {
+            cardIndex = index;
+        }
+    }
     #endregion
+
+
+
 }

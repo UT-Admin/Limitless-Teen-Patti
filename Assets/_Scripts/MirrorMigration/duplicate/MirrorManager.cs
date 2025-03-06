@@ -124,7 +124,9 @@ namespace TP
         private void OnDisable()
         {
             isConnectedToServer = false;
-            Debug.Log("Mirror Check ==============> " + GameController.Instance.isInGame);
+            DebugHelper.Log("Mirror Check ==============> " + GameController.Instance.isInGame);
+
+
             if (GameController.Instance.isInGame  /*UIController.Instance.mainmenuPage.gameObject.activeSelf*/)
             {
                 if (!GameController.Instance.isInGame && GameController.Instance.isForceJoinLobby)
@@ -133,11 +135,71 @@ namespace TP
                     return;
                 }
                 //UIController.Instance.InternetPop.SetActive(true);
-                AudioListener.volume = 0;
-                GameController.Instance.isREconnectonce = true;
-                UIController.Instance.InternetPopNew.SetActive(true);
+
+#if !UNITY_SERVER
+                APIController.instance.CheckInternetForButtonClick((Success) =>
+                {
+                    DebugHelper.Log("Mirror Check ==============> " + GameController.Instance.isInGame);
+                    if (Success)
+                    {
+
+                       /* APIController.instance.CheckMirror(async (success) =>
+                        {
+                            DebugHelper.Log("Mirror Check ==============> " + GameController.Instance.isInGame);
+                            if (!success)
+                            {*/
+                                DebugHelper.Log("Mirror Check ==============> " + GameController.Instance.isInGame);
+                                GameController.Instance.isREconnectonce = true;
+                                //UIController.Instance.ConnectionIssue.SetActive(true);
+                                UIController.Instance.InternetPopNew.SetActive(false);
+                            /*}
+                            else
+                            {*/
+                                AudioListener.volume = 0;
+                                GameController.Instance.isREconnectonce = true;
+                                if (!UIController.Instance.Insufficient.activeSelf)
+                                {       
+                                    UIController.Instance.InternetPopNew.SetActive(true);
+                                }
+                                UIController.Instance.ConnectionIssue.SetActive(false);
+                           /* }
+                        });*/
+                    }
+                    else
+                    {
+                        AudioListener.volume = 0;
+                        GameController.Instance.isREconnectonce = true;
+                        if (!UIController.Instance.Insufficient.activeSelf)
+                        {
+                            UIController.Instance.InternetPopNew.SetActive(true);
+                        }
+                        UIController.Instance.ConnectionIssue.SetActive(false);
+                    }
+
+                });
+#endif
                 //GameController.Instance.Reconnect();
             }
+            else
+            {
+                DebugHelper.Log("Mirror Check ==============> FALSE CASE CHECK============>  " + GameController.Instance.toCheckIfPlayerHasReJoined);
+                if (GameController.Instance.toCheckIfPlayerHasReJoined)
+                {
+                    /*APIController.instance.CheckMirror(async (success) =>
+                    {
+                        DebugHelper.Log("Mirror Check ==============> " + GameController.Instance.isInGame);
+                        if (!success)
+                        {*/
+                            AudioListener.volume = 0;
+                            GameController.Instance.toCheckIfPlayerHasReJoined = false;
+                            //UIController.Instance.ConnectionIssue.SetActive(true);
+                     /*       UIController.Instance.InternetPopNew.SetActive(false);
+                        }
+                    });*/
+
+                }
+            }
+
         }
         public PlayerManager GetLobbyPlayerManager(string playerID)
         {

@@ -48,6 +48,8 @@ namespace TP
         public TournamentResultModel currentTournamentResultModel;
         public TeenPattiGameData gameController = new TeenPattiGameData();
         public int RoundCount;
+        public string MessageToDisplay;
+        public int Code;
         public bool BetCompleted;
 
         public void ClearGameState()

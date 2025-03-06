@@ -1123,6 +1123,16 @@ namespace TP
         [Command]
         public void CmdDisconnectGame()
         {
+
+            if (gameManager.gameState.currentState == 1)
+            {
+                gameManager.playersList.Remove(myPlayerData.playerID);
+                gameManager.SubtractFromPotAmount();
+                APIController.instance.CancelBetMultiplayerAPI((x, y, z) => { }, myPlayerState.playerData.playerID, gameManager.gameController.gameName, gameManager.gameController.operatorName, gameManager.gameController.gameId, gameManager.gameState.currentMatchToken, myPlayerState.playerData.session_token, myPlayerState.playerData.currency_type
+                    , gameManager.gameController.environment);
+            }
+
+
             RemovePlayerFromGame();
             TargetRPCRemovePlayerManager();
         }
@@ -1261,14 +1271,17 @@ namespace TP
             param.Add(new KeyValuePojo { keyId = "currency", value = authentication.currency_type });
             param.Add(new KeyValuePojo { keyId = "game_name", value = authentication.gamename });
             param.Add(new KeyValuePojo { keyId = "operator", value = authentication.operatorname });
+
             string url1 = StaticStrings.GetLambdaUrl(authentication.environment);
             ApiRequest apiRequest1 = new ApiRequest();
             apiRequest1.action = (success, error, body) =>
             {
-                JObject jsonObject = JObject.Parse(body);
+                
                 if (success)
                 {
-                    LoggerUtils.Log("StartAuthenticationServerSideCall success ================> " + success);
+                    DebugHelper.Log("StartAuthenticationServerSideCall success ================> " + success);
+                    JObject apiResponse = JObject.Parse(body);
+                    HandleErrorCode((int)apiResponse["code"], playerID, apiResponse["message"].ToString());
                 }
                 else
                 {
@@ -1358,10 +1371,12 @@ namespace TP
             ApiRequest apiRequest1 = new ApiRequest();
             apiRequest1.action = (success, error, body) =>
             {
-                JObject jsonObject = JObject.Parse(body);
+                
                 if (success)
                 {
-                    LoggerUtils.Log("StartAuthenticationServerSideCall success ================> " + success);
+                    DebugHelper.Log("CmdGetUpdatedBalance success ================> " + success);
+                    ApiResponse apiResponse = JsonUtility.FromJson<ApiResponse>(body);
+                    HandleErrorCode(apiResponse.code, playerID, apiResponse.message);
                 }
                 else
                 {
@@ -1381,6 +1396,58 @@ namespace TP
             APIController.instance.GetUpdatedBalanceClientSideCall(body, error, success);
         }
 
+
+        public void HandleErrorCode(int Code, string playerID, string Message, bool fromStartAuth = false)
+        {
+            switch (Code)
+            {
+                case 200:
+                    break;
+                case 401:
+                case 403:
+                case 405:
+                case 412:
+                case 500:
+                case 413:
+                case 501:
+                case 408:
+                case 502:
+                    ShowErrorPopup(playerID, Message, Code);
+                    break;
+                case 402:
+                    InsufficientPopup(playerID);
+                    break;
+                case 409:
+                    break;
+                case 504:
+                    ServerMaintance(playerID);
+                    break;
+            }
+
+        }
+
+
+        [TargetRpc]
+        public void InsufficientPopup(string playerID)
+        {
+            UIController.Instance.Insufficient.SetActive(true);
+        }
+
+
+        [TargetRpc]
+        public void ServerMaintance(string playerID)
+        {
+            //UIController.Instance.ConnectionIssue.SetActive(true);
+        }
+
+
+
+
+        [TargetRpc]
+        public void ShowErrorPopup(string playerID, string Message, int code)
+        {
+            UIController.Instance.serverKick.ShowPopup(Message, code);
+        }
 
     }
 }

@@ -1300,8 +1300,8 @@ public class APIController : MonoBehaviour
             DebugHelper.Log($"CheckMirrorGameAvaliblity => Success : {success} ....... Message : {message}");
             if (!success)
             {
-                UIController.Instance.ConnectionIssue.SetActive(true);
-                return;
+               /* UIController.Instance.ConnectionIssue.SetActive(true);
+                return;*/
             }
             else
             {
@@ -1347,8 +1347,8 @@ public class APIController : MonoBehaviour
             if (Timer > 20)
             {
                 Timer = 0;
-                UIController.Instance.ConnectionIssue.SetActive(true);
-                break;
+               /* UIController.Instance.ConnectionIssue.SetActive(true);
+                break;*/
 
             }
             await UniTask.Delay(50);
@@ -1508,8 +1508,8 @@ public class APIController : MonoBehaviour
                 DebugHelper.Log($"CheckMirrorGameAvaliblity => Success : {success} ....... Message : {message}");
                 if (!success)
                 {
-                    UIController.Instance.ConnectionIssue.SetActive(true);
-                    return;
+                    /*UIController.Instance.ConnectionIssue.SetActive(true);
+                    return;*/
                 }
                 else
                 {

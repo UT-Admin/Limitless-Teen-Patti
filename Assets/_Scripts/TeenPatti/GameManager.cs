@@ -9,6 +9,7 @@ using DG.Tweening;
 using UnityEditor;
 using UnityEngine.UI;
 using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace TP
 {
@@ -314,7 +315,22 @@ namespace TP
                      TableValues();
                      break;*/
                 case GameMode.NOLIMITS:
-                    TableValues();
+                    if (UIGameController.CurrentGameModelTable is DeluxeTeenPattiTableModel)
+                    {
+                        GamePlayUI.instance.TeenPattiInfoBootAmount.text = CommonFunctions.Instance.GetAmountDecimalSeparator(currentTableModel.BootAmount);
+                        GamePlayUI.instance.TeenPattiInfoBlindLimit.text = "No Limits";
+                        GamePlayUI.instance.TeenPattiInfoChallLimit.text = "No Limits";
+                        GamePlayUI.instance.TeenPattiInfoPotLimit.text = "No Limits";
+                    }
+                    else
+                    {
+
+                        GamePlayUI.instance.TeenPattiInfoBootAmount.text = CommonFunctions.Instance.GetAmountDecimalSeparator(currentTableModel.BootAmount);
+                        GamePlayUI.instance.TeenPattiInfoBlindLimit.text = "No Limits";
+                        GamePlayUI.instance.TeenPattiInfoChallLimit.text = "No Limits";
+                        GamePlayUI.instance.TeenPattiInfoPotLimit.text = "No Limits";
+
+                    }
                     break;
                     /* case GameMode.POTBLIND:
                          GamePlayUI.instance.TeenPattiInfoBootAmount.text = CommonFunctions.Instance.GetAmountDecimalSeparator(currentTableModel.BootAmount);
@@ -469,6 +485,10 @@ namespace TP
             UpdateGameStateToServer();
         }
 
+
+
+        
+
         public void AddPlayerManager(PlayerManager pm)
         {
             if (pm.networkMatch.matchId != networkMatch.matchId)
@@ -477,6 +497,15 @@ namespace TP
             if (!playerManagersList.Contains(pm))
                 playerManagersList.Add(pm);
         }
+
+
+
+        public void SubtractFromPotAmount()
+        {
+            gameState.totalPot -= currentTableModel.BootAmount;
+            UpdateGameStateToServer();
+        }
+
 
         public void RemovePlayerManager(PlayerManager pm)
         {
@@ -781,8 +810,6 @@ namespace TP
             {
                 if (GetPlayerUI(mystate.playerData.playerID).isMine)
                 {
-                    GamePlayUI.instance.PlusTXT.color = new Color(0, 1, 0, 1f);
-                    GamePlayUI.instance.MinusTXT.color = new Color(0, 1, 0, .2f);
                     GamePlayUI.instance.ButtonHolder.SetActive(true);
 
                     StartBubbleLoop();
@@ -812,17 +839,17 @@ namespace TP
                 gameState.isSideShowRequestSend = false;
                 GamePlayUI.instance.UpdateChaalText(mystate.currentBoot);
 
-                
+               
                     if (mystate.hasSeenCard)
                     {
 
-                        GamePlayUI.instance.challText.text = "CHAAL";
+                    GamePlayUI.instance.challText.text = "CHAAL";
                     }
                     else
                     {
-                        GamePlayUI.instance.challText.text = "BLIND";
+                    GamePlayUI.instance.challText.text = "BLIND";
                     }
-               
+                
 
 
 
@@ -837,10 +864,9 @@ namespace TP
             {
                 GamePlayUI.instance.ButtonHolder.SetActive(false);
                 GamePlayUI.instance.HideHud();
-                
-
-                   // GamePlayUI.instance.MyProfileGlow.gameObject.SetActive(false);
                
+                    //GamePlayUI.instance.MyProfileGlow.gameObject.SetActive(false);
+              
             }
         }
 
@@ -1323,7 +1349,7 @@ namespace TP
                     }
                     else
                     {
-                        // HandleErrorCode(c, ps.playerData.playerID, y);
+                         HandleErrorCode(c, ps.playerData.playerID, y);
                         UpdateGameStateToServer();
                     }
                 }
@@ -1703,8 +1729,8 @@ namespace TP
                                 {
                                     if (c != 200)
                                     {
-                                        // SubtractAmountforAddBetOnSessionFailed(myMoney);
-                                        //HandleErrorCode(c, ps.playerData.playerID, y);
+                                         SubtractAmountforAddBetOnSessionFailed(myMoney);
+                                        HandleErrorCode(c, ps.playerData.playerID, y);
                                         UpdateGameStateToServer();
                                         return;
                                     }
@@ -1721,9 +1747,9 @@ namespace TP
                                 }
                                 else
                                 {
-                                    //SubtractAmountforAddBetOnSessionFailed(myMoney);
+                                    SubtractAmountforAddBetOnSessionFailed(myMoney);
                                     DebugHelper.Log("KICK ALL PLAYERS >>>>>>>>>>>>>  ***************");
-                                    //HandleErrorCode(c, ps.playerData.playerID, y);
+                                    HandleErrorCode(c, ps.playerData.playerID, y);
                                     UpdateGameStateToServer();
                                     return;
                                 }
@@ -1760,8 +1786,8 @@ namespace TP
                             {
                                 if (c != 200)
                                 {
-                                    //SubtractAmountforAddBetOnSessionFailed(myMoney);
-                                    //  HandleErrorCode(c, ps.playerData.playerID, y);
+                                    SubtractAmountforAddBetOnSessionFailed(myMoney);
+                                     HandleErrorCode(c, ps.playerData.playerID, y);
                                     UpdateGameStateToServer();
                                     return;
                                 }
@@ -1777,9 +1803,9 @@ namespace TP
                             }
                             else
                             {
-                                // SubtractAmountforAddBetOnSessionFailed(myMoney);
+                                 SubtractAmountforAddBetOnSessionFailed(myMoney);
                                 DebugHelper.Log("KICK ALL PLAYERS >>>>>>>>>>>>>  ***************");
-                                //HandleErrorCode(c, ps.playerData.playerID, y);
+                                HandleErrorCode(c, ps.playerData.playerID, y);
                                 UpdateGameStateToServer();
                                 return;
                             }
@@ -1850,8 +1876,8 @@ namespace TP
                                 {
                                     if (c != 200)
                                     {
-                                        //SubtractAmountforAddBetOnSessionFailed(newStake);
-                                        //HandleErrorCode(c, ps.playerData.playerID, y);
+                                        SubtractAmountforAddBetOnSessionFailed(newStake);
+                                        HandleErrorCode(c, ps.playerData.playerID, y);
                                         UpdateGameStateToServer();
                                         return;
                                     }
@@ -1866,9 +1892,9 @@ namespace TP
                                 }
                                 else
                                 {
-                                    //SubtractAmountforAddBetOnSessionFailed(newStake);
+                                    SubtractAmountforAddBetOnSessionFailed(newStake);
                                     DebugHelper.Log("KICK ALL PLAYERS >>>>>>>>>>>>>  ***************");
-                                    //HandleErrorCode(c, ps.playerData.playerID, y);
+                                    HandleErrorCode(c, ps.playerData.playerID, y);
                                     UpdateGameStateToServer();
                                     return;
 
@@ -1887,7 +1913,7 @@ namespace TP
                 }
                 else
                 {
-                    Debug.Log($"SendChall 2 --- ");
+                    DebugHelper.Log($"SendChall 2 --- ");
 
                     if (gameController.isBlockedAPI)
                     {
@@ -1896,62 +1922,65 @@ namespace TP
                     }
                     else
                     {
-                        Debug.Log($"SendChall 2 --- ");
-
-                        if (gameController.isBlockedAPI)
+                        DebugHelper.Log($"===================> &&&&&&&&&&&&&&&&&&&&&&& ");
+                        TransactionMetaData _metaData = new TransactionMetaData();
+                        _metaData.Amount = newStake;
+                        _metaData.Info = "Second Bet";
+                        PlayerState ps = gameState.players[currentPlayerIndex];
+                        ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
+                        APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x, c, y) =>
                         {
-                            SendChall(playerId, newStake, gameState.players[currentPlayerIndex].playerData.money, false, false);
-                            ChallAmount(newStake, playerId);
-                        }
-                        else
-                        {
-                            Debug.Log($"===================> &&&&&&&&&&&&&&&&&&&&&&& ");
-                            TransactionMetaData _metaData = new TransactionMetaData();
-                            _metaData.Amount = newStake;
-                            _metaData.Info = "Second Bet";
-                            ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, false);
-                            PlayerState ps = gameState.players[currentPlayerIndex];
-                            APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x, c, y) =>
+                            if (x)
                             {
-                                if (x)
+                                if (c != 200)
                                 {
-                                    if (c != 200)
-                                    {
-                                        //SubtractAmountforAddBetOnSessionFailed(newStake);
-                                        //HandleErrorCode(c, ps.playerData.playerID, y);
-                                        UpdateGameStateToServer();
-                                        return;
-                                    }
-                                    JObject jsonObject = JObject.Parse(y);
-                                    Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
-                                    ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
-                                    if (ShowMasterCheck)
-                                    {
-                                        ShowAndEndGame();
-                                    }
-                                    DebugHelper.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).CurrentGameSpend);
-                                }
-                                else
-                                {
-                                    //SubtractAmountforAddBetOnSessionFailed(newStake);
-                                    DebugHelper.Log("KICK ALL PLAYERS >>>>>>>>>>>>>  ***************");
-                                    //HandleErrorCode(c, ps.playerData.playerID, y);
+                                    SubtractAmountforAddBetOnSessionFailed(newStake);
+                                    HandleErrorCode(c, ps.playerData.playerID, y);
                                     UpdateGameStateToServer();
                                     return;
-
                                 }
+                                JObject jsonObject = JObject.Parse(y);
+                                Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
+                                ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
+                                if (ShowMasterCheck)
+                                {
+                                    ShowAndEndGame();
+                                }
+                                DebugHelper.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerId).CurrentGameSpend);
+                            }
+                            else
+                            {
+                                SubtractAmountforAddBetOnSessionFailed(newStake);
+                                DebugHelper.Log("KICK ALL PLAYERS >>>>>>>>>>>>>  ***************");
+                                HandleErrorCode(c, ps.playerData.playerID, y);
+                                UpdateGameStateToServer();
+                                return;
+                            }
 
-                            }, playerId, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL, ps.playerData.session_token, ps.playerData.currency_type, ps.playerData.platform, ps.playerData.token, gameController.environment, ps.playerData.money.ToString());
-                        }
-
+                        }, playerId, false, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameController.domainURL
+                            , ps.playerData.session_token, ps.playerData.currency_type, ps.playerData.platform, ps.playerData.token, gameController.environment, ps.playerData.money.ToString());
                     }
 
                 }
+                gameState.players[currentPlayerIndex].playerData.money -= newStake;
             }
             UpdateGameStateToServer();
         }
 
         bool isWinnerForUpdateClient;
+
+
+        [ClientRpc]
+        private void ClientUpdateBalance(string amount, string playerID)
+        {
+            if (APIController.instance.authentication.Id == playerID)
+            {
+                APIController.instance.UpdateAmount(amount);
+            }
+        }
+
+
+
         /* [ClientRpc]
          private void ClientUpdateBalance()
          {
@@ -2297,32 +2326,7 @@ namespace TP
             return playerState;
         }
 
-        public void GetMatchToken(string ID)
-        {
-            DebugHelper.Log("Get Match TokenCalled ======================> " + gameState.currentMatchToken);
-            gameStart = true;
-            if (string.IsNullOrEmpty(gameState.currentMatchToken))
-            {
-                APIController.instance.CreateMatch(roomInfo.lobbyName, (Responce, code, message) =>
-                {
-                    gameState.currentMatchToken = Responce.MatchToken;
-                    if (!gameController.isBlockedAPI)
-                    {
-                        isBotWin = Responce.WinChance <= 0 ? true : false;
-                        DebugHelper.Log("BOT WILL WIN THIS ROUND ------ >" + isBotWin + " *************** " + Responce.WinChance);
-                    }
-                    else
-                    {
-                        int val = UnityEngine.Random.Range(0, 10);
-                        isBotWin = val <= 7;
-                        DebugHelper.Log("BOT WILL WIN THIS ROUND LOOTRIX  ------ >" + isBotWin + " *************** " + val);
-                    }
-                    // HandleErrorCode(code, ID, message);
-                    UpdateGameStateToServer();
-
-                }, gameController.gameName, gameController.operatorName, ID, gameController.isBlockedAPI, gameController.serverInfo, gameController.environment, GetPlayerState(ID).playerData.money.ToString());
-            }
-        }
+       
 
         public int GetMyPlayerIndex()
         {
@@ -2563,10 +2567,9 @@ namespace TP
                     GamePlayUI.instance.ResetCoins.ResetBackAllData5();
                     //GamePlayUI.instance.ParentCoinsStack.gameObject.SetActive(true);
                     GamePlayUI.instance.SoundCheck = true;
-                   
 
-                        GamePlayUI.instance.challText.text = "blind";
-                   
+                    GamePlayUI.instance.challText.text = "blind";
+                    
                     GamePlayUI.instance.challAmountText.text = "0.00";
                     CountTemp = 0;
                     PackSound = false;
@@ -3289,7 +3292,7 @@ namespace TP
                     }
                     else
                     {
-                        //HandleErrorCode(c, ps.playerData.playerID, y);
+                        HandleErrorCode(c, ps.playerData.playerID, y);
                         UpdateGameStateToServer();
                     }
 
@@ -3530,19 +3533,14 @@ namespace TP
         {
             GamePlayUI.instance.GlowPlusButton.SetActive(true);
             GamePlayUI.instance.GlowMinusButton.SetActive(false);
-            GamePlayUI.instance.PlusTXT.color = new Color(0, 1, 0, 1f);
-            GamePlayUI.instance.MinusTXT.color = new Color(0, 1, 0, .2f);
-
             GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.activeButtonColor;
             GamePlayUI.instance.increaseBet.image.sprite = GamePlayUI.instance.ActivePlusMinus;
-           
+            GamePlayUI.instance.Plus.color = GamePlayUI.instance.PlusMinus;
             GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
             //  GamePlayUI.instance.decreaseBet.image.sprite = GamePlayUI.instance.InActivePlusMinus;
             GamePlayUI.instance.Minus.color = GamePlayUI.instance.Inactive;
             GamePlayUI.instance.increaseBet.interactable = true;
-           
             GamePlayUI.instance.decreaseBet.interactable = false;
-           
             GamePlayUI.instance.isStakeDoubled = false;
             if (myPlayerState.hasSeenCard)
                 myPlayerState.currentBoot = gameState.currentStake;
@@ -3558,11 +3556,9 @@ namespace TP
             {
                 GamePlayUI.instance.GlowPlusButton.SetActive(false);
                 GamePlayUI.instance.GlowMinusButton.SetActive(true);
-                GamePlayUI.instance.PlusTXT.color = new Color(0,1,0,0.2f);
-                GamePlayUI.instance.MinusTXT.color = new Color(0, 1, 0, 1f);
                 GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
                 //GamePlayUI.instance.increaseBet.image.sprite = GamePlayUI.instance.InActivePlusMinus;
-               
+                GamePlayUI.instance.Plus.color = new Color(0.5f, 1f, 0.4f, 0.2f);
                 GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.activeButtonColor;
                 GamePlayUI.instance.decreaseBet.image.sprite = GamePlayUI.instance.ActivePlusMinus;
                 GamePlayUI.instance.Minus.color = GamePlayUI.instance.PlusMinus;
@@ -3588,7 +3584,7 @@ namespace TP
                 GamePlayUI.instance.Minus.color = GamePlayUI.instance.Inactive;
                 GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
                 //   GamePlayUI.instance.increaseBet.image.sprite = GamePlayUI.instance.InActivePlusMinus;
-               
+                GamePlayUI.instance.Plus.color = new Color(0.5f, 1f, 0.4f, 0.2f);
                 GamePlayUI.instance.increaseBet.interactable = false;
                 GamePlayUI.instance.decreaseBet.interactable = false;
             }
@@ -3775,8 +3771,8 @@ namespace TP
                                 {
                                     if (c != 200)
                                     {
-                                        // SubtractAmountforAddBetOnSessionFailed(newStake);
-                                        //HandleErrorCode(c, ps.playerData.playerID, y);
+                                         SubtractAmountforAddBetOnSessionFailed(newStake);
+                                        HandleErrorCode(c, ps.playerData.playerID, y);
                                         UpdateGameStateToServer();
                                         return;
                                     }
@@ -3788,9 +3784,9 @@ namespace TP
                                 }
                                 else
                                 {
-                                    //SubtractAmountforAddBetOnSessionFailed(newStake);
+                                    SubtractAmountforAddBetOnSessionFailed(newStake);
                                     DebugHelper.Log("KICK ALL PLAYERS >>>>>>>>>>>>>  ***************");
-                                    //HandleErrorCode(c, ps.playerData.playerID, y);
+                                    HandleErrorCode(c, ps.playerData.playerID, y);
                                     UpdateGameStateToServer();
                                     return;
                                 }
@@ -3826,8 +3822,8 @@ namespace TP
                             {
                                 if (c != 200)
                                 {
-                                    //SubtractAmountforAddBetOnSessionFailed(newStake);
-                                    //HandleErrorCode(c, ps.playerData.playerID, y);
+                                    SubtractAmountforAddBetOnSessionFailed(newStake);
+                                    HandleErrorCode(c, ps.playerData.playerID, y);
                                     UpdateGameStateToServer();
                                     return;
                                 }
@@ -3840,9 +3836,9 @@ namespace TP
                             }
                             else
                             {
-                                //SubtractAmountforAddBetOnSessionFailed(newStake);
+                                SubtractAmountforAddBetOnSessionFailed(newStake);
                                 DebugHelper.Log("KICK ALL PLAYERS >>>>>>>>>>>>>  ***************");
-                                //HandleErrorCode(c, ps.playerData.playerID, y);
+                                HandleErrorCode(c, ps.playerData.playerID, y);
                                 UpdateGameStateToServer();
                                 return;
                             }
@@ -3859,7 +3855,11 @@ namespace TP
             UpdateGameStateToServer();
         }
 
+        public void SubtractAmountforAddBetOnSessionFailed(double newStake)
+        {
+            gameState.totalPot -= newStake;
 
+        }
 
         public void SetTostateFour()
         {
@@ -3969,8 +3969,8 @@ namespace TP
                                 {
                                     if (c != 200)
                                     {
-                                        //SubtractAmountforAddBetOnSessionFailed(newStake);
-                                        //HandleErrorCode(c, ps.playerData.playerID, y);
+                                        SubtractAmountforAddBetOnSessionFailed(newStake);
+                                        HandleErrorCode(c, ps.playerData.playerID, y);
                                         UpdateGameStateToServer();
                                         return;
                                     }
@@ -3983,9 +3983,9 @@ namespace TP
                                 }
                                 else
                                 {
-                                    //SubtractAmountforAddBetOnSessionFailed(newStake);
+                                    SubtractAmountforAddBetOnSessionFailed(newStake);
                                     DebugHelper.Log("KICK ALL PLAYERS >>>>>>>>>>>>>  ***************");
-                                    //HandleErrorCode(c, ps.playerData.playerID, y);
+                                    HandleErrorCode(c, ps.playerData.playerID, y);
                                     UpdateGameStateToServer();
                                     return;
                                 }
@@ -4038,7 +4038,7 @@ namespace TP
                         _metaData.Amount = newStake;
                         _metaData.Info = "Second Bet";
                         Debug.Log("AddBetCAlled Player " + newStake + " *********************************** " + " *********************************************################################################################################### " + playerID);
-                        ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, BetCheck);
+                       // ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, BetCheck);
                         PlayerState ps = gameState.players[currentPlayerIndex];
                         ShowServerAnimation(newStake, gameState.players[currentPlayerIndex].playerData.money, gameState.players[currentPlayerIndex].playerData.playerID, BetCheck);
                         APIController.instance.AddBetMultiplayerAPI(gameState.players[currentPlayerIndex].BetIndex, gameState.players[currentPlayerIndex].BetId, _metaData, newStake, (x, c, y) => {
@@ -4047,8 +4047,8 @@ namespace TP
                             {
                                 if (c != 200)
                                 {
-                                    // SubtractAmountforAddBetOnSessionFailed(newStake);
-                                    //HandleErrorCode(c, ps.playerData.playerID, y);
+                                     SubtractAmountforAddBetOnSessionFailed(newStake);
+                                    HandleErrorCode(c, ps.playerData.playerID, y);
                                     UpdateGameStateToServer();
                                     return;
                                 }
@@ -4060,9 +4060,9 @@ namespace TP
                             }
                             else
                             {
-                                //SubtractAmountforAddBetOnSessionFailed(newStake);
+                                SubtractAmountforAddBetOnSessionFailed(newStake);
                                 DebugHelper.Log("KICK ALL PLAYERS >>>>>>>>>>>>>  ***************");
-                                //HandleErrorCode(c, ps.playerData.playerID, y);
+                                HandleErrorCode(c, ps.playerData.playerID, y);
                                 UpdateGameStateToServer();
                                 return;
                             }
@@ -4123,6 +4123,7 @@ namespace TP
 
         public CardData[] GetCards()
         {
+
             CardData[] newCardData = new CardData[3];
             for (int i = 0; i < 3; i++)
             {
@@ -4415,8 +4416,26 @@ namespace TP
 
         #endregion
 
+        [ClientRpc]
+        public void SendErrorMessageRPC(byte[] jsonBytes)
+        {
+            string json = Encoding.UTF8.GetString(jsonBytes);
+            DebugHelper.Log("ServerKick ========> " + json);
+            var data = JsonUtility.FromJson<ShowErrorMessage>(json);
+            if (APIController.instance.userDetails.Id == data.PlayerID)
+            {
+                UIController.Instance.serverKick.ShowPopup(data.Message, data.Code);
+            }
+        }
+
+
+
+
         #region SERVER_SIDE_LOGIC
+        bool StateSeven;
+        bool StateEight;
         bool checkOnce;
+        bool showResultOnce;
         [Server]
         public void CheckActionRequired()
         {
@@ -4429,6 +4448,58 @@ namespace TP
             switch (gameState.currentState)
             {
                 case 0:
+
+                    if (gameState.players.Count > 0)
+                    {
+
+                        var playersSnapshot = gameState.players.ToArray();
+                        for (int i = 0; i < playersSnapshot.Length; i++)
+                        {
+                            if (playersSnapshot[i].currentState == 7)
+                            {
+                                string json = JsonUtility.ToJson(new ShowErrorMessage
+                                {
+                                    PlayerID = playersSnapshot[i].playerData.playerID,
+                                    Message = gameState.MessageToDisplay,
+                                    Code = gameState.Code
+                                });
+
+                                byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
+                                SendErrorMessageRPC(jsonBytes);
+                                DebugHelper.Log("Before Cancel Bet Called ===============>" + playersSnapshot[i].playerData.playerName);
+                                APIController.instance.CancelBetMultiplayerAPI((x, y, z) => { }, playersSnapshot[i].playerData.playerID, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, playersSnapshot[i].playerData.session_token, playersSnapshot[i].playerData.currency_type
+                                , gameController.environment);
+                                DebugHelper.Log("After Cancel Bet Called ===============>" + playersSnapshot[i].playerData.playerName);
+                                GetPlayerPUN(playersSnapshot[i].playerData.playerID).ServerKick("Kick");
+                                RemovePlayerByServer(playersSnapshot[i]);
+                                gameState.currentMatchToken = string.Empty;
+                                playersList.Clear();
+                            }
+                            if (GetRealPlayersCountInGame() < 1)
+                            {
+
+                                if (playersSnapshot[i].playerData.isBot)
+                                {
+                                    APIController.instance.CancelMatchAPI((x, y, z) => { }, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, playersSnapshot[i].playerData.session_token, gameController.currency, gameController.environment);
+                                    RemovePlayerByServer(playersSnapshot[i]);
+                                    DebugHelper.Log("Kick Player ============= 1> " + GetRealPlayersCountInGame());
+                                }
+
+
+                            }
+                            DebugHelper.Log("Kick Player ============= 2> " + GetRealPlayersCountInGame());
+                        }
+                        DebugHelper.Log("Kick Player ============= 3> " + GetRealPlayersCountInGame());
+                    }
+
+
+                    GameTimerOnce = false;
+                    FirstInitBetSuccess = false;
+                    IsSucces = false;
+                    CallThisOnce = false;
+                    StateEight = false;
+                    StateSeven = false;
+                    showResultOnce = false;
                     gameState.RoundCount = 0;
                     gameStart = false;
                     StopCoroutine(nameof(StartGameTimerServer));
@@ -4437,6 +4508,7 @@ namespace TP
 
                     if (GetRealPlayersCountInGame() < 3)
                     {
+
                         Debug.Log("CheckActionRequired==");
                         AddBotFromAPI();
                         Debug.Log("**** Went in Add Bot");
@@ -4475,26 +4547,24 @@ namespace TP
                     gameState.allPacked = false;
                     break;
                 case 2:
-
-
-
-
+                    StateEight = false;
+                    StateSeven = false;
                     ToggleSpectatorUsers();
                     if (GetActivePlayedPlayerCount() <= 1)
                     {
                         DebugHelper.LogError("game state update 4");
+                        DebugHelper.Log("CheckActionRequired 1 ==================> STATE SET 4");
                         gameState.currentState = 4;
 
                     }
 
                     if (GetNotDisconnectedPlayerCount() == 0)
                     {
-                        Debug.Log("###################  Player has Disconnected");
+                        DebugHelper.Log("###################  Player has Disconnected");
+                        DebugHelper.Log("CheckActionRequired 2 ==================> STATE SET 4");
                         gameState.currentState = 4;
 
                     }
-
-
                     IsSideShowChecked = false;
                     CheckBotTurn();
                     /*if(!isWinnerForUpdateClient && gameState.currentState != 4)
@@ -4510,22 +4580,92 @@ namespace TP
 
                     break;
                 case 3:
+                    StateEight = false;
+                    StateSeven = false;
+                    showResultOnce = false;
                     gameState.ShowAnimationEffect = false;
                     CheckSideShowRequestServer();
                     break;
+                    
                 case 4:
+                    CallThisOnce = false;
+                    StateEight = false;
+                    StateSeven = false;
                     gameState.ShowAnimationEffect = false;
                     isWinnerForUpdateClient = true;
                     isrejoin = false;
                     gameStart = false;
-                    Debug.Log("State 4 set");
+                    DebugHelper.Log("State 4 set");
+                    if (!showResultOnce)
+                    {
+                        showResultOnce = true;
+                        GameTimerOnce = false;
+                    }
                     StartCoroutine(ShowWinnerServer());
                     break;
                 case 5:
+                    StateEight = false;
+                    StateSeven = false;
+                    showResultOnce = false;
+                    break;
+                case 7:
+                    if (!StateSeven)
+                    {
+                        StateSeven = true;
+                        string json = JsonUtility.ToJson(new ShowErrorMessage
+                        {
+                            PlayerID = "",
+                            Message = gameState.MessageToDisplay,
+                            Code = 0
+                        });
+                        byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
+                        showStateSevenPopUp(jsonBytes);
+                        foreach (var item in roomInfo.players.ToArray())
+                        {
+
+                            RemovePlayerByServer(item.playerManager.myPlayerState);
+
+                        }
+                    }
+
+                    DebugHelper.Log("===============> Show Emergency PopUp");
+                    break;
+                case 8:
+                    if (!StateEight)
+                    {
+                        StateEight = true;
+                        foreach (var item in roomInfo.players.ToArray())
+                        {
+                            RemovePlayerByServer(item.playerManager.myPlayerState);
+                        }
+                    }
+                    DebugHelper.Log("===============> Show Emergency PopUp");
                     break;
             }
             UpdateGameStateToServer();
         }
+
+
+
+        [ClientRpc]
+        public void showStateSevenPopUp(byte[] jsonBytes)
+        {
+            string json = Encoding.UTF8.GetString(jsonBytes);
+            DebugHelper.Log("State7 ========> " + json);
+            var data = JsonUtility.FromJson<ShowErrorMessage>(json);
+
+            if (!UIController.Instance.matchClosed.activeSelf)
+            {
+
+                UIController.Instance.Message = data.Message;
+                UIController.Instance.matchClosed.SetActive(transform);
+                DebugHelper.Log("===============> Show Emergency PopUp");
+            }
+        }
+
+
+
+
 
 
         [Server]
@@ -4648,27 +4788,6 @@ namespace TP
         {
             yield return new WaitForSeconds(3f);
             botPlay = null;
-            for (int i = 0; i < gameState.players.Count; i++)
-            {
-                if (gameState.players[i].playerData.isBot)
-                {
-                    RemovePlayerByServer(gameState.players[i]);
-                }
-
-            }
-
-            if (gameController.IsTournament)
-            {
-                gameState.UpdateCurrentTournamentPlayers();
-                UpdateGameStateToServer();
-                yield return new WaitForSeconds(2.5f);
-                List<TeenPattiTournamentModel> tournament_data = UIGameController.GameModeModels.TournamentData.TeenPattiData.ToList();
-                var model = tournament_data.Find(x => x.Name == gameController.CurrentTournamentModel.Name);
-
-                if (model.RoundData[model.currentPlayingRound].RoundConfig.BootIncreaseRate == 0 || (model.RoundData[model.currentPlayingRound].RoundConfig.BootIncreaseRate != -1))
-                    if (gameState.CurrentGameCount % model.RoundData[model.currentPlayingRound].RoundConfig.BootIncreaseRate == 1 && (currentTableModel.BootAmount * 2) < currentTableModel.ChaalLimit)
-                        currentTableModel.BootAmount *= 2;
-            }
             if (gameState.players.FindAll(x => x.playerData.money < currentTableModel.BootAmount).Count != 0)
                 yield return new WaitForSeconds(2.5f);
             while (gameState.players.FindAll(x => x.playerData.money < currentTableModel.BootAmount).Count != 0)
@@ -4680,9 +4799,10 @@ namespace TP
                 }
             }
 
-            if (gameState.players.Exists(x => x.playerData.money < 11))
+
+            if (gameState.players.Exists(x => x.playerData.money < (currentTableModel.BootAmount + 1)))
             {
-                PlayerState psVal = gameState.players.Find(x => x.playerData.money < 11);
+                PlayerState psVal = gameState.players.Find(x => x.playerData.money < (currentTableModel.BootAmount + 1));
                 if (psVal != null && !String.IsNullOrEmpty(psVal.playerData.playerID))
                 {
                     InactiveUserKick(psVal.playerData.playerID, StaticStrings.EnoughBalanceServerKick + "" + (gameController.CurrentAmountType == CashType.SILVER ? StaticStrings.Chip : StaticStrings.Cash));
@@ -4690,62 +4810,56 @@ namespace TP
             }
 
 
+            int count = 0;
+            foreach (PlayerState ps in gameState.waitingPlayers)
             {
-                if (!gameController.IsTournament)
+                if (ps.isSpectator)
                 {
-
-                }
-                else
-                {
-                    if (gameState.players.Count <= 1)
+                    if (ps.playerData.isBot && (UnityEngine.Random.Range(1, 3) == 2 || count >= UnityEngine.Random.Range(0, 1)))
                     {
-                        InactiveUserKick(gameState.players[0].playerData.playerID, StaticStrings.EnoughBalanceServerKick + "" + (gameController.CurrentAmountType == CashType.SILVER ? StaticStrings.Chip : StaticStrings.Cash));
-
-
+                        ps.isSpectator = false;
+                        ps.ResetState();
+                    }
+                    else
+                    {
+                        count += 1;
                     }
                 }
-                int count = 0;
-                foreach (PlayerState ps in gameState.waitingPlayers)
-                {
-                    if (ps.isSpectator)
-                    {
-                        if (ps.playerData.isBot && (UnityEngine.Random.Range(1, 3) == 2 || count >= UnityEngine.Random.Range(0, 1)))
-                        {
-                            ps.isSpectator = false;
-                            ps.ResetState();
-                        }
-                        else
-                        {
-                            count += 1;
-                        }
-                    }
-                }
-
-                count = 0;
-                yield return new WaitForSeconds(2);
-                for (int j = 0; j < gameState.players.Count; j++)
-                {
-                    PlayerState ps = gameState.players[j - count];
-                    if (ps.playerData.isBot && UnityEngine.Random.Range(1, 5) == 3)
-                    {
-                        count++;
-                        RemovePlayerByServer(ps);
-                    }
-                }
-
-                if (GetRealPlayersCountInGame() == 0)
-                {
-                    RemovePlayerByServer(GetBotInGame());
-                }
-
-
-                CheckForRemoveAllBots();
-                gameState.removedPlayers.Clear();
-
-                yield return new WaitForSeconds(1.5f);
-                InitNewRoundState();
-                UpdateGameStateToServer();
             }
+
+            count = 0;
+            yield return new WaitForSeconds(2);
+            if (GetRealPlayersCountInGame() == 0)
+            {
+                foreach (var item in roomInfo.players.ToArray())
+                {
+                    if (item.playerManager.myPlayerData.isBot)
+                    {
+                        RemovePlayerByServer(item.playerManager.myPlayerState);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in roomInfo.players.ToArray())
+                {
+                    if (item.playerManager.myPlayerData.isBot && item.playerManager.myPlayerData.money <= 100)
+                    {
+
+                        DebugHelper.Log("Bot Removed Due to Low Balance <================================>" + item.playerManager.myPlayerData.money);
+                        RemovePlayerByServer(item.playerManager.myPlayerState);
+                    }
+                }
+            }
+
+
+
+            gameState.removedPlayers.Clear();
+            yield return new WaitForSeconds(1.5f);
+            CallThisOnce = false;
+            InitNewRoundState();
+            UpdateGameStateToServer();
+
         }
 
 
@@ -5289,8 +5403,8 @@ namespace TP
                                 playersList.Add(ps.playerData.playerID);
                                 /*  JObject jsonObject = JObject.Parse(message);
                                   ps.InitBetAmount = jsonObject["balance"].ToString();*/
-                                ClientUpdateBalance(ParseBalanceMessage(message), ps.playerData.playerID);
-                                ps.InitBetAmount = ParseBalanceMessage(message).ToString();
+                               // ClientUpdateBalance(ParseBalanceMessage(message), ps.playerData.playerID);
+                               // ps.InitBetAmount = ParseBalanceMessage(message).ToString();
                                 UpdateGameStateToServer();
 
 
@@ -5302,7 +5416,7 @@ namespace TP
                                 IsSucces = false;
                                 ps.hasInitBet = false;
                                 ps.currentState = 7;
-                                // HandleErrorCode(Code, ps.playerData.playerID, message);
+                                 HandleErrorCode(Code, ps.playerData.playerID, message);
                                 UpdateGameStateToServer();
                                 return;
                             }
@@ -5537,9 +5651,8 @@ namespace TP
                 }
             }
 
-            Debug.Log("Retrun count"+ count + "GetRealPlayersCountInGame====5");
+            Debug.Log("Retrun count" + count + "GetRealPlayersCountInGame====5");
             return count;
-
         }
 
         public int GetBotCountInGame()
@@ -5652,13 +5765,13 @@ namespace TP
         }
 
         string[] BotIDs = { "0176b48c-1e68-4347-89c2-bc9ffcf4b8ef", "040db418-c1ef-4533-be32-680487b76e3a", "0468f798-0224-479f-bb9d-3c747299ad9c", "06480966-fb90-4213-a675-ba5b285a409e", "0b31dc13-6952-45f1-8e64-f58f5cfd61ca", "09bc6f6d-d450-412e-8762-bba470532974" };
+
         int val = 0;
         public IEnumerator AddBotIfRequired()
         {
-            
+
             val++;
             Debug.Log(val + "Check AddBot if Requied");
-
             Debug.Log("BOT >>>>>>>>>>>> ADD BOT IF REQUIRED CALLED *************" + GetRealPlayersCountInGame());
 
 
@@ -5670,7 +5783,6 @@ namespace TP
             Debug.Log($"AddBot the check Data Bot Count {gameState.players.Count}======>{gameState.waitingPlayers.Count}");
             if (gameState.players.Count + gameState.waitingPlayers.Count == 0)
                 yield break;
-            Debug.Log("AddBotIfRequiredAddBotIfRequired");
             if ((gameController.CurrentGameType == GameType.PRIVATE) || gameController.IsTournament)
             {
                 DebugHelper.LogError("Privete/Tournament. No bots allowed");
@@ -5746,8 +5858,6 @@ namespace TP
             }
             else
             {
-                DebugHelper.Log(" BOT API >>>>>>>>>>>> BEFORE : " + gameController.environment);
-
                 DebugHelper.Log(" BOT API >>>>>>>>>>>> BEFORE : " + GetBotCountInGame());
                 PlayerData botDataAPI = new PlayerData();
                 APIController.instance.GetABotAPI(FetchExsistingBotID(), (botData) =>
@@ -5840,8 +5950,8 @@ namespace TP
 
                                 playersList.Add(ps.playerData.playerID);
 
-                                ClientUpdateBalance(ParseBalanceMessage(message), ps.playerData.playerID);
-                                ps.InitBetAmount = ParseBalanceMessage(message).ToString();
+                               // ClientUpdateBalance(ParseBalanceMessage(message), ps.playerData.playerID);
+                               // ps.InitBetAmount = ParseBalanceMessage(message).ToString();
                                 UpdateGameStateToServer();
                             }
                             else
@@ -5933,13 +6043,13 @@ namespace TP
             }
 
 
-            if ((gameState.players.Count + gameState.waitingPlayers.Count == GetBotCountInGame() && (AutoGamePlayCount > 2)) || ((gameState.players.Count + gameState.waitingPlayers.Count) - GetBotCountInGame()) >= 3)
+           /* if ((gameState.players.Count + gameState.waitingPlayers.Count == GetBotCountInGame() && (AutoGamePlayCount > 2)) || ((gameState.players.Count + gameState.waitingPlayers.Count) - GetBotCountInGame()) >= 3)
             {
                 while (GetBotCountInGame() != 0)
                 {
                     RemovePlayerByServer(GetBotInGame());
                 }
-            }
+            }*/
 
 
         }
@@ -6101,23 +6211,91 @@ namespace TP
             RemoveFromGame(_playerID, true);
         }
 
-        #endregion
-
-
-        [ClientRpc]
-        private void ClientUpdateBalance(string amount, string playerID)
+        public void GetMatchToken(string ID)
         {
-            if (APIController.instance.authentication.Id == playerID)
+            DebugHelper.Log("Get Match TokenCalled ======================> " + gameState.currentMatchToken);
+            gameStart = true;
+            if (string.IsNullOrEmpty(gameState.currentMatchToken))
             {
-                APIController.instance.UpdateAmount(amount);
+                APIController.instance.CreateMatch(roomInfo.lobbyName, (Responce, code, message) =>
+                {
+                    gameState.currentMatchToken = Responce.MatchToken;
+                    if (!gameController.isBlockedAPI)
+                    {
+                        isBotWin = Responce.WinChance <= 0 ? true : false;
+                        DebugHelper.Log("BOT WILL WIN THIS ROUND ------ >" + isBotWin + " *************** " + Responce.WinChance);
+                    }
+                    else
+                    {
+                        int val = UnityEngine.Random.Range(0, 10);
+                        isBotWin = val <= 7;
+                        DebugHelper.Log("BOT WILL WIN THIS ROUND LOOTRIX  ------ >" + isBotWin + " *************** " + val);
+                    }
+                    HandleErrorCode(code, ID, message);
+                    UpdateGameStateToServer();
+
+                }, gameController.gameName, gameController.operatorName, ID, gameController.isBlockedAPI, gameController.serverInfo, gameController.environment, GetPlayerState(ID).playerData.money.ToString());
             }
         }
 
-        public string ParseBalanceMessage(string message)
+
+        public void HandleErrorCode(int Code, string playerID, string Message, bool fromStartAuth = false)
         {
-            JObject json = JObject.Parse(message);
-            return json["balance"].ToString();
+            switch (Code)
+            {
+                case 200:
+                    break;
+                case 401:
+                case 403:
+                case 405:
+                case 412:
+                case 500:
+                case 413:
+                case 501:
+                case 408:
+                case 502:
+                    if (gameState.currentState <= 1 && !fromStartAuth)
+                    {
+                        gameState.currentState = 0;
+                        gameState.Code = Code;
+                        gameState.MessageToDisplay = Message;
+                    }
+                    else if (gameState.currentState >= 2 || fromStartAuth)
+                    {
+                        gameState.currentState = 7;
+                        gameState.MessageToDisplay = Message;
+                    }
+                    break;
+                case 402:
+                    InsufficientPopup(playerID);
+                    PackPlayerServer(playerID);
+                    break;
+                case 409:
+                    break;
+                case 504:
+                    gameState.currentState = 8;
+                    break;
+            }
+
         }
+        [ClientRpc]
+        public void InsufficientPopup(string playerID)
+        {
+            if (playerID == APIController.instance.authentication.Id)
+            {
+                UIController.Instance.Insufficient.gameObject.SetActive(true);
+            }
+        }
+
+
+
+
+
+        #endregion
+
+
+
+
 
     }
 
@@ -6126,3 +6304,15 @@ namespace TP
 
 
 }
+
+
+
+
+[Serializable]
+public class ShowErrorMessage
+{
+    public string PlayerID;
+    public string Message;
+    public int Code;
+}
+
