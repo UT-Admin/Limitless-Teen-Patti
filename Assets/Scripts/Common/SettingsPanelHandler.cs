@@ -11,7 +11,8 @@ using UnityEngine.UI;
 public class SettingsPanelHandler : MonoBehaviour
 {
     public RectTransform PanelTransform;
-    public float XOffPos = 700;
+    public float XOffPos = 630;
+    public Button MenuButton;
     public Button ExitBtn;
     public Button wholeExit;
     public Button fullScreen;
@@ -24,6 +25,12 @@ public class SettingsPanelHandler : MonoBehaviour
     public UnityAction SwapSpriteSequence;
     public TMP_Text playerNameTxt;
     public GameObject EnableSettingsWholeButton;
+    public GameObject Sound;
+    public GameObject Music;
+    public Sprite SoundRed;
+    public Sprite SoundWhite;
+    public Sprite MusicRed;
+    public Sprite MusicWhite;
     private void Awake()
     {
 
@@ -44,21 +51,60 @@ public class SettingsPanelHandler : MonoBehaviour
 
     private void Start()
     {
+        MenuButton.interactable = true;
         //ToggleSound(true);
     }
 
-    void CheckPlayerprefs()
+    public void CheckPlayerprefs()
     {
-        ToggleSound(PlayerPrefs.GetInt("SoundActive", 1) == 1);
-        ToggleMusic(PlayerPrefs.GetInt("ToggleMusic", 1) == 1);
+        //if (APIController.instance.userDetails.isBlockApiConnection)
+        //{
+        //    //ToggleSound(PlayerPrefs.GetInt("SoundActive", 1) == 1);
+        //    //ToggleMusic(PlayerPrefs.GetInt("ToggleMusic", 1) == 1);
+
+
+        //}
+        //else
+        //{
+        //    ToggleSound(APIController.instance.authentication.sound);
+        //    ToggleMusic(APIController.instance.authentication.music);
+        //}
+
+        string sounds = LocalStorage.Load("Lootrix_sound", "1");
+        string musics = LocalStorage.Load("Lootrix_music", "1");
+
+        if (string.IsNullOrEmpty(sounds) && string.IsNullOrEmpty(musics))
+        {
+            ToggleSound(true);
+            ToggleMusic(true);
+        }
+        else
+        {
+            ToggleSound(LocalStorage.Load("Lootrix_sound", "1") == "1");
+            ToggleMusic(LocalStorage.Load("Lootrix_music", "1") == "1");
+        }
     }
 
     public void ToggleSound(bool value)
     {
-        Debug.Log("============> " + value);
+        DebugHelper.Log("============> " + value);
+        APIController.instance.authentication.sound = value;
+        CancelInvoke(nameof(UpdateMusic));
+        Invoke(nameof(UpdateMusic), 0.5f);
         SoundActive = value;
         SoundToggle.isOn = value;
-        PlayerPrefs.SetInt("SoundActive", SoundActive ? 1 : 0);
+        LocalStorage.Save("Lootrix_sound", SoundActive ? "1" : "0");
+
+        // PlayerPrefs.SetInt("SoundActive", SoundActive ? 1 : 0);
+        if (value)
+        {
+            Sound.GetComponent<Image>().sprite = SoundRed;
+        }
+        else
+        {
+            Sound.GetComponent<Image>().sprite = SoundWhite;
+
+        }
 #if !UNITY_SERVER
         MasterAudioController.instance.CheckSoundToggle(value && APIController.instance.isOnline && APIController.instance.isInFocus);
 #endif
@@ -67,10 +113,24 @@ public class SettingsPanelHandler : MonoBehaviour
 
     public void ToggleMusic(bool value)
     {
-        Debug.Log("============> " + value);
+        DebugHelper.Log("============> " + value);
+        APIController.instance.authentication.music = value;
+        CancelInvoke(nameof(UpdateMusic));
+        Invoke(nameof(UpdateMusic), 0.5f);
         MusicActive = value;
         MusicToggle.isOn = value;
-        PlayerPrefs.SetInt("ToggleMusic", MusicActive ? 1 : 0);
+
+        LocalStorage.Save("Lootrix_music", MusicActive ? "1" : "0");
+        // PlayerPrefs.SetInt("ToggleMusic", MusicActive ? 1 : 0);
+        if (value)
+        {
+            Music.GetComponent<Image>().sprite = MusicRed;
+        }
+        else
+        {
+            Music.GetComponent<Image>().sprite = MusicWhite;
+
+        }
 #if !UNITY_SERVER
         MasterAudioController.instance.CheckMusicToggle(value && APIController.instance.isOnline && APIController.instance.isInFocus);
 #endif
@@ -79,21 +139,24 @@ public class SettingsPanelHandler : MonoBehaviour
 
     public void ShowSettings()
     {
-        playerNameTxt.text = APIController.instance.userDetails.name;
-        CheckPlayerprefs();
-        gameObject.SetActive(true);
-        wholeExit.gameObject.SetActive(true);
         PanelTransform?.DOKill();
-        PanelTransform.GetComponent<CanvasGroup>().DOFade(1, 0.1f);
+        PanelTransform.GetComponent<RectTransform>().anchoredPosition = new Vector3(-533, -838, 0);
+        gameObject.SetActive(true);
         PanelTransform.gameObject.SetActive(true);
-        PanelTransform.DOAnchorPosX(640, 0.1f);
+        MenuButton.interactable = false;
+        playerNameTxt.text = APIController.instance.userDetails.name;
+        wholeExit.gameObject.SetActive(true);
+        PanelTransform.GetComponent<CanvasGroup>().DOFade(1, 0.1f).OnComplete(() => { MenuButton.interactable = true; });
+        PanelTransform.DOAnchorPosX(630, 0.1f);
     }
     public void HideSettings()
     {
-        wholeExit.gameObject.SetActive(false);
         PanelTransform?.DOKill();
+        PanelTransform.GetComponent<RectTransform>().anchoredPosition = new Vector3(630, -838, 0);
+        MenuButton.interactable = false;
+        wholeExit.gameObject.SetActive(false);
         PanelTransform.DOAnchorPosX(-533, 0.3f);
-        PanelTransform.GetComponent<CanvasGroup>().DOFade(0, 0.3f).OnComplete(() => { gameObject.SetActive(false); PanelTransform.gameObject.SetActive(false); });
+        PanelTransform.GetComponent<CanvasGroup>().DOFade(0, 0.3f).OnComplete(() => { gameObject.SetActive(false); PanelTransform.gameObject.SetActive(false); MenuButton.interactable = true; });
     }
 
     public void OnExitBtnClick()
@@ -118,19 +181,36 @@ public class SettingsPanelHandler : MonoBehaviour
 
     }
 
+    void UpdateMusic()
+    {
+#if !UNITY_SERVER
+        APIController.instance.CheckInternetForButtonClick((success) =>
+        {
+            if (success)
+            {
+                APIController.instance.UpdateAudioSettings();
+            }
+            else
+            {
+                Invoke(nameof(UpdateMusic), 0.5f);
+            }
+        });
+#endif
+    }
+
     public void HowToPlayOpen()
     {
         if (MasterAudioController.instance.CheckSoundToggle())
             MasterAudioController.instance.PlayAudio(AudioEnum.BUTTONCLICK);
-        Debug.Log("How  to Play 1");
+        DebugHelper.Log("How  to Play 1");
         wholeExit.gameObject.SetActive(false);
-        Debug.Log("How  to Play 2");
+        DebugHelper.Log("How  to Play 2");
         PanelTransform.anchoredPosition = new Vector2(-533f, -714f);
-        Debug.Log("How  to Play 3");
+        DebugHelper.Log("How  to Play 3");
         gameObject.SetActive(false);
-        Debug.Log("How  to Play 4");
+        DebugHelper.Log("How  to Play 4");
         PanelTransform.gameObject.SetActive(false);
-        Debug.Log("How  to Play 5");
+        DebugHelper.Log("How  to Play 5");
         if (MasterAudioController.instance.CheckSoundToggle())
             MasterAudioController.instance.PlayAudio(AudioEnum.BUTTONCLICK);
     }

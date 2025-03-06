@@ -55,7 +55,7 @@ public class WebApiManager : MonoBehaviour
 
         if (callType == NetworkCallType.POST_METHOD_USING_JSONDATA)
             bodyJsonString = getEncodedParams(parameters);
-        Debug.Log(callType + " Check The CallType In the Start Game");
+
         GetNetWorkCall(callType, uri, bodyJsonString, parameters, callback, timeout);
     }
     /*************  ✨ Codeium Command ⭐  *************/
