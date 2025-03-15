@@ -30,9 +30,9 @@ namespace TP
         public List<RemoveEmetyRoom> emetyRooms = new List<RemoveEmetyRoom>();
         public SyncList<string> LobbyPlayersList = new SyncList<string>();
         NetworkMatch networkMatch;
-        public bool isRunLiveServer;
         string roomDataStr = "";
         public RoomData roomData = new RoomData();
+
         private void Awake()
         {
             instance = this;
@@ -47,6 +47,7 @@ namespace TP
         {
             if (isServer)
             {
+                APIController.instance.GetServerTitleData();
                 StartCoroutine(nameof(UpdateRoomInfo));
 
             }
@@ -60,18 +61,17 @@ namespace TP
 
         IEnumerator UpdateRoomInfo()
         {
-#if UNITY_EDITOR
-            yield break;
-#endif
-            if (!isRunLiveServer)
-                yield break;
+            //#if UNITY_EDITOR
+            //            yield break;
+            //#endif
+
             string serverIPAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.First(f => f.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToString();
             while (true)
             {
                 yield return new WaitForSeconds(5);
                 roomData.roomData.Clear();
                 roomData.serverAddress = serverIPAddress;
-                roomData.gameName = "TEENPATTI";
+                roomData.gameName = "nolimits";
                 roomData.playerCount = 0;
                 roomData.botCount = 0;
                 roomData.roomCount = 0;
@@ -90,26 +90,25 @@ namespace TP
                     roomData.roomCount += 1;
                     roomData.roomData.Add(infoData);
                 }
-                if (roomDataStr != JsonUtility.ToJson(roomData))
+
+                roomDataStr = JsonUtility.ToJson(roomData);
+                ApiRequest apiRequest = new ApiRequest();
+                apiRequest.action = (status, error, body) =>
                 {
-                    roomDataStr = JsonUtility.ToJson(roomData);
-                    ApiRequest apiRequest = new ApiRequest();
-                    apiRequest.action = (status, error, body) =>
-                    {
-                    };
-                    apiRequest.callType = NetworkCallType.GET_METHOD;
-                    apiRequest.url = "https://faa3fxxjp475nyajp53ljl4yve0ddudp.lambda-url.ap-south-1.on.aws/";
-                    List<KeyValuePojo> param = new List<KeyValuePojo>();
-                    param.Add(new KeyValuePojo { keyId = "requestType", value = "UpdateRoomInfo" });
-                    param.Add(new KeyValuePojo { keyId = "server_id", value = roomData.serverAddress });
-                    param.Add(new KeyValuePojo { keyId = "player_count", value = roomData.playerCount.ToString() });
-                    param.Add(new KeyValuePojo { keyId = "bot_count", value = roomData.botCount.ToString() });
-                    param.Add(new KeyValuePojo { keyId = "room_count", value = roomData.roomCount.ToString() });
-                    param.Add(new KeyValuePojo { keyId = "game_name", value = roomData.gameName });
-                    param.Add(new KeyValuePojo { keyId = "data", value = JsonConvert.SerializeObject(roomData.roomData) });
-                    apiRequest.param = param;
-                    APIController.instance.ExecuteAPI(apiRequest);
-                }
+                };
+                apiRequest.callType = NetworkCallType.POST_METHOD_USING_JSONDATA;
+                apiRequest.url = APIController.instance.LambdaURL;
+                List<KeyValuePojo> param = new List<KeyValuePojo>();
+                param.Add(new KeyValuePojo { keyId = "request_type", value = "UpdateRoomInfo" });
+                param.Add(new KeyValuePojo { keyId = "server_id", value = roomData.serverAddress });
+                param.Add(new KeyValuePojo { keyId = "player_count", value = roomData.playerCount.ToString() });
+                param.Add(new KeyValuePojo { keyId = "bot_count", value = roomData.botCount.ToString() });
+                param.Add(new KeyValuePojo { keyId = "room_count", value = roomData.roomCount.ToString() });
+                param.Add(new KeyValuePojo { keyId = "game_name", value = roomData.gameName });
+                param.Add(new KeyValuePojo { keyId = "data", value = JsonConvert.SerializeObject(roomData.roomData) });
+                apiRequest.param = param;
+                APIController.instance.ExecuteAPI(apiRequest, 15, true);
+
             }
         }
 
@@ -143,27 +142,28 @@ namespace TP
                     if (Success)
                     {
 
-                       /* APIController.instance.CheckMirror(async (success) =>
+                        APIController.instance.CheckMirror(async (success) =>
                         {
                             DebugHelper.Log("Mirror Check ==============> " + GameController.Instance.isInGame);
                             if (!success)
-                            {*/
+                            {
                                 DebugHelper.Log("Mirror Check ==============> " + GameController.Instance.isInGame);
                                 GameController.Instance.isREconnectonce = true;
-                                //UIController.Instance.ConnectionIssue.SetActive(true);
+                                DebugHelper.Log($"ConnectionIssue 152");
+                                UIController.Instance.ConnectionIssue.SetActive(true);
                                 UIController.Instance.InternetPopNew.SetActive(false);
-                            /*}
+                            }
                             else
-                            {*/
+                            {
                                 AudioListener.volume = 0;
                                 GameController.Instance.isREconnectonce = true;
                                 if (!UIController.Instance.Insufficient.activeSelf)
-                                {       
+                                {
                                     UIController.Instance.InternetPopNew.SetActive(true);
                                 }
                                 UIController.Instance.ConnectionIssue.SetActive(false);
-                           /* }
-                        });*/
+                            }
+                        });
                     }
                     else
                     {
@@ -185,17 +185,18 @@ namespace TP
                 DebugHelper.Log("Mirror Check ==============> FALSE CASE CHECK============>  " + GameController.Instance.toCheckIfPlayerHasReJoined);
                 if (GameController.Instance.toCheckIfPlayerHasReJoined)
                 {
-                    /*APIController.instance.CheckMirror(async (success) =>
+                    APIController.instance.CheckMirror(async (success) =>
                     {
                         DebugHelper.Log("Mirror Check ==============> " + GameController.Instance.isInGame);
                         if (!success)
-                        {*/
+                        {
                             AudioListener.volume = 0;
                             GameController.Instance.toCheckIfPlayerHasReJoined = false;
-                            //UIController.Instance.ConnectionIssue.SetActive(true);
-                     /*       UIController.Instance.InternetPopNew.SetActive(false);
+                            DebugHelper.Log($"ConnectionIssue 195");
+                            UIController.Instance.ConnectionIssue.SetActive(true);
+                            UIController.Instance.InternetPopNew.SetActive(false);
                         }
-                    });*/
+                    });
 
                 }
             }
@@ -338,12 +339,12 @@ namespace TP
             }
             else
             {
-                Debug.Log($"Match ID already exists");
+                DebugHelper.Log($"Match ID already exists");
                 return false;
             }
         }
 
-        public bool JoinGame(string _matchID, string _playerID, GameObject _playerObj , out NetworkIdentity gameManagerNetID, bool isRejoin = false)
+        public bool JoinGame(string _matchID, string _playerID, GameObject _playerObj, out NetworkIdentity gameManagerNetID, bool isRejoin = false)
         {
             gameManagerNetID = GetComponent<NetworkIdentity>();
             if (roomIDs.Contains(_matchID))
@@ -355,14 +356,14 @@ namespace TP
                     {
 
                         GameManager gm = roomList[i].gameManagerID.gameObject.GetComponent<GameManager>();
-                        Debug.Log("Join Game Current Room  max player Count " + gm.gameState.players.Count +"    "+ gm.gameState.waitingPlayers.Count);
-                        if ((gm.gameState.players.Count + gm.gameState.waitingPlayers.Count) < roomList[i].maxPlayerCount ||   (isRejoin && (gm.gameState.players.Count + gm.gameState.waitingPlayers.Count) <= roomList[i].maxPlayerCount))
+                        DebugHelper.Log("Join Game Current Room  max player Count " + gm.gameState.players.Count + "    " + gm.gameState.waitingPlayers.Count);
+                        if ((gm.gameState.players.Count + gm.gameState.waitingPlayers.Count) < roomList[i].maxPlayerCount || (isRejoin && (gm.gameState.players.Count + gm.gameState.waitingPlayers.Count) <= roomList[i].maxPlayerCount))
                         {
-                            Debug.Log("Join Game Current Room is not Full");
+                            DebugHelper.Log("Join Game Current Room is not Full");
                         }
                         else
                         {
-                            Debug.Log("Join Game Current Room is Full");
+                            DebugHelper.Log("Join Game Current Room is Full");
                             return false;
                         }
 
@@ -402,13 +403,13 @@ namespace TP
                     }
                 }
 
-                Debug.Log($"Match joined");
+                DebugHelper.Log($"Match joined");
                 StopClearMatchCoroutine(_matchID);
                 return true;
             }
             else
             {
-                Debug.Log($"Match ID does not exist");
+                DebugHelper.Log($"Match ID does not exist");
                 return false;
             }
         }
@@ -420,49 +421,51 @@ namespace TP
             {
                 matchID = "";
                 gameManagerNetID = GetComponent<NetworkIdentity>();
-                Debug.Log("Can rejoin 4: " + canReJoin);
+                DebugHelper.Log("Can rejoin 4: " + canReJoin);
 
                 for (int i = 0; i < roomList.Count; i++)
                 {
                     if (!canReJoin)
                     {
-                        Debug.Log("Can rejoin 5: " + canReJoin);
+                        DebugHelper.Log("Can rejoin 5: " + canReJoin);
                         if (roomList[i].players.Exists(x => x.playerID == _playerID))
                         {
-                            Debug.Log("Can rejoin 6: " + canReJoin + roomList[i].players.Exists(x => x.playerID == _playerID));
+                            DebugHelper.Log("Can rejoin 6: " + canReJoin + roomList[i].players.Exists(x => x.playerID == _playerID));
                             roomList[i].gameManagerID.gameObject.GetComponent<GameManager>().CheckForReJoin(roomList[i].players.Find(x => x.playerID == _playerID).playerManager, _playerID, roomList[i].lobbyName);
                             return false;
                         }
 
                     }
 
-                    //Debug.Log($"Join Game ===>  Checking match {roomList[i].players.Count}");
-                    //Debug.Log($"Join Game ===>  Checking match {_GameMode}");
-                    //Debug.Log($"Join Game ===>  Checking match {(int)roomList[i].gameType}");
-                    //Debug.Log($"Join Game ===>  Checking match {roomList[i].lobbyName}");
-                    //Debug.Log($"Join Game ===>  Checking match {lobbyName}");
-                    Debug.Log($"Join Game ===>  Checking match {roomList[i].players.Exists(x => x.playerID == _playerID)} ////////////////  {roomList[i].players.Count}");
+                    //DebugHelper.Log($"Join Game ===>  Checking match {roomList[i].players.Count}");
+                    //DebugHelper.Log($"Join Game ===>  Checking match {_GameMode}");
+                    //DebugHelper.Log($"Join Game ===>  Checking match {(int)roomList[i].gameType}");
+                    //DebugHelper.Log($"Join Game ===>  Checking match {roomList[i].lobbyName}");
+                    //DebugHelper.Log($"Join Game ===>  Checking match {lobbyName}");
+                    DebugHelper.Log($"Join Game ===>  Checking match {roomList[i].players.Exists(x => x.playerID == _playerID)} ////////////////  {roomList[i].players.Count}");
 
 
-                     
+
 
                     if ((int)roomList[i].gameType == _GameMode && roomList[i].lobbyName == lobbyName && roomList[i].players.Count < 5)
                     {
-                        Debug.Log($"Join Game =========> Checking match {roomList[i].roomName} | inMatch {roomList[i].isClosed} | matchFull {roomList[i].isRoomFull} count {roomList[i].players.Count} / {roomList[i].maxPlayerCount}");
+                        DebugHelper.Log($"Join Game =========> Checking match {roomList[i].roomName} | inMatch {roomList[i].isClosed} | matchFull {roomList[i].isRoomFull} count {roomList[i].players.Count} / {roomList[i].maxPlayerCount}");
                         if (roomList[i].players.Exists(x => x.playerID == _playerID) || (!roomList[i].isClosed && !roomList[i].isRoomFull && roomList[i].players.Count < roomList[i].maxPlayerCount))
                         {
-                            Debug.Log("Join Game =======> 1" + canReJoin);
+                            DebugHelper.Log("Join Game =======> 1" + canReJoin);
                             if (JoinGame(roomList[i].roomName, _playerID, _playerObj, out gameManagerNetID, canReJoin))
                             {
-                                Debug.Log("Join Game =======> 2");
+                                DebugHelper.Log("Join Game =======> 2");
+
                                 matchID = roomList[i].roomName;
                                 gameManagerNetID = roomList[i].gameManagerID;
+
                                 return true;
                             }
                         }
                     }
                 }
-                Debug.Log("Join Game =======> 3");
+                DebugHelper.Log("Join Game =======> 3");
                 return false;
             }
         }
@@ -477,7 +480,7 @@ namespace TP
                     roomList[i].isRoomFull = false;
                     if (!isServer) return;
 
-                    Debug.Log($"Join Game Player disconnected from match {_roomName} | {roomList[i].players.Count} players remaining");
+                    DebugHelper.Log($"Join Game Player disconnected from match {_roomName} | {roomList[i].players.Count} players remaining");
                     if (roomList[i].players.Count == 4 && roomList[i].players.Exists(x => x.playerManager.myPlayerData.isBot))
                     {
                         roomList[i].isClosed = false;
@@ -485,7 +488,7 @@ namespace TP
 
                     if (roomList[i].GetPlayerCount() == 0)
                     {
-                        Debug.Log($"No more players in Match. Attempting Terminating {_roomName}");
+                        DebugHelper.Log($"No more players in Match. Attempting Terminating {_roomName}");
                         StopClearMatchCoroutine(_roomName);
                         StartCoroutinForClearMatch(roomList[i]);
 
@@ -520,7 +523,7 @@ namespace TP
             //else
             //    yield break;
 
-            Debug.LogError("Empty room: " + room.roomName);
+            DebugHelper.LogError("Empty room: " + room.roomName);
             yield return new WaitForSeconds(15);
             if (room.GetPlayerCount() == 0)
             {
@@ -535,14 +538,14 @@ namespace TP
                 //    NetworkServer.Destroy(gm.playerManagersList[0].gameObject);
                 //    gm.playerManagersList.Where(x => x != null).ToList();
                 //}
-                Debug.LogError("Empty room cleared: " + room.roomName);
+                DebugHelper.LogError("Empty room cleared: " + room.roomName);
                 roomList.Remove(room);
                 roomIDs.Remove(room.roomName);
                 if (room.gameManagerID.gameObject)
                     NetworkServer.Destroy(room.gameManagerID.gameObject);
             }
             else
-                Debug.LogError("Room clear cancelled, Player count: " + room.players.Count);
+                DebugHelper.LogError("Room clear cancelled, Player count: " + room.players.Count);
             emptyRoomList.Remove(room.roomName);
         }
 

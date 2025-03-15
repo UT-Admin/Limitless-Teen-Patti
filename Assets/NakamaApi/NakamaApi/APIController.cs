@@ -1,17 +1,21 @@
-using Cysharp.Threading.Tasks;
-using Mirror;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Text;
-using TP;
 using UnityEngine;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Text;
+using System.Security.Cryptography;
+using Newtonsoft.Json.Linq;
+using Cysharp.Threading.Tasks;
+using Random = UnityEngine.Random;
 using static WebApiManager;
+using TP;
+using Mirror;
+using UnityEngine.UI;
+using System.Net;
+using System.Linq;
+using Mirror.SimpleWeb;
+using System.Collections;
 
 [Serializable]
 public class BetRequest
@@ -82,11 +86,17 @@ public class APIController : MonoBehaviour
     public int DefaultHostPort;
     public List<APIRequestList> apiRequestList;
     public BackendAPI backendAPIURL = new();
+    public string LambdaURL;
+
+    #region ENUM
+    public EnvironmentType EnvironmentType;
+    #endregion
 
     //public List<ApiResponse> apiResponse;
     //    public List<ApiRequest> apis = new List<ApiRequest>();
 
     public List<string> PlayerIDs = new() { "f0255647-61d5-4807-b700-352ce052c791", "f24c7429-3946-4567-87be-e258571f704f", "72b183bc-fcbb-4ed4-9061-775d3e908731", "72d43cf3-7bbb-4b88-b443-0669b1390d5e", "cb282b1f-d52f-4958-a28c-9c4a31610877", "bd004aed-2912-46ed-b30b-216e861376e4", "4b2921b6-275b-4454-b61a-d120b57933f3" };
+    [SerializeField] private ServerURLData _serverURLData;
 
 #if UNITY_WEBGL
     #region WebGl Events
@@ -150,7 +160,6 @@ public class APIController : MonoBehaviour
     {
         InitPlayerBetResponse(testJson);
     }
-
     public void GetABotResponse(string data)
     {
         DebugHelper.Log("get bot response :::::::----::: " + data);
@@ -161,7 +170,6 @@ public class APIController : MonoBehaviour
         GetABotAction = null;
         DebugHelper.Log("get bot response :::::::----::: after response " + data);
     }
-
     public void UpdateBalanceResponse(double data)
     {
         if (string.IsNullOrEmpty(userDetails.Id)) return;
@@ -175,7 +183,6 @@ public class APIController : MonoBehaviour
 
         }
     }
-
     [HideInInspector] public bool isOnline = true;
     public bool isInFocus = true;
     public bool isNeedToPauseWhileSwitchingTab = false;
@@ -218,6 +225,8 @@ public class APIController : MonoBehaviour
 
     }
 
+
+
     public void InternetCheckResponse(string status)
     {
         Debug.Log($"Received internet check response ::: {status}, Is Action null {InternetCheckAction == null}");
@@ -252,6 +261,7 @@ public class APIController : MonoBehaviour
             else
             {
                 Time.timeScale = 0;
+
             }
         }
         OnSwitchingTab?.Invoke(data.ToLower() == "true");
@@ -422,6 +432,8 @@ public class APIController : MonoBehaviour
 
 #endif
 
+
+
     public static List<char> cryptocharacters = new List<char>();
     private static readonly string key = "Hs9INfoebjwQwtrGRMD1hPaNAMrvGXxX"; // Replace with your key
     private void Awake()
@@ -442,6 +454,10 @@ public class APIController : MonoBehaviour
         }
 
     }
+
+
+
+
 
 
     public void OnClickDepositBtn()
@@ -510,6 +526,9 @@ public class APIController : MonoBehaviour
         DebugHelper.Log("Mirror Check Reload ==============> " + GameController.Instance.isInGame);
         GameController.Instance.isInGame = false;
     }
+
+
+
 
 
     public bool isCheckOnline;
@@ -606,6 +625,7 @@ public class APIController : MonoBehaviour
     }
 
 
+
     public void ValidateSession(string playerID, string token, string gamename, string operatorname, string session_token, Action<string> action, string environment)
     {
         List<KeyValuePojo> param = new List<KeyValuePojo>();
@@ -615,7 +635,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "operator", value = operatorname });
         param.Add(new KeyValuePojo { keyId = "session_token", value = session_token });
         param.Add(new KeyValuePojo { keyId = "request_type", value = "validateSession" });
-        Debug.Log(" Check The CallType In the Start Game======>1");
+
         WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_JSONDATA, StaticStrings.GetLambdaUrl(environment), param, (success, error, body) =>
         {
 
@@ -625,65 +645,264 @@ public class APIController : MonoBehaviour
     }
 
 
-    public void CheckMirrorGameAvaliblity(string host, string port, Action<bool, string> action)
+    #region MIRROR_SERVER_STATUS
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="TryCount"></param>
+    public void GetServerTitleData(int TryCount = 3)
     {
-
-        action?.Invoke(true, "BACK END TEAM ISSUE");
-        return;
-        DebugHelper.Log("Mirror Server check ==========> Check Once " + host + port);
-        var param = new List<KeyValuePojo>();
-        param.Add(new KeyValuePojo { keyId = "request_type", value = "CheckMirrorServer" });
-        param.Add(new KeyValuePojo { keyId = "host", value = host });
-        param.Add(new KeyValuePojo { keyId = "port", value = port });
-        param.Add(new KeyValuePojo { keyId = "game_name", value = authentication.gamename });
-
-
-        if (host.ToLower().Contains("localhost"))
+        DebugHelper.Log("GetServerTitleData ==========> Stage 1");
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_JSONDATA, "https://fwiknm2h5fpjwc32oguaevkggi0tibgf.lambda-url.ap-south-1.on.aws/", new List<KeyValuePojo>() { new KeyValuePojo { value = "getTitleAllData", keyId = "request_type" } }, (success, error, body) =>
         {
-            action?.Invoke(true, "Connected to localHost");
+            DebugHelper.Log("GetServerTitleData ==========>" + "body:  " + body);
+            if (success)
+            {
+                _serverURLData = JsonConvert.DeserializeObject<ServerURLData>(body);
+                if (_serverURLData.data.Exists(x => x.env.Equals(EnvironmentType.ToString().ToLower())))
+                {
+                    DebugHelper.Log($"GetTitleData ==========> {EnvironmentType.ToString()}");
+                    LambdaURL = _serverURLData.data.Find(x => x.env.Equals(EnvironmentType.ToString().ToLower())).API_URL;
+                }
+                else
+                {
+                    DebugHelper.Log("GetTitle Data is empty");
+                    LambdaURL = StaticStrings.LambdaUrl + "dev";
+                }
+
+
+                for (int i = 0; i < _serverURLData.data.Count; i++)
+                {
+                    switch (_serverURLData.data[i].env)
+                    {
+                        case "live":
+                            StaticStrings.ServerLambdaUrlLive = _serverURLData.data[i].API_URL;
+                            break;
+                        case "production":
+                            StaticStrings.ServerLambdaUrlProduction = _serverURLData.data[i].API_URL;
+                            break;
+                        case "dev":
+                            StaticStrings.ServerLambdaUrlDev = _serverURLData.data[i].API_URL;
+                            break;
+                        case "testing":
+                            StaticStrings.ServerLambdaUrlTest = _serverURLData.data[i].API_URL;
+                            break;
+                    }
+                }
+                DebugHelper.Log("GetServerDetails Response is orginal ::: " + _serverURLData.code + _serverURLData.message);
+            }
+            else
+            {
+                DebugHelper.Log("GetServerTitleData ==========> Stage 4 : " + "Error Code " + error);
+
+                if (TryCount > 0)
+                {
+                    StartCoroutine(RetryAfterDelay(TryCount));
+                    return;
+                }
+
+                if (error.Contains("timeout"))
+                {
+
+                    DebugHelper.Log("TimeOut : " + "Error Code " + error);
+                }
+
+            }
+        }, 10);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="TryCount"></param>
+    /// <returns></returns>
+    public IEnumerator RetryAfterDelay(int TryCount)
+    {
+        yield return new WaitForSeconds(2f);
+        GetServerTitleData(TryCount - 1);
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="action"></param>
+    public void GetTitleData(Action<bool, string, string, string> action, int TryCount = 3)
+    {
+        DebugHelper.Log("GetTitleData ==========> Stage 1");
+
+        Dictionary<string, string> payload = new Dictionary<string, string>();
+        payload["request_type"] = "GetTitleData";
+        payload["game_name"] = authentication.gamename;
+        string payloadJson = JsonConvert.SerializeObject(payload);
+        string encryptPayload = CryptoHelper.EncryptString(payloadJson);
+        DebugHelper.Log("GetTitleData ==========> Stage 2" + payloadJson);
+        DebugHelper.Log("GetTitleData ==========> Stage " + encryptPayload);
+        if (NetworkManager.singleton.networkAddress.ToLower().Contains("localhost"))
+        {
+            action?.Invoke(true, StaticStrings.LambdaUrl, "localhost", NetworkManager.singleton.GetComponent<SimpleWebTransport>().port.ToString());
             return;
         }
 
-        Debug.Log(" Check The CallType In the Start Game======>2");
-        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_JSONDATA, StaticStrings.GetLambdaUrl(authentication.environment), param, (success, error, body) =>
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_JSONDATA, StaticStrings.GetTitleUrl(authentication.environment), new List<KeyValuePojo>() { new KeyValuePojo { value = encryptPayload, keyId = "data" } }, (success, error, body) =>
         {
-            DebugHelper.Log("Mirror Server check ==========> BODY " + body);
+            DebugHelper.Log("GetTitleData ==========> Stage 3 : " + "\n url: " + StaticStrings.GetTitleUrl(authentication.environment) + "\nbody:  " + body);
             if (success)
             {
+                var response = JsonConvert.DeserializeObject<Dictionary<string, string>>(body);
+                string orginalData = CryptoHelper.DecryptString(response["data"]);
+                DebugHelper.Log("GetServerDetails Response is orginal ::: " + orginalData);
+                var finalresponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(orginalData);
 
-                ApiResponse response = JsonUtility.FromJson<ApiResponse>(body);
-                DebugHelper.Log("Mirror Server check ==========> IsACTIVE " + response.code + "**************" + response.message);
-
-
-                if (response.code != 200)
+                if (finalresponse.ContainsKey("code") && finalresponse["code"].ToString() == "200" && finalresponse.ContainsKey("data"))
                 {
-                    action.Invoke(false, response.message);
+                    JObject json = JObject.Parse(finalresponse["data"]);
+                    action.Invoke(true, (string)json["api_url"], (string)json["server_url"], (string)json["server_port"]);
 
                 }
                 else
                 {
-                    action.Invoke(true, response.message);
+                    action.Invoke(false, finalresponse["message"], "", "");
                 }
-
             }
             else
             {
-                DebugHelper.Log("Mirror Server check ==========> " + " Not IsACTIVE");
+                DebugHelper.Log("GetTitleData ==========> Stage 4 : " + "Error Code " + error);
+
+                if (TryCount > 0)
+                {
+                    StartCoroutine(RetryAfterDelay(action, TryCount));
+                    return;
+                }
+
+                if (error.Contains("timeout"))
+                {
+                    UIController.Instance.InternetPopNew.SetActive(true);
+
+                }
+                else
+                {
+                    action.Invoke(false, "error", "", "");
+                }
+            }
+        }, 3);
+    }
+
+    public IEnumerator RetryAfterDelay(Action<bool, string, string, string> action, int TryCount)
+    {
+        yield return new WaitForSeconds(2f);
+        GetTitleData(action, TryCount - 1);
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="action"></param>
+    public void GetServer(Action<bool> action)
+    {
+        DebugHelper.Log("GetServer ==========> Stage 1");
+        var param = new List<KeyValuePojo>();
+        param.Add(new KeyValuePojo { keyId = "request_type", value = "GetServer" });
+        param.Add(new KeyValuePojo { keyId = "game_name", value = authentication.gamename });
+
+        if (NetworkManager.singleton.networkAddress.ToLower().Contains("localhost"))
+        {
+            action?.Invoke(true);
+            return;
+        }
+
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_JSONDATA, StaticStrings.GetTitleUrl(authentication.environment), param, (success, error, body) =>
+        {
+            DebugHelper.Log("GetServer ==========> Stage 2 : " + body);
+            if (success)
+            {
+                ApiResponse response = JsonUtility.FromJson<ApiResponse>(body);
+                DebugHelper.Log("GetServer ==========> Stage 3 : " + response.code + "**************" + response.message);
+                if (response.code != 200)
+                {
+                    action.Invoke(false);
+                }
+                else
+                {
+                    action.Invoke(true);
+                }
+            }
+            else
+            {
+                DebugHelper.Log("GetServer ==========> Stage 4 : " + " Not IsACTIVE");
                 if (body.Contains("timeout"))
                 {
                     UIController.Instance.InternetPopNew.SetActive(true);
                 }
                 else
                 {
-                    action.Invoke(false, "error");
+                    action.Invoke(true);
                 }
             }
-        }, 1);
+        }, 10);
+    }
+
+    #endregion
+
+
+    public async void CheckMirror(Action<bool> action)
+    {
+        DebugHelper.Log("CheckMirror ==========> Stage 1");
+
+        Dictionary<string, string> payload = new Dictionary<string, string>();
+        payload["request_type"] = "CheckServer";
+        payload["host"] = NetworkManager.singleton.networkAddress;
+        payload["port"] = NetworkManager.singleton.GetComponent<SimpleWebTransport>().port.ToString();
+        payload["game_name"] = authentication.gamename;
+        string payloadJson = JsonConvert.SerializeObject(payload);
+        string encryptPayload = CryptoHelper.EncryptString(payloadJson);
+        DebugHelper.Log("CheckMirror ==========> Stage 2" + payloadJson);
+        DebugHelper.Log("CheckMirror ==========> Stage " + encryptPayload);
+        if (NetworkManager.singleton.networkAddress.ToLower().Contains("localhost"))
+        {
+            action?.Invoke(true);
+            return;
+        }
+
+        WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_JSONDATA, StaticStrings.GetTitleUrl(authentication.environment), new List<KeyValuePojo>() { new KeyValuePojo { value = encryptPayload, keyId = "data" } }, (success, error, body) =>
+        {
+            DebugHelper.Log("CheckMirror ==========> Stage 3 : " + "\n url: " + StaticStrings.GetTitleUrl(authentication.environment) + "\nbody:  " + body);
+            if (success)
+            {
+                var response = JsonConvert.DeserializeObject<Dictionary<string, string>>(body);
+                string orginalData = CryptoHelper.DecryptString(response["data"]);
+                DebugHelper.Log("CheckMirror Response is orginal ::: " + orginalData);
+                var finalresponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(orginalData);
+
+                if (finalresponse.ContainsKey("code") && finalresponse["code"].ToString() == "200")
+                {
+                    action.Invoke(true);
+                }
+                else
+                {
+                    action.Invoke(false);
+                }
+            }
+            else
+            {
+                DebugHelper.Log("CheckMirror ==========> Stage 4 : " + "Error Code " + error);
+                if (error.Contains("timeout"))
+                {
+                    UIController.Instance.InternetPopNew.SetActive(true);
+                }
+                else
+                {
+                    action.Invoke(false);
+                }
+            }
+        }, 10);
     }
 
 
-    public bool isValidateSession = false;
 
+    public bool isValidateSession = false;
     public async void ValidateSession()
     {
 
@@ -731,6 +950,9 @@ public class APIController : MonoBehaviour
 
 #endif
     }
+
+
+
 
     public class ServerData
     {
@@ -801,19 +1023,23 @@ public class APIController : MonoBehaviour
 #endif
     }
 
+
+
     public void TerminateMatch(string matchToken, string operatorName, string enviroment)
     {
         List<KeyValuePojo> param = new List<KeyValuePojo>();
         param.Add(new KeyValuePojo { keyId = "id", value = matchToken });
         param.Add(new KeyValuePojo { keyId = "operator", value = operatorName });
         param.Add(new KeyValuePojo { keyId = "request_type", value = "TerminateMatch" });
-        Debug.Log(" Check The CallType In the Start Game======>3");
+
         WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_JSONDATA, StaticStrings.GetLambdaUrl(enviroment), param, (success, error, body) =>
         {
+            betRequest.RemoveAll(x => x.MatchToken == matchToken);
             DebugHelper.Log($"TerminateMatch => Body : {body}, Status : {success}, Error : {error}");
+
+
         });
     }
-
     public int InitlizeBet(double amount, TransactionMetaData metadata, bool isAbleToCancel = false, Action<bool> action = null, string playerId = "", bool isBot = false, Action<string> betIdAction = null)
     {
         if (isPlayByDummyData)
@@ -936,7 +1162,6 @@ public class APIController : MonoBehaviour
 #endif
         }
     }
-
     public void FinilizeBet(int index, TransactionMetaData metadata, Action<bool> action = null, string playerId = "", bool isBot = false)
     {
         if (isPlayByDummyData)
@@ -983,7 +1208,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "balance", value = Balance });
         param.Add(new KeyValuePojo { keyId = "lobby_name", value = lobbyName });
 
-        Debug.Log(" Check The CallType In the Start Game======>4");
+
         WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_JSONDATA, StaticStrings.GetLambdaUrl(environment), param, (success, error, body) =>
         {
             if (success)
@@ -1012,6 +1237,8 @@ public class APIController : MonoBehaviour
             }
         });
     }
+
+
 
 
     public void ApiCallBackDebugger(string data)
@@ -1082,6 +1309,8 @@ public class APIController : MonoBehaviour
 
 
 
+
+
     public void AddMatchLog(string matchToken, string action, string metadata, string PlayerId = "")
     {
         if (userDetails.isBlockApiConnection)
@@ -1108,7 +1337,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "Id", value = matchToken });
         param.Add(new KeyValuePojo { keyId = "unclaim_amount", value = amount.ToString() });
         param.Add(new KeyValuePojo { keyId = "requestType", value = "AddUnclaimAmount" });
-        Debug.Log(" Check The CallType In the Start Game======>5");
+
         WebApiManager.Instance.GetNetWorkCall(NetworkCallType.GET_METHOD, backendAPIURL.LootrixMatchAPI, param, (success, error, body) =>
         {
             if (success)
@@ -1137,7 +1366,7 @@ public class APIController : MonoBehaviour
         param.Add(new KeyValuePojo { keyId = "player", value = JsonConvert.SerializeObject(players) });
         param.Add(new KeyValuePojo { keyId = "request_type", value = "AddPlayers" });
         param.Add(new KeyValuePojo { keyId = "operator", value = Operatorname });
-        Debug.Log(" Check The CallType In the Start Game======>6");
+
         WebApiManager.Instance.GetNetWorkCall(NetworkCallType.POST_METHOD_USING_JSONDATA, StaticStrings.GetLambdaUrl(environment), param, (success, error, body) =>
         {
             if (success)
@@ -1155,14 +1384,16 @@ public class APIController : MonoBehaviour
     }
 
 
+
+
     public void ExecuteAPI(ApiRequest api, int timeout = 0, bool check = false)
     {
         if (!check)
         {
-            DebugHelper.Log("ExecuteAPI =====> " + api);
-        }
 
-        Debug.Log("Check The CallType In the Start Game====>7"+ api.callType);
+        }
+        DebugHelper.Log("ExecuteAPI =====> " + api);
+
         WebApiManager.Instance.GetNetWorkCall(api.callType, api.url, api.param, (success, error, body) =>
         {
 
@@ -1226,6 +1457,11 @@ public class APIController : MonoBehaviour
 
 
 
+
+
+
+
+
     //public void GetABotAPI(List<string> botId, Action<BotDetails> action, string domainURL)
     //{
     //    List<KeyValuePojo> param = new List<KeyValuePojo>();
@@ -1281,27 +1517,24 @@ public class APIController : MonoBehaviour
     public async void StartAuthentication(string data)
     {
         authentication = !string.IsNullOrWhiteSpace(data) ? JsonUtility.FromJson<AuthenticationData>(data) : new AuthenticationData();
-        /*if (string.IsNullOrWhiteSpace(authentication.environment))
-        {
-            IsLiveGame = true;
-        }
-        else
-        {
-            IsLiveGame = authentication.environment.ToLower() == "live";
-        }*/
-        // NetworkManager.singleton.networkAddress = IsLiveGame ? "gameserver.utwebapps.com" : "dev.test.gameservers.utwebapps.com";
-        GameController.Instance.CurrentServerHost = NetworkManager.singleton.networkAddress;
-       
+        authentication.entryAmountDetails = new();
+        authentication.entryAmountDetails.SetEntryAmount(authentication.game_data, authentication.currency_type);
         GamePlayUI.instance.AssignCurrency(authentication.currency_type.ToString(), "0.00");
 
+
 #if UNITY_WEBGL
-        CheckMirrorGameAvaliblity(GameController.Instance.CurrentServerHost, (7777).ToString(), async (success, message) =>
+
+        GetTitleData(async (success, apiUrl, host, port) =>
         {
-            DebugHelper.Log($"CheckMirrorGameAvaliblity => Success : {success} ....... Message : {message}");
+            DebugHelper.Log($"CheckMirrorGameAvaliblity => Success : {success} .......  {port} .... {host}");
+            NetworkManager.singleton.networkAddress = host;
+            NetworkManager.singleton.GetComponent<SimpleWebTransport>().port = ushort.Parse(port);
+            StaticStrings.LambdaUrl = apiUrl;
             if (!success)
             {
-               /* UIController.Instance.ConnectionIssue.SetActive(true);
-                return;*/
+                DebugHelper.Log($"ConnectionIssue 1515");
+                UIController.Instance.ConnectionIssue.SetActive(true);
+                return;
             }
             else
             {
@@ -1319,7 +1552,6 @@ public class APIController : MonoBehaviour
                 PlayerManager.localPlayer.StartGameAuthentication(data);
             }
         });
-
 #endif
     }
 
@@ -1347,8 +1579,9 @@ public class APIController : MonoBehaviour
             if (Timer > 20)
             {
                 Timer = 0;
-               /* UIController.Instance.ConnectionIssue.SetActive(true);
-                break;*/
+                DebugHelper.Log($"ConnectionIssue 1562");
+                UIController.Instance.ConnectionIssue.SetActive(true);
+                break;
 
             }
             await UniTask.Delay(50);
@@ -1423,12 +1656,12 @@ public class APIController : MonoBehaviour
                     }
                     else
                     {
-                        userDetails.potLimit = 1000;
+                        userDetails.potLimit = 1000000000;
                         userDetails.challLimit = 320;
                         userDetails.bootAmount = 10;
                     }
-                    userDetails.commission = authentication.game_data.comission;
-                    authentication.comission = authentication.game_data.comission;
+                    userDetails.commission = authentication.entryAmountDetails.commission;
+                    authentication.comission = authentication.entryAmountDetails.commission;
                     if (string.IsNullOrWhiteSpace(userDetails.gameId))
                         userDetails.gameId = "ecd5c5ce-e0a1-4732-82a0-099ec7d180be";
                     DebugHelper.Log("Check this once !!!!!!!!!!!!!" + JsonUtility.ToJson(userDetails));
@@ -1442,7 +1675,7 @@ public class APIController : MonoBehaviour
                     GameController.Instance.CurrentPlayerData.comission = authentication.comission;
                     GameController.Instance.CurrentPlayerData.environment = authentication.environment;
                     GameController.Instance.CurrentPlayerData.balance = authentication.balance;
-                    // GamePlayUI.instance.AssignCurrency(userDetails.currency_type.ToString(), authentication.balance.ToString());
+                    GamePlayUI.instance.AssignCurrency(userDetails.currency_type.ToString(), authentication.balance.ToString());
 
                     OnUserDetailsUpdate?.Invoke();
                     OnUserBalanceUpdate?.Invoke();
@@ -1503,13 +1736,14 @@ public class APIController : MonoBehaviour
 
         if (!NetworkClient.isConnected)
         {
-            CheckMirrorGameAvaliblity(GameController.Instance.CurrentServerHost, (7777).ToString(), async (success, message) =>
+            CheckMirror(async (success) =>
             {
-                DebugHelper.Log($"CheckMirrorGameAvaliblity => Success : {success} ....... Message : {message}");
+                DebugHelper.Log($"CheckMirrorGameAvaliblity => Success : {success} .......");
                 if (!success)
                 {
-                    /*UIController.Instance.ConnectionIssue.SetActive(true);
-                    return;*/
+                    DebugHelper.Log($"ConnectionIssue 1716");
+                    UIController.Instance.ConnectionIssue.SetActive(true);
+                    return;
                 }
                 else
                 {
@@ -1528,7 +1762,7 @@ public class APIController : MonoBehaviour
             await UniTask.Delay(100);
         }
 
-        PlayerManager.localPlayer.GetUpdatedBalance(APIController.instance.authentication.Id, APIController.instance.authentication.session_token, APIController.instance.authentication.currency_type, APIController.instance.authentication.token, APIController.instance.authentication.gamename, APIController.instance.authentication.operatorname, APIController.instance.authentication.environment);
+        PlayerManager.localPlayer.GetUpdatedBalance(APIController.instance.authentication.Id, APIController.instance.authentication.session_token, APIController.instance.authentication.currency_type, APIController.instance.authentication.token, APIController.instance.authentication.operatorname, APIController.instance.authentication.gamename, APIController.instance.authentication.environment);
 
     }
 
@@ -2314,7 +2548,8 @@ public class AuthenticationData
     public bool music = true;
     public bool sound = true;
     public string environment;
-    public EntryAmountDetails game_data = new();
+    public string game_data;
+    public EntryAmountDetails entryAmountDetails;
 }
 
 
@@ -2330,6 +2565,119 @@ public class EntryAmountDetails
     public List<int> smallBlinds = new List<int>();
     public List<int> potLimits = new List<int>();
     public List<int> chaalLimits = new List<int>();
-    public float comission = 0;
+    public float commission = 0;
     public int player_count = 0;
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="entryData"></param>
+    /// <param name="currency_type"></param>
+    public void SetEntryAmount(string entryData, string currency_type)
+    {
+        if (string.IsNullOrEmpty(entryData))
+        {
+            SetDefaultAmount(currency_type);
+            return;
+        }
+        JObject entrydata = JObject.Parse(entryData);
+        betValues = JsonConvert.DeserializeObject<List<int>>(entrydata["betValues"].ToString());
+        maxBetValue = int.Parse(entrydata["maxBetValue"].ToString());
+        minBetValue = int.Parse(entrydata["minBetValue"].ToString());
+        incrementValue = int.Parse(entrydata["incrementValue"].ToString());
+        decrementValue = int.Parse(entrydata["decrementValue"].ToString());
+        entryAmounts = JsonConvert.DeserializeObject<List<int>>(entrydata["entryAmounts"].ToString());
+        smallBlinds = JsonConvert.DeserializeObject<List<int>>(entrydata["smallBlinds"].ToString());
+        potLimits = JsonConvert.DeserializeObject<List<int>>(entrydata["potLimits"].ToString());
+        chaalLimits = JsonConvert.DeserializeObject<List<int>>(entrydata["chaalLimits"].ToString());
+        commission = JsonConvert.DeserializeObject<float>(entrydata["comission"].ToString());
+        player_count = JsonConvert.DeserializeObject<int>(entrydata["player_count"].ToString());
+
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="currency_type"></param>
+    public void SetDefaultAmount(string currency_type)
+    {
+        if (currency_type == "USD" || currency_type == "EUR")
+        {
+            betValues = new List<int> { 1, 2, 5, 10 };
+            minBetValue = 1;
+            maxBetValue = 100;
+            incrementValue = 1;
+            decrementValue = 1;
+            entryAmounts = new List<int> { };
+            smallBlinds = new List<int> { };
+            potLimits = new List<int> { };
+            chaalLimits = new List<int> { };
+        }
+        else
+        {
+            betValues = new List<int> { 10, 20, 50, 100 };
+            minBetValue = 10;
+            maxBetValue = 10000;
+            incrementValue = 10;
+            decrementValue = 10;
+            entryAmounts = new List<int> { };
+            smallBlinds = new List<int> { };
+            potLimits = new List<int> { };
+            chaalLimits = new List<int> { };
+        }
+        commission = 0;
+        player_count = 2;
+    }
+}
+
+//[System.Serializable]
+//public class EntryAmountDetails
+//{
+//    public List<int> betValues = new List<int>();
+//    public int maxBetValue;
+//    public int minBetValue;
+//    public int incrementValue;
+//    public int decrementValue;
+//    public List<int> entryAmounts = new List<int>();
+//    public List<int> smallBlinds = new List<int>();
+//    public List<int> potLimits = new List<int>();
+//    public List<int> chaalLimits = new List<int>();
+//    public float comission = 0;
+//    public int player_count = 0;
+//}
+
+
+/// <summary>
+/// 
+/// </summary>
+
+[Serializable]
+public class ServerURLData
+{
+    public int code;
+    public string message;
+    public List<Data> data;
+    public string output;
+}
+
+/// <summary>
+/// 
+/// </summary>
+[Serializable]
+public class Data
+{
+    public string env;
+    public string API_URL;
+    public string wss_url;
+}
+
+[Serializable]
+public enum EnvironmentType
+{
+    Production,
+    Live,
+    Dev,
+    Testing,
+    LocalHost
 }

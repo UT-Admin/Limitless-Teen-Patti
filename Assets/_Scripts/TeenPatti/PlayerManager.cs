@@ -227,10 +227,10 @@ namespace TP
 
         public void SearchGame(int _gameType, string lobbyName, bool canReJoin)
         {
-            Debug.Log("Can rejoin 2: " + canReJoin);
-            Debug.Log(" Check this level 1 ");
+            DebugHelper.Log("Can rejoin 2: " + canReJoin);
+            DebugHelper.Log(" Check this level 1 ");
             GameController.Instance.isForceJoin = false;
-            Debug.Log(" Check this level 2");
+            DebugHelper.Log(" Check this level 2");
             try
             {
                 CmdSearchGame(_gameType, lobbyName, canReJoin);
@@ -238,10 +238,10 @@ namespace TP
             catch
             {
                 UIController.Instance.Loading.SetActive(false);
-                Debug.Log(" Check this level 3a ");
+                DebugHelper.Log(" Check this level 3a ");
             }
 
-            Debug.Log(" Check this level 3");
+            DebugHelper.Log(" Check this level 3");
         }
 
         public void AddFriend(string playerId)
@@ -283,7 +283,7 @@ namespace TP
 
         public void JoinGame(string _matchID)
         {
-            Debug.Log(_matchID);
+            DebugHelper.Log(_matchID);
             CmdJoinGame(_matchID);
 
         }
@@ -296,7 +296,7 @@ namespace TP
 
         }
 
-        public void ServerDisconnect()
+        public void ServerDisconnect(bool forceKick = false)
         {
             try
             {
@@ -311,7 +311,7 @@ namespace TP
                 MirrorManager.instance.ExitLobby(playerID);
             else
                 MirrorManager.instance.PlayerDisconnected(this, roomName);
-            RpcDisconnectGame();
+            RpcDisconnectGame(forceKick);
             networkMatch.matchId = string.Empty.ToGuid();
             roomName = "";
         }
@@ -549,7 +549,7 @@ namespace TP
 #endif
             }
 
-            Debug.Log("invalide session");
+            DebugHelper.Log("invalide session");
 
 
         }
@@ -617,7 +617,7 @@ namespace TP
             }
             else
             {
-                Debug.Log("Room Closed Searching New Game");
+                DebugHelper.Log("Room Closed Searching New Game");
                 // GameController.Instance.StartGameOnButtonClick();
                 UIController.Instance.FindGameWEBGL();
 
@@ -676,6 +676,11 @@ namespace TP
             }
             else
             {
+                float val = float.Parse(APIController.instance.userDetails.balance.ToString("F2"));
+                GamePlayUI.instance.allinAmountText.text = CommonFunctions.Instance.GetAmountDecimalSeparator(APIController.instance.userDetails.balance);
+                GamePlayUI.instance.UpdateChaalText(val, true);
+                GamePlayUI.instance.isRaisedBet = false;
+                UIController.Instance.Connecting.SetActive(false);
                 GameController.Instance.currentRoomName = _matchID;
                 PlayerPrefs.SetString("LastEnteredRoom", _matchID);
                 StartCoroutine(WaitAndCheckJoinStatus(true));
@@ -694,10 +699,14 @@ namespace TP
         }
 
         [ClientRpc]
-        void RpcDisconnectGame()
+        void RpcDisconnectGame(bool forceKick)
         {
             if (isLocalPlayer)
             {
+                if (forceKick)
+                {
+                    UIController.Instance.serverKick.ShowPopup("Session Token Expired", 401);
+                }
                 GamePlayUI.instance.ClearAllUI();
                 GameController.Instance.DisconnectClient();
             }
@@ -983,18 +992,18 @@ namespace TP
         {
             isInLobby = false;
             ExitLobby();
-            Debug.Log("Can rejoin 3: " + canReJoin);
+            DebugHelper.Log("Can rejoin 3: " + canReJoin);
 
             if (MirrorManager.instance.SearchGame(gameObject, playerID, _gameType, lobbyName, out roomName, out gameManagerNetID, canReJoin))
             {
-                Debug.Log($"Join Game =======> Game Found Successfully</color>");
+                DebugHelper.Log($"Join Game =======> Game Found Successfully</color>");
                 networkMatch.matchId = roomName.ToGuid();
                 gameManager = gameManagerNetID.GetComponent<GameManager>();
                 TargetSearchGame(true, roomName, _gameType, lobbyName);
             }
             else
             {
-                Debug.Log($"Join Game =======> Game Search Failed</color>");
+                DebugHelper.Log($"Join Game =======> Game Search Failed</color>");
                 TargetSearchGame(false, roomName, _gameType, lobbyName);
             }
         }
@@ -1319,13 +1328,13 @@ namespace TP
         [TargetRpc]
         private void TargetValidateSession(bool success)
         {
-            Debug.Log("TARGET valide Session Called ===================> " + success);
+            DebugHelper.Log("TARGET valide Session Called ===================> " + success);
             APIController.instance.isValidateSession = false;
             if (success)
                 return;
 #if UNITY_WEBGL && !UNITY_EDITOR
             APIController.DisconnectGame("Session expired. Account active in another device.");
-            Debug.Log("Invalide Session ===================> ");
+            DebugHelper.Log("Invalide Session ===================> ");
 #endif
         }*/
         [Command]

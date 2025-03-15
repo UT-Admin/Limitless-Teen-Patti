@@ -191,7 +191,7 @@ namespace TP
 
         public void FindGameWEBGLRejoin()
         {
-			Debug.Log("=================> REJOIN CALLED");
+			DebugHelper.Log("=================> REJOIN CALLED");
             Loading.SetActive(true);
 			StartGameAfterShutDown();
 
@@ -219,7 +219,7 @@ namespace TP
 
 		public void StrtGameAfterDeposit()
 		{
-			Debug.Log("=================>  Startgame AfterDeposit");
+			DebugHelper.Log("=================>  Startgame AfterDeposit");
             JoinTeenpatti(1);
         }
 
@@ -428,7 +428,7 @@ namespace TP
 		
 		IEnumerator WaitAndEnterGameMirror()
 		{
-			Debug.Log("CHECK STATUS =========> 1");
+			DebugHelper.Log("CHECK STATUS =========> 1");
 			ShowLoadingScreen();
             string data;
 			GameController.Instance.totalEarnings = 0;
@@ -445,7 +445,7 @@ namespace TP
 				lobbyName += "_" + "TPG";
 
 			}
-			Debug.Log("CHECK STATUS =========> 3");
+			DebugHelper.Log("CHECK STATUS =========> 3");
 			GameController.Instance.isInGame = false;
 			GameController.Instance.currentLobbyName = lobbyName + APIController.instance.userDetails.game_Id +APIController.instance.userDetails.isBlockApiConnection;
 			GameController.Instance.StartGame((int)GameController.Instance.CurrentGameMode, GameController.Instance.currentLobbyName);

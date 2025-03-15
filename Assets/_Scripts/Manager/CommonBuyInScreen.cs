@@ -56,23 +56,23 @@ public class CommonBuyInScreen : MonoBehaviour
         playNowButton.interactable = true;
 
 
-        if (APIController.instance.authentication.game_data.entryAmounts.Count <= 0)
+        if (APIController.instance.authentication.entryAmountDetails.entryAmounts.Count <= 0)
         {
-            APIController.instance.authentication.game_data.entryAmounts = new List<int> { 1, 2, 5,10 };
-            APIController.instance.authentication.game_data.chaalLimits = new List<int> { 32, 64, 160, 320};
-            APIController.instance.authentication.game_data.potLimits = new List<int> { 100, 200, 500,1000 };
+            APIController.instance.authentication.entryAmountDetails.entryAmounts = new List<int> { 1, 2, 5,10 };
+            APIController.instance.authentication.entryAmountDetails.chaalLimits = new List<int> { 32, 64, 160, 320};
+            APIController.instance.authentication.entryAmountDetails.potLimits = new List<int> { 100, 200, 500,1000 };
             GameController.Instance.BuyScreenData = new();
 
-            for (int i = 0; i < APIController.instance.authentication.game_data.entryAmounts.Count; i++)
+            for (int i = 0; i < APIController.instance.authentication.entryAmountDetails.entryAmounts.Count; i++)
             {
 
                 SelectedAmountData data = new();
-                data.Commission = APIController.instance.authentication.game_data.comission;
+                data.Commission = APIController.instance.authentication.entryAmountDetails.commission;
                 data.Currency = APIController.instance.userDetails.currency_type;
-                data.entryFee = APIController.instance.authentication.game_data.entryAmounts[i];
-                data.ChaalAmount = APIController.instance.authentication.game_data.chaalLimits[i];
-                data.potAmount = APIController.instance.authentication.game_data.potLimits[i];
-                toggles[i].GetComponentInChildren<TMP_Text>().text = APIController.instance.authentication.game_data.entryAmounts[i].ToString() + " " + APIController.instance.userDetails.currency_type;
+                data.entryFee = APIController.instance.authentication.entryAmountDetails.entryAmounts[i];
+                data.ChaalAmount = APIController.instance.authentication.entryAmountDetails.chaalLimits[i];
+                data.potAmount = APIController.instance.authentication.entryAmountDetails.potLimits[i];
+                toggles[i].GetComponentInChildren<TMP_Text>().text = APIController.instance.authentication.entryAmountDetails.entryAmounts[i].ToString() + " " + APIController.instance.userDetails.currency_type;
                 GameController.Instance.BuyScreenData.selectedAmountData.Add(data);
             }
 
@@ -87,15 +87,15 @@ public class CommonBuyInScreen : MonoBehaviour
         }
         else
         {
-            for (int i = 0; i < APIController.instance.authentication.game_data.entryAmounts.Count; i++)
+            for (int i = 0; i < APIController.instance.authentication.entryAmountDetails.entryAmounts.Count; i++)
             {
                 SelectedAmountData data = new();
-                data.Commission = APIController.instance.authentication.game_data.comission;
+                data.Commission = APIController.instance.authentication.entryAmountDetails.commission;
                 data.Currency = APIController.instance.userDetails.currency_type;
-                data.entryFee = APIController.instance.authentication.game_data.entryAmounts[i];
-                data.ChaalAmount = APIController.instance.authentication.game_data.chaalLimits[i];
-                data.potAmount = APIController.instance.authentication.game_data.potLimits[i];
-                toggles[i].GetComponentInChildren<TMP_Text>().text = APIController.instance.authentication.game_data.entryAmounts[i].ToString() + " " + APIController.instance.userDetails.currency_type;
+                data.entryFee = APIController.instance.authentication.entryAmountDetails.entryAmounts[i];
+                data.ChaalAmount = APIController.instance.authentication.entryAmountDetails.chaalLimits[i];
+                data.potAmount = APIController.instance.authentication.entryAmountDetails.potLimits[i];
+                toggles[i].GetComponentInChildren<TMP_Text>().text = APIController.instance.authentication.entryAmountDetails.entryAmounts[i].ToString() + " " + APIController.instance.userDetails.currency_type;
                 GameController.Instance.BuyScreenData.selectedAmountData.Add(data);
             }
 
@@ -198,11 +198,11 @@ public class CommonBuyInScreen : MonoBehaviour
     {
         ChangeTextColor(toggleIndex);
         SelectedAmountData dataToSet = GameController.Instance.BuyScreenData.selectedAmountData[toggleIndex];
-        platformInfo.text = $"Platform Fee ({APIController.instance.authentication.game_data.comission * 100}% of total Pot Amount)";
+        platformInfo.text = $"Platform Fee ({APIController.instance.authentication.entryAmountDetails.commission * 100}% of total Pot Amount)";
         entryFee.text =dataToSet.entryFee.ToString() + " " + APIController.instance.userDetails.currency_type;
         chaalLimit.text = dataToSet.ChaalAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
         potLimit.text = dataToSet.potAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
-        APIController.instance.userDetails.potLimit = dataToSet.potAmount;
+        APIController.instance.userDetails.potLimit = 1000000000;
         APIController.instance.userDetails.challLimit = dataToSet.ChaalAmount;
         APIController.instance.userDetails.bootAmount = dataToSet.entryFee;
         APIController.instance.authentication.challLimit = dataToSet.ChaalAmount;

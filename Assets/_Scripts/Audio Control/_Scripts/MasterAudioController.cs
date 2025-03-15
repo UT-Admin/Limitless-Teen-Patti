@@ -38,7 +38,7 @@ public class MasterAudioController : MonoBehaviour
     public void CheckSoundToggle(bool isMute)
     {
 
-        Debug.Log("CheckSoundToggle==================> " + isMute);
+        DebugHelper.Log("CheckSoundToggle==================> " + isMute);
         foreach (var audioType in audiosActive.FindAll(x => x.audioEnum != AudioEnum.BG))
         {
             if (audioType.audioActive.Count > 0)
@@ -53,7 +53,7 @@ public class MasterAudioController : MonoBehaviour
 
     public void CheckMusicToggle(bool isMute)
     {
-        Debug.Log("CheckMusicToggle==================> " + isMute);
+        DebugHelper.Log("CheckMusicToggle==================> " + isMute);
         foreach (var audioType in audiosActive.FindAll(x => x.audioEnum == AudioEnum.BG))
         {
             if (audioType.audioActive.Count > 0)
@@ -84,7 +84,7 @@ public class MasterAudioController : MonoBehaviour
 
     public void PlayAudio(AudioEnum audioToPlay, bool loop = false)
     {
-        Debug.Log("Check Sound Play");
+        DebugHelper.Log("Check Sound Play");
         //========================================================================== TEMP
         if (audioToPlay == AudioEnum.BUTTONCLICKCLOSE)
         {

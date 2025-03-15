@@ -2,11 +2,17 @@ mergeInto(LibraryManager.library, {
   CloseWindow: function () {
   ExitGame();
   },
-  GetUpdatedBalance: function () {
+  UpdateBalance: function () {
   GetBalance();
   },
   DisconnectGame: function (msg) {
   Disconnect(UTF8ToString(msg));
+  },
+  SetAudio: function (sound,music) {
+  SetGameAudio(sound,music);
+  },
+  InternetCheckResponse: function () {
+  CheckInternet();
   },
   ExternalApiResponse: function (msg) {
   ExecuteAPIResponse(UTF8ToString(msg));

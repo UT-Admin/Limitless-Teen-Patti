@@ -133,7 +133,7 @@ namespace TP
         public bool isTimerRunning = false;
         public void StartTurn()
         {
-            Debug.Log("Check Start Turn");
+            DebugHelper.Log("Check Start Turn");
             TimerCountDown.SetActive(true);
             StopCoroutine(nameof(StartCountdown));
             StartCoroutine(nameof(StartCountdown));
@@ -158,7 +158,7 @@ namespace TP
 
 
             BackCardGlowAnim(false);
-            Debug.Log("======================> StartTimer Check222");
+            DebugHelper.Log("======================> StartTimer Check222");
             TimerCountDown.SetActive(false);
 
         }
@@ -195,16 +195,16 @@ namespace TP
         {
             avatharTimer.enabled = true;
             BackCardGlowAnim(true);
-            Debug.Log("======================> StartTimer Check111");
+            DebugHelper.Log("======================> StartTimer Check111");
             avatharTimer.color = new Color(0f, 1f, 0f, .6f);
 
 
             avatharTimer.fillAmount = 0;
             double myTurnTime = myPlayerState.myTurnTime;
-            /* Debug.Log("======================> StartTimer Check" + myPlayerState.lives + " =============> " + myPlayerState.isMyTurn);*/
+            /* DebugHelper.Log("======================> StartTimer Check" + myPlayerState.lives + " =============> " + myPlayerState.isMyTurn);*/
             while (/*myPlayerState.lives > 0 &&*/ myPlayerState.isMyTurn)
             {
-                Debug.Log("======================> StartTimer Check333....111");
+                DebugHelper.Log("======================> StartTimer Check333....111");
                 bool playedSound = false;
                 bool playedVibration = false;
                 float timerVal = 0f;
@@ -217,7 +217,7 @@ namespace TP
                     avatharTimer.enabled = true;
                     avatharTimer.fillAmount = 1 - timerVal;
                     BackCardGlowAnim(true);
-                    Debug.Log("======================> StartTimer Check333" + timerVal);
+                    DebugHelper.Log("======================> StartTimer Check333" + timerVal);
                     // Color col = CommonFunctions.Instance.ReMapColor(0.6f, 0.8f, Color.green, Color.red, timerVal);
                     Color col = new Color(0f, 1f, 0f, .6f);
                     avatharTimer.color = col;
@@ -287,7 +287,7 @@ namespace TP
         //    else
         //    {
         //        MasterAudioController.instance.StopAudio(AudioEnum.TIMER);
-        //        Debug.Log("Timer  END CALLED  -------- >  IS TIMER RUNNIUNG  ------------> UpdateState ");
+        //        DebugHelper.Log("Timer  END CALLED  -------- >  IS TIMER RUNNIUNG  ------------> UpdateState ");
         //        EndTurn();
         //        availableLives = ps.lives;
         //    }
@@ -312,7 +312,7 @@ namespace TP
         {
             myPlayerState = ps;
             playerID = myPlayerState.playerData.playerID;
-            Debug.Log("==================>YYYYYYYYYYYYYYYYYYYYY" + ps.playerData.playerName + "==================> " + ps.isMyTurn + " ==============================> " + GameManager.localInstance.gameState.currentState);
+            DebugHelper.Log("==================>YYYYYYYYYYYYYYYYYYYYY" + ps.playerData.playerName + "==================> " + ps.isMyTurn + " ==============================> " + GameManager.localInstance.gameState.currentState);
 
 
 
@@ -340,8 +340,8 @@ namespace TP
                 {
                     if (APIController.instance.userDetails.balance <= (myPlayerState.hasSeenCard ? GameManager.localInstance.gameState.currentStake : (GameManager.localInstance.gameState.currentStake / 2)))
                     {
-                        Debug.Log("Auto Card Trun Seen  ===>6");
-                        Debug.Log("CHECK ALL IN ==============>");
+                        DebugHelper.Log("Auto Card Trun Seen  ===>6");
+                        DebugHelper.Log("CHECK ALL IN ==============>");
                         GamePlayUI.instance.allinButton.gameObject.SetActive(true);
                         GamePlayUI.instance.allinAmountText.text = CommonFunctions.Instance.GetAmountDecimalSeparator(APIController.instance.userDetails.balance);
                         GamePlayUI.instance.DisableButtonColorForAllin();
@@ -388,7 +388,7 @@ namespace TP
 
 
 
-                        Debug.Log("Auto Card Trun Seen Auto Card Trun SeenAuto Card Trun SeenAuto Card Trun Seen====>5");
+                        DebugHelper.Log("Auto Card Trun Seen Auto Card Trun SeenAuto Card Trun SeenAuto Card Trun Seen====>5");
                         GamePlayUI.instance.showButton.image.sprite = GamePlayUI.instance.ActiveShowPic;
                         GamePlayUI.instance.Show.color = GamePlayUI.instance.ActiveChaal;
                         /*GamePlayUI.instance.showButtonText.text = "Show";*/
@@ -426,7 +426,7 @@ namespace TP
                     else if (GameManager.localInstance.GetContestingPlayers().Count == 2 && GameManager.localInstance.myPlayerState.hasSeenCard)
                     {
 
-                        Debug.Log("Auto Card Trun Seen ===>1");
+                        DebugHelper.Log("Auto Card Trun Seen ===>1");
                         GamePlayUI.instance.GlowShowButton.SetActive(true);
                         GamePlayUI.instance.showButton.image.sprite = GamePlayUI.instance.ActiveShowPic;
                         GamePlayUI.instance.Show.color = GamePlayUI.instance.ActiveChaal;
@@ -472,7 +472,7 @@ namespace TP
                 isTimerRunning = false;
                 MasterAudioController.instance.StopAudio(AudioEnum.TIMER);
 
-                Debug.Log("======================> Timer Check UpdateStatus");
+                DebugHelper.Log("======================> Timer Check UpdateStatus");
                 EndTurn();
                 availableLives = ps.lives;
             }
@@ -532,7 +532,7 @@ namespace TP
 
                 if (myPlayerState.hasSeenCardBoolCheck)
                 {
-                    Debug.Log("Check For SEE");
+                    DebugHelper.Log("Check For SEE");
                     playerStatusShow();
                     profilePictureGlow.SetActive(true);
                     playerStatus.text = "Seen";
@@ -768,7 +768,7 @@ namespace TP
                 sitButton.SetActive(false);
                 if (!GameManager.localInstance.gameState.waitingPlayers.Exists(x => x.playerData.playerID == playerID) && !myPlayerState.hasSeenCard && !myPlayerState.hasPacked && GameManager.localInstance.gameState.currentState == 2 && GameManager.localInstance.gameState.isDealCard)
                 {
-                    Debug.Log("Auto Card Trun Seen ===>2");
+                    DebugHelper.Log("Auto Card Trun Seen ===>2");
                     GamePlayUI.instance.SeeButtonActive(true);
                 }
                 else
@@ -813,7 +813,7 @@ namespace TP
             avatharTimer.enabled = true;
             avatharTimer.fillAmount = 1 - value;
             BackCardGlowAnim(true);
-            Debug.Log("======================> StartTimer Check444");
+            DebugHelper.Log("======================> StartTimer Check444");
         }
         public void SetWinText()
         {
@@ -838,7 +838,7 @@ namespace TP
             winnerBannerGlow.SetActive(false);
             // winnerBanner.SetActive(false);
             playerName.text = string.Empty;
-            playerAmount.text = string.Empty + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>"; ;
+            playerAmount.text = string.Empty;
             playerStatus.text = string.Empty;
             _chatContainer.SetActive(false);
 
@@ -922,7 +922,7 @@ namespace TP
             isTimerRunning = false;
             avatharTimer.enabled = false;
             BackCardGlowAnim(false);
-            Debug.Log("======================> StartTimer Check555");
+            DebugHelper.Log("======================> StartTimer Check555");
             string valAmount = CommonFunctions.Instance.TpvAmountSeparator(betAmountVal, true);
             betAmount.text = valAmount;
 
@@ -1003,11 +1003,11 @@ namespace TP
         #endregion
         public void ClearUI(bool isforce = false)
         {
-            Debug.Log("Clear UI called");
+            DebugHelper.Log("Clear UI called");
             isSeen = false;
             isTimerRunning = false;
             //if (isMine)
-            //    Debug.LogError("your ui is deleted");
+            //    DebugHelper.LogError("your ui is deleted");
             playerID = "";
             betContainer.gameObject.SetActive(false);
             RaiseUp.SetActive(false);
@@ -1077,8 +1077,8 @@ namespace TP
             if (isMine)
             {
                 string val = betcoinImage + CommonFunctions.Instance.TpvAmountSeparator(APIController.instance.userDetails.balance, true);
-                Debug.Log("*** InitUI  ----->" + val);
-                playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
+                DebugHelper.Log("*** InitUI  ----->" + val);
+                playerAmount.text = val;
                 playerName.text = "You";
             }
             else
@@ -1236,13 +1236,13 @@ namespace TP
 
                         double pot = GameManager.localInstance.gameState.totalPot;
                         string val = CommonFunctions.Instance.TpvAmountSeparator(APIController.instance.userDetails.balance, true);
-                        Debug.Log("*** GiveAmountToPot1 ----->" + val);
-                        playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
+                        DebugHelper.Log("*** GiveAmountToPot1 ----->" + val);
+                        playerAmount.text = val;
 
                         if (GameManager.localInstance.gameState.totalPot != 0)
                         {
-                            GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(GameManager.localInstance.gameState.totalPot) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>";
-                            Debug.Log(GameManager.localInstance.playerManagersList.Count + "Check the player List in The Game Manager");
+                            GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(GameManager.localInstance.gameState.totalPot);
+                            DebugHelper.Log(GameManager.localInstance.playerManagersList.Count + "Check the player List in The Game Manager");
 
                         }
 
@@ -1289,7 +1289,7 @@ namespace TP
                              double pot = GameManager.localInstance.gameState.totalPot;
 
                              string val = CommonFunctions.Instance.TpvAmountSeparator(APIController.instance.userDetails.balance, true);
-                             Debug.Log("*** GiveAmountToPot1 ----->" + val);
+                             DebugHelper.Log("*** GiveAmountToPot1 ----->" + val);
                              playerAmount.text = val;
                              if (GameManager.localInstance.gameState.totalPot != 0)
                              {
@@ -1320,14 +1320,14 @@ namespace TP
                     ////////////////////////////////////////////////
                     /* if (CoinAnimation[0] == null)
                      {
-                         Debug.LogError("CoinAnimation[0] is null");
+                         DebugHelper.LogError("CoinAnimation[0] is null");
                      }*/
                     /* else
                      {
                         *//* var coinAnimationCheck = CoinAnimation[0].GetComponent<CoinAnimationCheck>();
                          if (coinAnimationCheck == null)
                          {
-                             Debug.LogError("CoinAnimationCheck component is missing");
+                             DebugHelper.LogError("CoinAnimationCheck component is missing");
                          }
                          else
                          {
@@ -1366,14 +1366,14 @@ namespace TP
                           /* CoinAnimation[0].GetComponent<Image>().sprite = GamePlayUI.instance.Coins[0];
                            CoinAnimation[0].SetActive(true);*/
                           playerBalance.SetActive(true);
-                          playerAmount.text = "" + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>"; ;
+                          playerAmount.text = "";
 
                       })
                       .AppendCallback(() =>
                       {
                           string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
 
-                          playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
+                          playerAmount.text = val;
                       })
                       .Append(PotChipImage.transform.DOMove(potContainer.position, .1f, false).OnComplete(() =>
                       {
@@ -1385,7 +1385,7 @@ namespace TP
                                     .SetEase(Ease.OutQuad)
                                     .OnComplete(() =>
                                     {
-                                                Debug.Log("PotAmount Val________1");
+                                                DebugHelper.Log("PotAmount Val________1");
                                         /*GamePlayUI.instance.PotGlowAnim();*/
                                         // Fade out GlowPotAmount
                                         /*var glowImage = GamePlayUI.instance.GlowPotAmount.GetComponent<Image>();
@@ -1404,7 +1404,7 @@ namespace TP
                                     })
                                     .OnStart(() =>
                                     {
-                                        Debug.Log("PotAmount Val________2");
+                                        DebugHelper.Log("PotAmount Val________2");
 
                                         // Activate and fade in GlowPotAmount
                                         /* GamePlayUI.instance.GlowPotAmount.SetActive(true);*/
@@ -1450,7 +1450,7 @@ namespace TP
                           if (GameManager.localInstance.gameState.totalPot != 0)
                           {
 
-                              GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(GameManager.localInstance.gameState.totalPot) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>";
+                              GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(GameManager.localInstance.gameState.totalPot);
 
                           }
 
@@ -1468,7 +1468,7 @@ namespace TP
                           }
                           catch
                           {
-                              Debug.Log("Check this Amount =============> " + amount);
+                              DebugHelper.Log("Check this Amount =============> " + amount);
                           }
 
                       }));
@@ -1476,14 +1476,14 @@ namespace TP
                     ////////////////////////////////////////////////
                     /* if (CoinAnimation[0] == null)
                      {
-                         Debug.LogError("CoinAnimation[0] is null");
+                         DebugHelper.LogError("CoinAnimation[0] is null");
                      }
                      else
                      {
                          var coinAnimationCheck = CoinAnimation[0].GetComponent<CoinAnimationCheck>();
                          if (coinAnimationCheck == null)
                          {
-                             Debug.LogError("CoinAnimationCheck component is missing");
+                             DebugHelper.LogError("CoinAnimationCheck component is missing");
                          }
                          else
                          {
@@ -1509,8 +1509,8 @@ namespace TP
                 {
 
                     string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
-                    Debug.Log("GiveAmountToPot3 ----->" + val);
-                    playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
+                    DebugHelper.Log("GiveAmountToPot3 ----->" + val);
+                    playerAmount.text = val;
                     playerBalance.SetActive(true);
                     CancelInvoke("HideProfileAmount");
                     Invoke("HideProfileAmount", 2);
@@ -1541,7 +1541,7 @@ namespace TP
 
         public void GetAmountFromPot(float amount)
         {
-            Debug.Log("Check pot location");
+            DebugHelper.Log("Check pot location");
             StartCoroutine(GetAmount(amount));
         }
 
@@ -1572,7 +1572,7 @@ namespace TP
             {
                 int ChekCount = GamePlayUI.instance.PotChipsStack.Length;
                 ChekCount++;
-                Debug.Log(ChekCount + "PotChipsStack Count");
+                DebugHelper.Log(ChekCount + "PotChipsStack Count");
                 GamePlayUI.instance.PotChipsStack[ChekCount].gameObject.SetActive(true);
                 /* GamePlayUI.instance.PotChipsStack[ChekCount].gameObject.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
              .SetEase(Ease.OutQuad)
@@ -1640,7 +1640,7 @@ namespace TP
 
             double value = 0;
 
-            GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(value) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>";
+            GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(value);
 
             GamePlayUI.instance.potAmountPannel.SetActive(false);
             if (MasterAudioController.instance.CheckSoundToggle())
@@ -1662,7 +1662,7 @@ namespace TP
                     isGetAmountFromPot = false;
 
                 });
-                Debug.Log(GameManager.localInstance.CountTemp + "Check pot location");
+                DebugHelper.Log(GameManager.localInstance.CountTemp + "Check pot location");
 
                 if (GameManager.localInstance.CountTemp == 1)
                 {
@@ -1710,7 +1710,7 @@ namespace TP
                 {
                     betContainer.gameObject.SetActive(false);
                     string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
-                    playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
+                    playerAmount.text = val;
                     playerBalance.SetActive(true);
                     CancelInvoke("HideProfileAmount");
                     Invoke("HideProfileAmount", 2);
@@ -1719,7 +1719,7 @@ namespace TP
 
                 });
 
-                Debug.Log(GameManager.localInstance.CountTemp + "Check pot location");
+                DebugHelper.Log(GameManager.localInstance.CountTemp + "Check pot location");
 
 
                 if (GameManager.localInstance.CountTemp == 1)
@@ -1814,7 +1814,7 @@ namespace TP
                 double value = 0;
 
 
-                GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(value) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>";
+                GamePlayUI.instance.potAmount.text = CommonFunctions.Instance.TpvAmountSeparator(value);
                 if (MasterAudioController.instance.CheckSoundToggle())
                     MasterAudioController.instance.PlayAudio(AudioEnum.CHIPSOUND);
                 betContainer.GetComponent<RectTransform>().DOLocalMove(localStartPosision, .5f, false).OnComplete(() =>
@@ -1835,7 +1835,7 @@ namespace TP
 
                         string val = CommonFunctions.Instance.TpvAmountSeparator(amount, true);
 
-                        playerAmount.text = val + " " + $"<size=15>{APIController.instance.authentication.currency_type}</size>";
+                        playerAmount.text = val;
 
                         playerBalance.SetActive(true);
                         CancelInvoke("HideProfileAmount");
@@ -2022,11 +2022,11 @@ namespace TP
 
         public void BackCardGlowAnim(bool CheckState)
         {
-            Debug.Log("Auto Card Trun Seen ===>3");
+            DebugHelper.Log("Auto Card Trun Seen ===>3");
             if (!isSeen)
             {
-                Debug.Log("Auto Card Trun Seen ===>4");
-                Debug.Log($"Started yoyo fade animation===============>");
+                DebugHelper.Log("Auto Card Trun Seen ===>4");
+                DebugHelper.Log($"Started yoyo fade animation===============>");
 
                 foreach (var item in BackCardGlow)
                 {
@@ -2048,11 +2048,11 @@ namespace TP
                                 .SetLoops(-1, LoopType.Yoyo) // Infinite loop, fade back and forth
                                 .SetEase(Ease.InOutSine); // Smooth easing
 
-                            Debug.Log($"Started yoyo fade animation for {item.name}");
+                            DebugHelper.Log($"Started yoyo fade animation for {item.name}");
                         }
                         else
                         {
-                            Debug.LogWarning($"Image component not found on {item.name}");
+                            DebugHelper.LogWarning($"Image component not found on {item.name}");
                         }
                     }
 

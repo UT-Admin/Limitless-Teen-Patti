@@ -129,16 +129,16 @@ namespace TP
                 return GameController.Instance.avatharPicture[int.Parse(url)];
         }
 
-        public string GetAmountDecimalSeparator(double value, bool isIndianFormat = true, int spriteindex =5)
+        public string GetAmountDecimalSeparator(double value, bool isIndianFormat = true, int spriteindex = 5)
         {
-            if (value < 1000)
+            if (value < 100000000)
             {
 
-                #if GOP 
+#if GOP
                     return string.Format("<sprite index={0}>", spriteindex) + value.ToString("0.00");
-                #else
-                    return  value.ToString("0.00");
-                #endif
+#else
+                return value.ToString("0.00");
+#endif
 
             }
             if (isIndianFormat)
@@ -147,22 +147,22 @@ namespace TP
                 currencyFormat.CurrencySymbol = "";
                 if (GameController.Instance.CurrentAmountType == CashType.CASH)
                 {
-                   
-                    #if GOP
+
+#if GOP
                         currencyFormat.CurrencySymbol = string.Format("<sprite index={0}>", spriteindex);
-                    #else
-                        currencyFormat.CurrencySymbol = string.Format("<sprite index=5>", spriteindex);
-                    #endif
+#else
+                    currencyFormat.CurrencySymbol = string.Format("<sprite index=5>", spriteindex);
+#endif
                 }
                 else
                 {
-                    #if GOP
+#if GOP
                         currencyFormat.CurrencySymbol = "<sprite index=5>";
-                    #else
-                        currencyFormat.CurrencySymbol = "<sprite index=5>";
-                    #endif  //Added by gibson Rupee symbol was Missing in non Cash Games
+#else
+                    currencyFormat.CurrencySymbol = "<sprite index=5>";
+#endif  //Added by gibson Rupee symbol was Missing in non Cash Games
                 }
-                  
+
                 currencyFormat.CurrencyDecimalDigits = 0;
                 return value.ToString("C", currencyFormat);
             }

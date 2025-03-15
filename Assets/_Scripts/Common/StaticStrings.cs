@@ -4,11 +4,50 @@ namespace TP
     public class StaticStrings
     {
 
-        public const string LambdaUrl = "https://mcz69cgpoh.execute-api.ap-south-1.amazonaws.com/api/";
+        public static string checkInternetUrl = "https://6rugffwb323fkm7j7umild4vjm0hfcfm.lambda-url.ap-south-1.on.aws/";
+
         public const int timeOut = 20;
+
+        public static string LambdaUrl = "https://mcz69cgpoh.execute-api.ap-south-1.amazonaws.com/api/";
+
+        public const string TitleURL = "https://fwiknm2h5fpjwc32oguaevkggi0tibgf.lambda-url.ap-south-1.on.aws/";
+
+
+        public static string ServerLambdaUrlProduction = "https://mcz69cgpoh.execute-api.ap-south-1.amazonaws.com/api/";
+        public static string ServerLambdaUrlDev = "https://mcz69cgpoh.execute-api.ap-south-1.amazonaws.com/api/";
+        public static string ServerLambdaUrlLive = "https://mcz69cgpoh.execute-api.ap-south-1.amazonaws.com/api/";
+        public static string ServerLambdaUrlTest = "https://mcz69cgpoh.execute-api.ap-south-1.amazonaws.com/api/";
+
+
         public static string GetLambdaUrl(string environment)
         {
+#if UNITY_WEBGL
             return LambdaUrl + environment;
+#elif UNITY_SERVER
+            switch (environment)
+            {
+                case "live":
+                    LambdaUrl = ServerLambdaUrlLive;
+                    break;
+                case "production":
+                    LambdaUrl = ServerLambdaUrlProduction;
+                    break;
+                case "dev":
+                    LambdaUrl = ServerLambdaUrlDev;
+                    break;
+                case "testing":
+                    LambdaUrl = ServerLambdaUrlTest;
+                    break;
+            }
+
+            return LambdaUrl;
+#endif
+        }
+
+
+        public static string GetTitleUrl(string environment)
+        {
+            return TitleURL + environment.ToLower();
         }
 
 
@@ -67,7 +106,6 @@ namespace TP
         public const string EnoughBalanceServerKick = "Kicked out by server due to insufficient";
         public const string Chip = "chip";
         public const string Cash = "cash";
-        public const string checkInternetUrl = "https://6rugffwb323fkm7j7umild4vjm0hfcfm.lambda-url.ap-south-1.on.aws/";
         #region BuildSettings
 
 #if RealTPG

@@ -190,7 +190,10 @@ namespace TP
         public SideShowWinnerEffect sideShowWinnerEffect;
         public SideShowRequest sideShowRequest;
         Coroutine strengthMeterRountine;
-        public static GamePlayUI instance;
+		public static GamePlayUI instance;
+        public TMP_Text Currency_TypePot;
+        public TMP_Text Currency_TypePlayer;
+        public TMP_Text Currency_Commision;
 
         #endregion
 
@@ -215,6 +218,16 @@ namespace TP
         #endregion
 
         #region HELPER_FUNCTIONS
+
+        public void AssignCurrency(String currency, string money)
+        {
+            DebugHelper.Log("assingCurrency =========> " + money);
+            profileAmount.text = money;
+            Currency_TypePot.text = currency;
+            Currency_TypePlayer.text = currency;
+            Currency_Commision.text = currency;
+        }
+
 
         public void EnableButtonColor()
         {
@@ -556,14 +569,7 @@ namespace TP
 
 
 
-        public void AssignCurrency(String currency, string money)
-        {
-            DebugHelper.Log("assingCurrency =========> " + money);
-            profileAmount.text = money;
-            //Currency_TypePot.text = currency;
-            //Currency_TypePlayer.text = currency;
-            //Currency_Commision.text = currency;
-        }
+
 
 
 
@@ -651,7 +657,7 @@ namespace TP
 				hukamSuitImageBig.color = Color.black;
 				hukamCardRank.color = Color.black;
 			}
-			DebugHelper.LogError("zanthu details");
+			DebugHelperHelper.LogError("zanthu details");
 			hukamCards.SetActive(true);
 
 		}*/
@@ -660,7 +666,8 @@ namespace TP
 		public void EnableBottomNotificationPannel(string textToDisplay)
 		{
 			ButtonHolder.SetActive(false);
-			bottomTemp.gameObject.SetActive(true);
+            UIController.Instance.Connecting.SetActive(false);
+            bottomTemp.gameObject.SetActive(true);
 			bottomTextTemp.text = textToDisplay;
 #if RealTPG
 			playerAmount.SetActive(false);
@@ -673,7 +680,7 @@ namespace TP
 		public void GlobalMessage(string message)
 		{
 			CancelInvoke("HideGlobalMessage");
-			Debug.Log("GlobalPanelCalled");
+			DebugHelper.Log("GlobalPanelCalled");
 			globalPannel.SetActive(true);
 			globalText.text = message;
 			Invoke("HideGlobalMessage", 2);
@@ -778,7 +785,7 @@ namespace TP
 		public void StartSideShow()
 		{
 
-			Debug.Log("START SIDE SHOW CALLED ****************");
+			DebugHelper.Log("START SIDE SHOW CALLED ****************");
 			GlobalMessage("Requesting side show");
 			sideShowPannel.SetActive(true);
 			PlayerState state = GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestSender];
@@ -797,7 +804,7 @@ namespace TP
 		public void StartSideShowUser(int sender, int reciver)
 		{
 
-			Debug.Log("StartSideShowUser ****************");
+			DebugHelper.Log("StartSideShowUser ****************");
 			sideShowAlertPannel.SetActive(true);
             PlayerState state = GameManager.localInstance.gameState.players[sender];
             PlayerState state1 = GameManager.localInstance.gameState.players[reciver];
@@ -833,27 +840,31 @@ namespace TP
 				challAmountText.text = (_boot).ToString() + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>"; 
 		}
 		public float ChaalIncrease;
-		public void UpdateChaalText(float boot)
-		{
-			float finalBoot = 0;
-			if (isStakeDoubled)
-				finalBoot = boot * 2;
-			else
-				finalBoot = boot;
-			if (PlayerManager.localPlayer.myPlayerData.money <= finalBoot){
-				HideHud();
-            }else
+        public void UpdateChaalText(float boot, bool RejoinSetAmount = false)
+        {
+            float finalBoot = 0;
+            if (isStakeDoubled)
+                finalBoot = boot * 2;
+            else
+                finalBoot = boot;
+            if (APIController.instance.userDetails.balance <= finalBoot)
             {
-				challAmountText.text = finalBoot < 100000 ? CommonFunctions.Instance.GetAmountDecimalSeparator(finalBoot) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>" : CommonFunctions.Instance.GetAmountAbreviation(finalBoot) + " " + $"<size=25>{APIController.instance.authentication.currency_type}</size>"; ;
+                HideHud();
+                if (RejoinSetAmount)
+                {
+                    challAmountText.text = finalBoot < 100000 ? CommonFunctions.Instance.GetAmountDecimalSeparator(finalBoot) : CommonFunctions.Instance.GetAmountAbreviation(finalBoot);
+                }
 
-			}
+            }
+            else
+            {
+                challAmountText.text = finalBoot < 100000 ? CommonFunctions.Instance.GetAmountDecimalSeparator(finalBoot) : CommonFunctions.Instance.GetAmountAbreviation(finalBoot);
 
-			ChaalIncrease = finalBoot;
-
-
+            }
+            ChaalIncrease = finalBoot;
         }
 
-		public void ExitGame()
+        public void ExitGame()
 		{
 			DebugHelper.LogError("call game exit");
 
@@ -962,7 +973,7 @@ namespace TP
 				return;
 			}
 			strengthMeter.SetActive(active);
-			Debug.Log("STRENGTH ************** &&&&&&&&");
+			DebugHelper.Log("STRENGTH ************** &&&&&&&&");
 		}
 
 
@@ -979,7 +990,7 @@ namespace TP
 			}
 			if ((GameManager.localInstance.gameState.currentState == 0 || GameManager.localInstance.gameState.currentState == 1) || !GameManager.localInstance.gameState.isDealCard || GameManager.localInstance.myPlayerState.isSpectator || GameManager.localInstance.myPlayerState.hasPacked || !GameManager.localInstance.myPlayerState.hasSeenCard || GameManager.localInstance.myPlayerState.currentState == 0)
 			{
-				Debug.Log("STRENGTH **************");
+				DebugHelper.Log("STRENGTH **************");
 				strengthMeter.SetActive(false);
 			}
 		}

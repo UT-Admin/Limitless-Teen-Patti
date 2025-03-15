@@ -51,7 +51,6 @@ namespace TP
         public string MessageToDisplay;
         public int Code;
         public bool BetCompleted;
-
         public void ClearGameState()
         {
             players.Clear();
@@ -164,60 +163,25 @@ namespace TP
                 rank += 1;
             }
         }
-        bool RoyalMode = false;
+
         public void NewDeck()
         {
-            
-
             currentDeck = new List<CardData>();
             int suit = 1;
             int rank = 1;
-
-            for (int i = 0; i < deckCount; i++)
+          
             {
-                Debug.Log("Print the log");
-                if (rank % 14 == 0)
+                for (int i = 0; i < deckCount; i++)
                 {
-
-                    suit++;
-                    rank = 1;
-                }
-                currentDeck.Add(new CardData(suit, rank, true));
-                rank++;
-            }
-
-            /* int suit = 1;
-             int rank = 1;*/
-            /*if (gameController.CurrentGameMode == GameMode.ROYAL)
-            {
-
-                for (int j = 1; j <= 4; j++)
-                {
-
-                    currentDeck.Add(new CardData(j, 1, true));
-                    for (int i = 10; i < 14; i++)
+                    if (rank % 14 == 0)
                     {
-                        *//* RoyalMode = true;*//*
-                        Debug.Log("Print the log");
-                        currentDeck.Add(new CardData(j, i, true));
-
+                        suit++;
+                        rank = 1;
                     }
+                    currentDeck.Add(new CardData(suit, rank, true));
+                    rank++;
                 }
-
-            }*/
-            /* else
-             {
-                 for (int i = 0; i < deckCount; i++)
-                 {
-                     if (rank % 14 == 0)
-                     {
-                         suit++;
-                         rank = 1;
-                     }
-                     currentDeck.Add(new CardData(suit, rank, true));
-                     rank++;
-                 }
-             }*/
+            }
         }
         public int GetSeenPlayerCount()
         {
@@ -232,17 +196,9 @@ namespace TP
         public CardData GetRandomCard()
         {
             if (currentDeck == null)
-            {
-                Debug.Log("NewDeck===========>3");
                 NewDeck();
-
-            }
-            if (currentDeck.Count < 2)
-            {
-                Debug.Log("NewDeck===========>4");
+            if (currentDeck.Count < 15)
                 NewDeck();
-
-            }
 
             int randomNum = UnityEngine.Random.Range(0, currentDeck.Count);
             CardData cardGive = currentDeck[randomNum];
@@ -271,13 +227,9 @@ namespace TP
             isSideShowRequestSend = false;
             isDealCard = false;
             forceSee = false;
-            Debug.Log("NewDeck===========>5");
             NewDeck();
-            /*if (gameController.CurrentGameMode.ToString() == "ZANDU")
-                InitZanduMode();*/
-            /* else if (gameController.CurrentGameMode == GameMode.HUKAM)
-                 InitHUKAMMode();
- */
+         
+
             players.RemoveAll(x => x.disconnectTime > 0);
             foreach (PlayerState ps in players)
             {
@@ -311,12 +263,12 @@ namespace TP
                 zanducards[i] = GetRandomCard();
             }
         }
-        /* public void InitHUKAMMode()
-         {
-             zanducards = new CardData[1];
-             zanthuCount = 0;
-             zanducards[0] = GetRandomCard();
-         }*/
+        public void InitHUKAMMode()
+        {
+            zanducards = new CardData[1];
+            zanthuCount = 0;
+            zanducards[0] = GetRandomCard();
+        }
         public void SetCurrentStake(float amnt)
         {
             currentStake = amnt;
@@ -362,8 +314,6 @@ namespace TP
         public string environment;
         public float balance;
 
-
-        //public AuthenticationData auth;
     }
 
     [System.Serializable]
@@ -395,7 +345,6 @@ namespace TP
         public bool hasInitBet;
         public bool CalledInitBet;
         public string InitBetAmount;
-
         public void ResetState()
         {
             playerData.currentCards = new CardData[3];
@@ -415,6 +364,8 @@ namespace TP
             turnCount = 0;
             CurrentGameSpend = 0;
             BetIndex = 0;
+            hasInitBet = false;
+            CalledInitBet = false;
         }
         public CardData[] GetCurrentCards()
         {
@@ -426,7 +377,6 @@ namespace TP
             {
                 hasSeenCardBoolCheck = true;
                 hasSeenCard = true;
-
                 currentBoot *= 2;
             }
         }
