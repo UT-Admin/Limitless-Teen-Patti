@@ -489,7 +489,7 @@ namespace TP
         {
             TeenPattiTableModel _gameModelTable = new TeenPattiTableModel();
             DebugHelper.Log("Test this  ===============> " + APIController.instance.userDetails.potLimit);
-            _gameModelTable.BlindLimit = 4;
+            _gameModelTable.BlindLimit = 1000000000;
             _gameModelTable.PotLimit = 1000000000;
             _gameModelTable.ChaalLimit = (int)APIController.instance.userDetails.challLimit;
             _gameModelTable.BootAmount = (int)APIController.instance.userDetails.bootAmount;

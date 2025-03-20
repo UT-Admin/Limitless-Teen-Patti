@@ -27,7 +27,7 @@ namespace TP
         public string platform;
         public float comission;
         public string environment;
-        public float balance;
+        public double balance;
 
 
 

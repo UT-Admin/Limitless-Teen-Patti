@@ -68,21 +68,17 @@ namespace TP
             {
                 if (Success)
                 {
-                    GameController.Instance.isInGame = false;
-                    NetworkClient.Shutdown();
-                    if (GameController.Instance.isREconnectonce)
-                    {
-                        GameController.Instance.isREconnectonce = false;
-                        //Invoke(nameof(), 5);
-                        StartGameAfterShutDown();
 
-                    }
+                    APIController.instance.OnClickDepositBtn();
+
                 }
                 else
                 {
-                    Loading.SetActive(false);
-                    UIController.Instance.InternetPopNew.gameObject.SetActive(true);
+
+                    UIController.Instance.InternetPopInSufficient.SetActive(true);
+
                 }
+
             });
 #endif
 
@@ -387,18 +383,20 @@ namespace TP
                 if (APIController.instance.userDetails.isBlockApiConnection)
                 {
                     if (!UIController.Instance.InsufficientDemo.activeSelf)
-                    {
-                        UIController.Instance.InsufficientDemo.SetActive(true);
-						UIController.Instance.Loading.SetActive(false);
+					{
+						UIController.Instance.InsufficientDemo.SetActive(true);
+                        UIController.Instance.Connecting.SetActive(false);
+                        UIController.Instance.Loading.SetActive(false);
 					}
                 }
                 else
                 {
 
                     if (!UIController.Instance.Insufficient.activeSelf)
-                    {
-                        UIController.Instance.Insufficient.SetActive(true);
-						UIController.Instance.Loading.SetActive(false);
+					{
+						UIController.Instance.Insufficient.SetActive(true);
+                        UIController.Instance.Connecting.SetActive(false);
+                        UIController.Instance.Loading.SetActive(false);
 
 					}
 
@@ -447,8 +445,8 @@ namespace TP
 			}
 			DebugHelper.Log("CHECK STATUS =========> 3");
 			GameController.Instance.isInGame = false;
-			GameController.Instance.currentLobbyName = lobbyName + APIController.instance.userDetails.game_Id +APIController.instance.userDetails.isBlockApiConnection;
-			GameController.Instance.StartGame((int)GameController.Instance.CurrentGameMode, GameController.Instance.currentLobbyName);
+            GameController.Instance.currentLobbyName = lobbyName + APIController.instance.userDetails.game_Id + APIController.instance.userDetails.isBlockApiConnection + APIController.instance.userDetails.bootAmount;
+            GameController.Instance.StartGame((int)GameController.Instance.CurrentGameMode, GameController.Instance.currentLobbyName);
 			yield return new WaitForSeconds(0);
 		}
 		

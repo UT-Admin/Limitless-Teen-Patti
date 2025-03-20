@@ -676,12 +676,12 @@ namespace TP
                 }
 
 
-                if (mystate.turnCount > 3 && !mystate.hasSeenCard)
-                {
-                    mystate.hasSeenCard = true;
+                //if (mystate.turnCount > 3 && !mystate.hasSeenCard)
+                //{
+                //    mystate.hasSeenCard = true;
 
-                    GamePlayUI.instance.OnSeeClicked();
-                }
+                //    GamePlayUI.instance.OnSeeClicked();
+                //}
 
                 gameState.isSideShowRequestSend = false;
                 GamePlayUI.instance.UpdateChaalText(mystate.currentBoot);
@@ -3456,6 +3456,8 @@ namespace TP
 
         void SeeCards()
         {
+
+            Debug.Log("SEE CARD  CALLED=========>");
             if (gameState.currentState == 2)
             {
                 if (myPlayer)

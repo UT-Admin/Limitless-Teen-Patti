@@ -792,9 +792,18 @@ namespace TP
             PlayerState state1 = GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestReceiver];
             Player1SideShowPic.sprite = GameController.Instance.avatharPicture[state.ui];
             Player2SideShowPic.sprite = GameController.Instance.avatharPicture[state1.ui];
-            sideShowSenderName.text = GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestSender].playerData.playerName;
-			sideShowReceiverName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestReceiver].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestReceiver].playerData.playerName;
-			StopCoroutine(nameof(StartCountdown));
+            if (APIController.instance.userDetails.isBlockApiConnection)
+            {
+                sideShowSenderName.text = GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestSender].playerData.playerName;
+                sideShowReceiverName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestReceiver].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestReceiver].playerData.playerName;
+            }
+            else
+            {
+                sideShowSenderName.text = GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestSender].playerData.playerName.Substring(0, 3) + "*****";
+                sideShowReceiverName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestReceiver].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.sideShowRequestReceiver].playerData.playerName.Substring(0, 3) + "*****";
+
+            }
+            StopCoroutine(nameof(StartCountdown));
 			StartCoroutine(nameof(StartCountdown));
             StopCoroutine(nameof(StartCountdownTimer));
             StartCoroutine(nameof(StartCountdownTimer));
@@ -810,8 +819,16 @@ namespace TP
             PlayerState state1 = GameManager.localInstance.gameState.players[reciver];
             Player1SideAlertShowPic.sprite = GameController.Instance.avatharPicture[state.ui];
             Player2SideAlertShowPic.sprite = GameController.Instance.avatharPicture[state1.ui];
-            sideShowAlertSenderName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[sender].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[sender].playerData.playerName;
-			sideShowAlertReciverName.text = GameManager.localInstance.gameState.players[reciver].playerData.playerName;
+            if (APIController.instance.userDetails.isBlockApiConnection)
+            {
+                sideShowAlertSenderName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[sender].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[sender].playerData.playerName;
+                sideShowAlertReciverName.text = GameManager.localInstance.gameState.players[reciver].playerData.playerName;
+            }
+            else
+            {
+                sideShowAlertSenderName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[sender].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[sender].playerData.playerName.Substring(0, 3) + "*****";
+                sideShowAlertReciverName.text = GameManager.localInstance.gameState.players[reciver].playerData.playerName.Substring(0, 3) + "*****";
+            }
             StopCoroutine(nameof(StartCountdownAlert));
 			StartCoroutine(nameof(StartCountdownAlert));
             StopCoroutine(nameof(StartCountdownTimer1));

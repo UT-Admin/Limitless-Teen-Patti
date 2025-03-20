@@ -709,6 +709,7 @@ namespace TP
                 }
                 GamePlayUI.instance.ClearAllUI();
                 GameController.Instance.DisconnectClient();
+                UIController.Instance.BackToMainMenuLoading.gameObject.SetActive(true);
             }
             ClientDisconnect();
         }
@@ -953,6 +954,7 @@ namespace TP
         [Command]
         public void SeeCMD(string playerID)
         {
+            Debug.Log("SEE CARD  CALLED =========> SeeCMD ");
             gameManager.SeeCardMaster(playerID);
             RPCCardStrength();
         }

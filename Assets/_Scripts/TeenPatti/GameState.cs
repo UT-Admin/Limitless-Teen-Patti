@@ -312,7 +312,7 @@ namespace TP
         public string platform;
         public float comission;
         public string environment;
-        public float balance;
+        public double balance;
 
     }
 
@@ -373,6 +373,7 @@ namespace TP
         }
         public void SetCardsSeen()
         {
+            Debug.Log("SEE CARD  CALLED=========>");
             if (hasSeenCard == false)
             {
                 hasSeenCardBoolCheck = true;

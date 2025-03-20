@@ -115,8 +115,16 @@ public class SideShowWinnerEffect : MonoBehaviour
         this.gameObject.SetActive(true);
         ProfileA.sprite = GameController.Instance.avatharPicture[GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].ui];
         ProfileB.sprite = GameController.Instance.avatharPicture[GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].ui];
-        playerAName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerName;
-        playerBName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerName;
+        if (APIController.instance.userDetails.isBlockApiConnection)
+        {
+            playerAName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerName;
+            playerBName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerName;
+        }
+        else
+        {
+            playerAName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerName.Substring(0, 3) + "*****";
+            playerBName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerName.Substring(0, 3) + "*****";
+        }
         ArrowIdicators[1].SetActive(GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerID);
         ArrowIdicators[0].SetActive(GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerID);
         Effect1.Play("SideShowRedWinner");
@@ -258,8 +266,16 @@ public class SideShowWinnerEffect : MonoBehaviour
         this.gameObject.SetActive(true);
         ProfileA.sprite = GameController.Instance.avatharPicture[GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].ui];
         ProfileB.sprite = GameController.Instance.avatharPicture[GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].ui];
-        playerAName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerName;
-        playerBName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerName;
+        if (APIController.instance.userDetails.isBlockApiConnection)
+        {
+            playerAName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerName;
+            playerBName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerName;
+        }
+        else
+        {
+            playerAName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Senderval].playerData.playerName.Substring(0, 3) + "*****";
+            playerBName.text = GameManager.localInstance.myPlayerID == GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerID ? "You" : GameManager.localInstance.gameState.players[GameManager.localInstance.gameState.Receiverval].playerData.playerName.Substring(0, 3) + "*****";
+        }
         ArrowIdicators[1].SetActive(false);
         ArrowIdicators[0].SetActive(false);
         Effect1.Play("SideShowRedWinner");
@@ -296,8 +312,16 @@ public class SideShowWinnerEffect : MonoBehaviour
         this.gameObject.SetActive(true);
         ProfileA.sprite = GameController.Instance.avatharPicture[val.ui];
         ProfileB.sprite = GameController.Instance.avatharPicture[val1.ui];
-        playerAName.text = GameManager.localInstance.myPlayerID == val.playerData.playerID ? "You" : val.playerData.playerName;
-        playerBName.text = GameManager.localInstance.myPlayerID == val1.playerData.playerID ? "You" : val1.playerData.playerName;
+        if (APIController.instance.userDetails.isBlockApiConnection)
+        {
+            playerAName.text = GameManager.localInstance.myPlayerID == val.playerData.playerID ? "You" : val.playerData.playerName;
+            playerBName.text = GameManager.localInstance.myPlayerID == val1.playerData.playerID ? "You" : val1.playerData.playerName;
+        }
+        else
+        {
+            playerAName.text = GameManager.localInstance.myPlayerID == val.playerData.playerID ? "You" : val.playerData.playerName.Substring(0, 3) + "*****";
+            playerBName.text = GameManager.localInstance.myPlayerID == val1.playerData.playerID ? "You" : val1.playerData.playerName.Substring(0, 3) + "*****";
+        }
         ArrowIdicators[1].SetActive(GameManager.localInstance.myPlayerID == val.playerData.playerID);
         ArrowIdicators[0].SetActive(GameManager.localInstance.myPlayerID == val1.playerData.playerID);
         Effect1.Play("SideShowRedWinner");
@@ -362,8 +386,8 @@ public class SideShowWinnerEffect : MonoBehaviour
         this.gameObject.SetActive(true);
         ProfileA.sprite = GameController.Instance.avatharPicture[val.ui];
         ProfileB.sprite = GameController.Instance.avatharPicture[val1.ui];
-        playerAName.text = GameManager.localInstance.myPlayerID == val.playerData.playerID ? "You" : val.playerData.playerName;
-        playerBName.text = GameManager.localInstance.myPlayerID == val1.playerData.playerID ? "You" : val1.playerData.playerName;
+        playerAName.text = GameManager.localInstance.myPlayerID == val.playerData.playerID ? "You" : val.playerData.playerName.Substring(0, 3) + "*****";
+        playerBName.text = GameManager.localInstance.myPlayerID == val1.playerData.playerID ? "You" : val1.playerData.playerName.Substring(0, 3) + "*****";
         ArrowIdicators[1].SetActive(false);
         ArrowIdicators[0].SetActive(false);
         Effect1.Play("SideShowRedWinner");

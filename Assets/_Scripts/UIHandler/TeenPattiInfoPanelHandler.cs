@@ -58,6 +58,7 @@ namespace TP
 
         private void OnEnable()
         {
+            Debug.Log("======================>");
             if (APIController.instance.userDetails.isBlockApiConnection)
             {
                 val.text = "";

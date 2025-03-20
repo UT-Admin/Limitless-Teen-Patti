@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -33,7 +34,7 @@ public class CommonBuyInScreen : MonoBehaviour
     [Header("---BUTTON---")]
     [SerializeField] private Button playNowButton;
     public static CommonBuyInScreen Instance;
-  
+
 
 
     private void Awake()
@@ -46,7 +47,7 @@ public class CommonBuyInScreen : MonoBehaviour
 
     private void Update()
     {
-        
+
     }
 
 
@@ -58,9 +59,9 @@ public class CommonBuyInScreen : MonoBehaviour
 
         if (APIController.instance.authentication.entryAmountDetails.entryAmounts.Count <= 0)
         {
-            APIController.instance.authentication.entryAmountDetails.entryAmounts = new List<int> { 1, 2, 5,10 };
-            APIController.instance.authentication.entryAmountDetails.chaalLimits = new List<int> { 32, 64, 160, 320};
-            APIController.instance.authentication.entryAmountDetails.potLimits = new List<int> { 100, 200, 500,1000 };
+            APIController.instance.authentication.entryAmountDetails.entryAmounts = new List<int> { 1, 2, 5, 10 };
+            APIController.instance.authentication.entryAmountDetails.chaalLimits = new List<int> { 32, 64, 160, 320 };
+            APIController.instance.authentication.entryAmountDetails.potLimits = new List<int> { 100, 200, 500, 1000 };
             GameController.Instance.BuyScreenData = new();
 
             for (int i = 0; i < APIController.instance.authentication.entryAmountDetails.entryAmounts.Count; i++)
@@ -128,7 +129,7 @@ public class CommonBuyInScreen : MonoBehaviour
                 }
                 else
                 {
-          
+
                     UIController.Instance.FindGameWEBGL();
                     GameController.Instance.SearchOnInternetCheck = true;
                     this.gameObject.SetActive(false);
@@ -150,13 +151,13 @@ public class CommonBuyInScreen : MonoBehaviour
 
     public void SetToggleTextColor()
     {
-       
-        for(int i = 0; i < toggles.Length;i++)
+
+        for (int i = 0; i < toggles.Length; i++)
         {
             if (toggles[i].isOn)
             {
                 DebugHelper.Log("Toggle Text == " + toggles[i].GetComponentInChildren<TMP_Text>().text.ToString());
-                          
+
             }
         }
     }
@@ -165,7 +166,7 @@ public class CommonBuyInScreen : MonoBehaviour
         DebugHelper.Log("AUDIO SOUND ============>");
         GameController.Instance.isAudioPlayStarted = true;
         AudioListener.volume = 1;
-        GamePlayUI.instance.settingsPanel.MusicToggle.isOn = APIController.instance.userDetails.isBlockApiConnection ? true: APIController.instance.authentication.sound;
+        GamePlayUI.instance.settingsPanel.MusicToggle.isOn = APIController.instance.userDetails.isBlockApiConnection ? true : APIController.instance.authentication.sound;
         GamePlayUI.instance.settingsPanel.SoundToggle.isOn = APIController.instance.userDetails.isBlockApiConnection ? true : APIController.instance.authentication.music;
 
 
@@ -189,7 +190,7 @@ public class CommonBuyInScreen : MonoBehaviour
     {
         for (int i = 0; i < toggles.Length; i++)
         {
-            toggles[i].GetComponentInChildren<TMP_Text>().color = i == index ? new Color(0.8f, 0.9f, 0.6f, 1f) : new Color(0.2f, 0.7f, 0.7f, 1f);
+            toggles[i].GetComponentInChildren<TMP_Text>().color = i == index ? new Color(0, 0, 0, 1f) : new Color(1, 1, 1, 1f);
         }
     }
 
@@ -199,15 +200,15 @@ public class CommonBuyInScreen : MonoBehaviour
         ChangeTextColor(toggleIndex);
         SelectedAmountData dataToSet = GameController.Instance.BuyScreenData.selectedAmountData[toggleIndex];
         platformInfo.text = $"Platform Fee ({APIController.instance.authentication.entryAmountDetails.commission * 100}% of total Pot Amount)";
-        entryFee.text =dataToSet.entryFee.ToString() + " " + APIController.instance.userDetails.currency_type;
+        entryFee.text = dataToSet.entryFee.ToString() + " " + APIController.instance.userDetails.currency_type;
         chaalLimit.text = dataToSet.ChaalAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
         potLimit.text = dataToSet.potAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
-        APIController.instance.userDetails.potLimit = 1000000000;
+        APIController.instance.userDetails.potLimit = dataToSet.potAmount;
         APIController.instance.userDetails.challLimit = dataToSet.ChaalAmount;
         APIController.instance.userDetails.bootAmount = dataToSet.entryFee;
         APIController.instance.authentication.challLimit = dataToSet.ChaalAmount;
         APIController.instance.authentication.bootAmount = dataToSet.entryFee;
-       
+
     }
 }
 

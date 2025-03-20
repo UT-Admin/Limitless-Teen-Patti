@@ -1630,7 +1630,7 @@ public class APIController : MonoBehaviour
                     JObject output = JObject.Parse(apiResponse["output"].ToString());
                     authentication.session_token = (string)output["session_token"];
                     authentication.name = (string)data["username"];
-                    authentication.balance = (float)data["balance"];
+                    authentication.balance = (double)data["balance"];
                     DebugHelper.Log("authentication  is : " + JsonUtility.ToJson(authentication));
                     userDetails.Id = authentication.Id;
                     userDetails.game_Id = authentication.operatorname + "_" + authentication.gamename;
@@ -1714,6 +1714,13 @@ public class APIController : MonoBehaviour
         else
         {
             DebugHelper.Log("check 1.1" + (int)apiResponse["code"]);
+
+#if UNITY_WEBGL
+
+            DisconnectGame("Illigal Access");
+#else
+                DebugHelper.Log("Illigal Access");
+#endif
         }
     }
 
@@ -1793,7 +1800,7 @@ public class APIController : MonoBehaviour
 #if UNITY_WEBGL
                 UpdateBalance();
 #endif
-                authentication.balance = (float)json["balance"];
+                authentication.balance = (double)json["balance"];
                 userDetails.balance = authentication.balance;
                 DebugHelper.Log("GetUpdateBalance Body Success ==============> " + authentication.balance);
                 OnUserBalanceUpdate?.Invoke();
@@ -2534,7 +2541,7 @@ public class AuthenticationData
     public string name;
     public string token;
     public string session_token;
-    public float balance;
+    public double balance;
     public string currency_type;
     public string gamename;
     public string operatorname;

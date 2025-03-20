@@ -10,7 +10,7 @@ public class scrollReset : MonoBehaviour
 
     private void OnEnable()
     {
-     
+        ScrollReset();
     }
 
     private void OnDisable()
