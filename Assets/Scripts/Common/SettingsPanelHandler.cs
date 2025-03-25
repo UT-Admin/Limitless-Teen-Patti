@@ -24,6 +24,10 @@ public class SettingsPanelHandler : MonoBehaviour
     private bool SoundActive;
     public UnityAction SwapSpriteSequence;
     public TMP_Text playerNameTxt;
+    public TMP_Text SoundTXT;
+    public TMP_Text MusicTXT;
+
+
     public GameObject EnableSettingsWholeButton;
     public GameObject Sound;
     public GameObject Music;
@@ -96,17 +100,36 @@ public class SettingsPanelHandler : MonoBehaviour
         LocalStorage.Save("Lootrix_sound", SoundActive ? "1" : "0");
 
         // PlayerPrefs.SetInt("SoundActive", SoundActive ? 1 : 0);
-        if (value)
+        if (!value)
         {
-            Sound.GetComponent<Image>().sprite = SoundRed;
+            //Sound.GetComponent<Image>().sprite = SoundRed;
+            VertexGradient gradient = new VertexGradient(
+         new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+         new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+         new Color32(207, 40, 41, 255),   // Bottom color: #CF2829FF
+         new Color32(207, 40, 41, 255));  // Bottom color: #CF2829FF
+
+
+            SoundTXT.colorGradient = gradient;
+            
         }
         else
         {
             Sound.GetComponent<Image>().sprite = SoundWhite;
 
+            VertexGradient gradient = new VertexGradient(
+            new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+            new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+            new Color32(40, 127, 77, 255),   // Bottom color: #287F4DFF
+            new Color32(40, 127, 77, 255)    // Bottom color: #287F4DFF
+     );
+
+
+            SoundTXT.colorGradient = gradient;
+            
         }
 #if !UNITY_SERVER
-        MasterAudioController.instance.CheckSoundToggle(value && APIController.instance.isOnline && APIController.instance.isInFocus);
+            MasterAudioController.instance.CheckSoundToggle(value && APIController.instance.isOnline && APIController.instance.isInFocus);
 #endif
 
     }
@@ -122,7 +145,7 @@ public class SettingsPanelHandler : MonoBehaviour
 
         LocalStorage.Save("Lootrix_music", MusicActive ? "1" : "0");
         // PlayerPrefs.SetInt("ToggleMusic", MusicActive ? 1 : 0);
-        if (value)
+        /*if (value)
         {
             Music.GetComponent<Image>().sprite = MusicRed;
         }
@@ -130,7 +153,40 @@ public class SettingsPanelHandler : MonoBehaviour
         {
             Music.GetComponent<Image>().sprite = MusicWhite;
 
+        }*/
+
+        if (value)
+        {
+
+            Sound.GetComponent<Image>().sprite = SoundRed;
+            
+            VertexGradient gradient = new VertexGradient(
+           new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+           new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+           new Color32(40, 127, 77, 255),   // Bottom color: #287F4DFF
+           new Color32(40, 127, 77, 255));    // Bottom color: #287F4DFF
+            MusicTXT.colorGradient = gradient;
+
+
         }
+        else
+        {
+
+            Sound.GetComponent<Image>().sprite = SoundWhite;
+
+             VertexGradient gradient = new VertexGradient(
+         new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+         new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+         new Color32(207, 40, 41, 255),   // Bottom color: #CF2829FF
+         new Color32(207, 40, 41, 255));  // Bottom color: #CF2829FF
+
+
+            MusicTXT.colorGradient = gradient;
+
+        }
+
+
+
 #if !UNITY_SERVER
         MasterAudioController.instance.CheckMusicToggle(value && APIController.instance.isOnline && APIController.instance.isInFocus);
 #endif
@@ -147,7 +203,7 @@ public class SettingsPanelHandler : MonoBehaviour
         playerNameTxt.text = APIController.instance.userDetails.name;
         wholeExit.gameObject.SetActive(true);
         PanelTransform.GetComponent<CanvasGroup>().DOFade(1, 0.1f).OnComplete(() => { MenuButton.interactable = true; });
-        PanelTransform.DOAnchorPosX(630, 0.1f);
+        PanelTransform.DOAnchorPosX(570, 0.1f);
     }
     public void HideSettings()
     {

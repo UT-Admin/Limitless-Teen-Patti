@@ -2680,7 +2680,7 @@ public class Data
 }
 
 [Serializable]
-public enum EnvironmentType
+public enum EnvironmentType  
 {
     Production,
     Live,
