@@ -5141,6 +5141,10 @@ namespace TP
                     {
                         APIController.instance.CancelBetMultiplayerAPI((x, y, z) => { }, gameState.players[i].playerData.playerID, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameState.players[i].playerData.session_token, gameState.players[i].playerData.currency_type
                                , gameController.environment);
+                        gameState.players[i].BetIndex = 0;
+                        gameState.players[i].BetId = string.Empty;
+                        gameState.players[i].hasInitBet = false;
+                        gameState.players[i].CalledInitBet = false;
                     }
 
                     gameState.currentState = 0;
