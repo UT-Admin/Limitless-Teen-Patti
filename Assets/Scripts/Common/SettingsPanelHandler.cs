@@ -196,22 +196,22 @@ public class SettingsPanelHandler : MonoBehaviour
     public void ShowSettings()
     {
         PanelTransform?.DOKill();
-        PanelTransform.GetComponent<RectTransform>().anchoredPosition = new Vector3(-533, -838, 0);
+    //    PanelTransform.GetComponent<RectTransform>().anchoredPosition = new Vector3(647, -855, 0);
         gameObject.SetActive(true);
         PanelTransform.gameObject.SetActive(true);
         MenuButton.interactable = false;
         playerNameTxt.text = APIController.instance.userDetails.name;
         wholeExit.gameObject.SetActive(true);
         PanelTransform.GetComponent<CanvasGroup>().DOFade(1, 0.1f).OnComplete(() => { MenuButton.interactable = true; });
-        PanelTransform.DOAnchorPosX(570, 0.1f);
+        PanelTransform.DOAnchorPosX(647, 0.1f);
     }
     public void HideSettings()
     {
         PanelTransform?.DOKill();
-        PanelTransform.GetComponent<RectTransform>().anchoredPosition = new Vector3(630, -838, 0);
+      //  PanelTransform.GetComponent<RectTransform>().anchoredPosition = new Vector3(-647, -855, 0);
         MenuButton.interactable = false;
         wholeExit.gameObject.SetActive(false);
-        PanelTransform.DOAnchorPosX(-533, 0.3f);
+        PanelTransform.DOAnchorPosX(-647, 0.3f);
         PanelTransform.GetComponent<CanvasGroup>().DOFade(0, 0.3f).OnComplete(() => { gameObject.SetActive(false); PanelTransform.gameObject.SetActive(false); MenuButton.interactable = true; });
     }
 

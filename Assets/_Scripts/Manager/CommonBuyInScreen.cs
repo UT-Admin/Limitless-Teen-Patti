@@ -201,8 +201,8 @@ public class CommonBuyInScreen : MonoBehaviour
         SelectedAmountData dataToSet = GameController.Instance.BuyScreenData.selectedAmountData[toggleIndex];
         platformInfo.text = $"Platform Fee ({APIController.instance.authentication.entryAmountDetails.commission * 100}% of total Pot Amount)";
         entryFee.text = dataToSet.entryFee.ToString() + " " + APIController.instance.userDetails.currency_type;
-        chaalLimit.text = dataToSet.ChaalAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
-        potLimit.text = dataToSet.potAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
+        //chaalLimit.text = dataToSet.ChaalAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
+        //potLimit.text = dataToSet.potAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
         APIController.instance.userDetails.potLimit = dataToSet.potAmount;
         APIController.instance.userDetails.challLimit = dataToSet.ChaalAmount;
         APIController.instance.userDetails.bootAmount = dataToSet.entryFee;

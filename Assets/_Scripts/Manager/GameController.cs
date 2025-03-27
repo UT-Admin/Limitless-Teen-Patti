@@ -178,7 +178,7 @@ namespace TP
             if (_EnvironmentType != PrevEnvironmentType)
             {
                 PrevEnvironmentType = _EnvironmentType;
-                OnEnvironmentTypeChange(EnvironmentType.LocalHost);
+                OnEnvironmentTypeChange(_EnvironmentType);
             }
         }
 

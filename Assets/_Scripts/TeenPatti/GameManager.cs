@@ -4256,7 +4256,7 @@ namespace TP
                     }
                     else
                     {
-                        StopCoroutine(nameof(AddBotIfRequired));
+                       StopCoroutine(nameof(AddBotIfRequired));
                         DebugHelper.Log("****  NOT Went in Add Bot");
                     }
                     isrejoin = false;
@@ -5132,8 +5132,22 @@ namespace TP
                 gameState.currentState = 6;
                 UpdateGameStateToServer();
                 gameState.NewDeck();
-              
+
                 gameState.players = gameState.players.OrderBy(x => x.ui).ToList();
+
+                if (gameState.players.Count == 1)
+                {
+                    for (int i = 0; i < gameState.players.Count; i++)
+                    {
+                        APIController.instance.CancelBetMultiplayerAPI((x, y, z) => { }, gameState.players[i].playerData.playerID, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameState.players[i].playerData.session_token, gameState.players[i].playerData.currency_type
+                               , gameController.environment);
+                    }
+
+                    gameState.currentState = 0;
+                    UpdateGameStateToServer();
+                    yield break;
+                }
+
                 gameState.currentState = 2;
                 GlobalMessage("Collecting Boot amount");
                 yield return new WaitForSeconds(2);
