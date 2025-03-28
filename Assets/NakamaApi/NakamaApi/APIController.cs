@@ -1769,7 +1769,7 @@ public class APIController : MonoBehaviour
             await UniTask.Delay(100);
         }
 
-        PlayerManager.localPlayer.GetUpdatedBalance(APIController.instance.authentication.Id, APIController.instance.authentication.session_token, APIController.instance.authentication.currency_type, APIController.instance.authentication.token, APIController.instance.authentication.operatorname, APIController.instance.authentication.gamename, APIController.instance.authentication.environment);
+        PlayerManager.localPlayer.GetUpdatedBalance(APIController.instance.authentication.Id, APIController.instance.authentication.session_token, APIController.instance.authentication.currency_type, APIController.instance.authentication.token, APIController.instance.authentication.gamename, APIController.instance.authentication.operatorname, APIController.instance.authentication.environment);
 
     }
 
@@ -2118,7 +2118,7 @@ public class APIController : MonoBehaviour
     }
 
 
-    private async void ClearBetResponse(string betID)
+    public async void ClearBetResponse(string betID)
     {
         await UniTask.Delay(100);
         try

@@ -195,7 +195,7 @@ namespace TP
         {
             avatharTimer.enabled = true;
             BackCardGlowAnim(true);
-            DebugHelper.Log("======================> StartTimer Check111");
+
             avatharTimer.color = new Color(0f, 1f, 0f, .6f);
 
 
@@ -204,7 +204,7 @@ namespace TP
             /* DebugHelper.Log("======================> StartTimer Check" + myPlayerState.lives + " =============> " + myPlayerState.isMyTurn);*/
             while (/*myPlayerState.lives > 0 &&*/ myPlayerState.isMyTurn)
             {
-                DebugHelper.Log("======================> StartTimer Check333....111");
+
                 bool playedSound = false;
                 bool playedVibration = false;
                 float timerVal = 0f;
@@ -217,7 +217,7 @@ namespace TP
                     avatharTimer.enabled = true;
                     avatharTimer.fillAmount = 1 - timerVal;
                     BackCardGlowAnim(true);
-                    DebugHelper.Log("======================> StartTimer Check333" + timerVal);
+
                     // Color col = CommonFunctions.Instance.ReMapColor(0.6f, 0.8f, Color.green, Color.red, timerVal);
                     Color col = new Color(0f, 1f, 0f, .6f);
                     avatharTimer.color = col;
@@ -426,7 +426,7 @@ namespace TP
                     else if (GameManager.localInstance.GetContestingPlayers().Count == 2 && GameManager.localInstance.myPlayerState.hasSeenCard)
                     {
 
-                        DebugHelper.Log("Auto Card Trun Seen ===>1");
+          
                         GamePlayUI.instance.GlowShowButton.SetActive(true);
                         GamePlayUI.instance.showButton.image.sprite = GamePlayUI.instance.ActiveShowPic;
                         GamePlayUI.instance.Show.color = GamePlayUI.instance.ActiveChaal;
@@ -768,7 +768,7 @@ namespace TP
                 sitButton.SetActive(false);
                 if (!GameManager.localInstance.gameState.waitingPlayers.Exists(x => x.playerData.playerID == playerID) && !myPlayerState.hasSeenCard && !myPlayerState.hasPacked && GameManager.localInstance.gameState.currentState == 2 && GameManager.localInstance.gameState.isDealCard)
                 {
-                    DebugHelper.Log("Auto Card Trun Seen ===>2");
+        
                     GamePlayUI.instance.SeeButtonActive(true);
                 }
                 else
@@ -1073,7 +1073,6 @@ namespace TP
             SetSpectator(false);
 
 
-
             if (isMine)
             {
                 string val = betcoinImage + CommonFunctions.Instance.TpvAmountSeparator(APIController.instance.userDetails.balance, true);
@@ -1084,7 +1083,7 @@ namespace TP
             else
             {
 
-                playerName.text = myPlayerState.playerData.playerName;
+                playerName.text = APIController.instance.userDetails.isBlockApiConnection ? myPlayerState.playerData.playerName : myPlayerState.playerData.playerName.Substring(0, 3) + "*****";
             }
 
             ImageStatusColor.gameObject.SetActive(false);
@@ -1554,11 +1553,11 @@ namespace TP
                 GamePlayUI.instance.PotChipsStack[i].gameObject.SetActive(true);
             }
             // GamePlayUI.instance.PotChipsStack[PlayerListCount-1].gameObject.SetActive(false);
-            GamePlayUI.instance.PotChipsStack[PlayerListCount - 1].gameObject.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
+            GamePlayUI.instance.PotChipsStack[PlayerListCount].gameObject.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
         .SetEase(Ease.OutQuad)
         .OnComplete(() =>
         {
-            GamePlayUI.instance.PotChipsStack[PlayerListCount - 1].gameObject.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
+            GamePlayUI.instance.PotChipsStack[PlayerListCount].gameObject.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
            .SetEase(Ease.OutQuad);
 
         });
@@ -2022,11 +2021,10 @@ namespace TP
 
         public void BackCardGlowAnim(bool CheckState)
         {
-            DebugHelper.Log("Auto Card Trun Seen ===>3");
+        
             if (!isSeen)
             {
-                DebugHelper.Log("Auto Card Trun Seen ===>4");
-                DebugHelper.Log($"Started yoyo fade animation===============>");
+         
 
                 foreach (var item in BackCardGlow)
                 {
@@ -2048,11 +2046,10 @@ namespace TP
                                 .SetLoops(-1, LoopType.Yoyo) // Infinite loop, fade back and forth
                                 .SetEase(Ease.InOutSine); // Smooth easing
 
-                            DebugHelper.Log($"Started yoyo fade animation for {item.name}");
                         }
                         else
                         {
-                            DebugHelper.LogWarning($"Image component not found on {item.name}");
+        
                         }
                     }
 

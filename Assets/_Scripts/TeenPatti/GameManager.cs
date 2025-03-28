@@ -1616,7 +1616,7 @@ namespace TP
                                         return;
                                     }
                                     JObject jsonObject = JObject.Parse(y);
-                                    Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
+                                    Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> " + gameState.players[currentPlayerIndex].playerData.playerName);
                                     ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
                                     if (ShowMasterCheck)
                                     {
@@ -1673,7 +1673,7 @@ namespace TP
                                     return;
                                 }
                                 JObject jsonObject = JObject.Parse(y);
-                                Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
+                                Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> " + gameState.players[currentPlayerIndex].playerData.playerName);
                                 ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
 
                                 if (ShowMasterCheck)
@@ -1765,7 +1765,7 @@ namespace TP
                                         return;
                                     }
                                     JObject jsonObject = JObject.Parse(y);
-                                    Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
+                                    Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> " + gameState.players[currentPlayerIndex].playerData.playerName);
                                     ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
                                     if (ShowMasterCheck)
                                     {
@@ -1822,7 +1822,7 @@ namespace TP
                                     return;
                                 }
                                 JObject jsonObject = JObject.Parse(y);
-                                Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
+                                Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> " + gameState.players[currentPlayerIndex].playerData.playerName);
                                 ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
                                 if (ShowMasterCheck)
                                 {
@@ -3612,7 +3612,7 @@ namespace TP
                                         return;
                                     }
                                     JObject jsonObject = JObject.Parse(y);
-                                    Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString());
+                                    Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> " + gameState.players[currentPlayerIndex].playerData.playerName);
                                     ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
                                     DebugHelper.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).CurrentGameSpend); SetTostateFour();
 
@@ -3663,7 +3663,7 @@ namespace TP
                                     return;
                                 }
                                 JObject jsonObject = JObject.Parse(y);
-                                Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
+                                Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> " + gameState.players[currentPlayerIndex].playerData.playerName);
                                 ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
                                 DebugHelper.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).CurrentGameSpend);
                                 SetTostateFour();
@@ -3810,7 +3810,7 @@ namespace TP
                                         return;
                                     }
                                     JObject jsonObject = JObject.Parse(y);
-                                    Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
+                                    Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> " + gameState.players[currentPlayerIndex].playerData.playerName);
                                     ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
                                     AddWinnerAfterChaal();
                                     DebugHelper.Log("CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).playerData.playerName);
@@ -3887,7 +3887,7 @@ namespace TP
                                     return;
                                 }
                                 JObject jsonObject = JObject.Parse(y);
-                                Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
+                                Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> " +gameState.players[currentPlayerIndex].playerData.playerName);
                                 ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
                                 AddWinnerAfterChaal();
                                 DebugHelper.Log(" CHECK >>>>>>>>>>>>>  ***************" + gameState.totalPot + " ****************** " + GetPlayerState(playerID).playerData.playerName);
@@ -5141,13 +5141,8 @@ namespace TP
                     {
                         APIController.instance.CancelBetMultiplayerAPI((x, y, z) => { }, gameState.players[i].playerData.playerID, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameState.players[i].playerData.session_token, gameState.players[i].playerData.currency_type
                                , gameController.environment);
-                        gameState.players[i].BetIndex = 0;
-                        gameState.players[i].BetId = string.Empty;
-                        gameState.players[i].hasInitBet = false;
-                        gameState.players[i].CalledInitBet = false;
                     }
-
-                    gameState.currentState = 0;
+                    InitNewRoundState();
                     UpdateGameStateToServer();
                     yield break;
                 }
@@ -5217,6 +5212,7 @@ namespace TP
                     {
                         APIController.instance.CancelBetMultiplayerAPI((x, y, z) => { }, gameState.players[i].playerData.playerID, gameController.gameName, gameController.operatorName, gameController.gameId, gameState.currentMatchToken, gameState.players[i].playerData.session_token, gameState.players[i].playerData.currency_type
                                , gameController.environment);
+                        APIController.instance.ClearBetResponse(gameState.players[i].BetId);
                     }
 
                 }

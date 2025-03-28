@@ -1359,39 +1359,38 @@ namespace TP
         }
 
 
-        public void GetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string userToken, string operatorName, string gameName, string environment)
+        public void GetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string UserToken, string gameName, string Operator, string environment)
         {
-            CmdGetUpdatedBalance(Id, SessionToken, CurrencyType, userToken, operatorName, gameName, environment);
+            CmdGetUpdatedBalance(Id, SessionToken, CurrencyType, UserToken, gameName, Operator, environment);
         }
-
-
         [Command]
-        private void CmdGetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string userToken, string operatorName, string gameName, string environment)
+        private void CmdGetUpdatedBalance(string Id, string SessionToken, string CurrencyType, string UserToken, string gameName, string Operator, string environment)
         {
             List<KeyValuePojo> param = new List<KeyValuePojo>();
+            param.Add(new KeyValuePojo { keyId = "user_token", value = UserToken });
+            param.Add(new KeyValuePojo { keyId = "game_name", value = gameName });
+            param.Add(new KeyValuePojo { keyId = "operator", value = Operator });
             param.Add(new KeyValuePojo { keyId = "request_type", value = "info" });
             param.Add(new KeyValuePojo { keyId = "user_id", value = Id });
             param.Add(new KeyValuePojo { keyId = "session_token", value = SessionToken });
+            param.Add(new KeyValuePojo { keyId = "balance", value = myPlayerState.playerData.money.ToString() });
             param.Add(new KeyValuePojo { keyId = "currency", value = CurrencyType });
-            param.Add(new KeyValuePojo { keyId = "user_token", value = userToken });
-            param.Add(new KeyValuePojo { keyId = "operator", value = operatorName });
-            param.Add(new KeyValuePojo { keyId = "game_name", value = gameName });
+
 
             string url1 = StaticStrings.GetLambdaUrl(environment);
-
             ApiRequest apiRequest1 = new ApiRequest();
             apiRequest1.action = (success, error, body) =>
             {
-                
                 if (success)
                 {
                     DebugHelper.Log("CmdGetUpdatedBalance success ================> " + success);
                     ApiResponse apiResponse = JsonUtility.FromJson<ApiResponse>(body);
-                    HandleErrorCode(apiResponse.code, playerID, apiResponse.message);
+                    // HandleErrorCode(apiResponse.code, playerID, apiResponse.message);
                 }
                 else
                 {
-                    LoggerUtils.Log("StartAuthenticationServerSideCall error ================> " + error);
+
+                    DebugHelper.Log("CmdGetUpdatedBalance error ================> " + error);
                 }
                 TargetGetUpdatedBalanceClientSideCall(body, error, success);
             };
