@@ -5949,7 +5949,8 @@ namespace TP
                     {
                         //isBotWin = Responce.WinChance <= 0 ? true : false;
                         DebugHelper.Log("BOT WILL WIN THIS ROUND ------ >" + isBotWin + " *************** " + Responce.WinChance);
-                        isBotWin = true;
+                        int val = UnityEngine.Random.Range(0, 10);
+                        isBotWin = val <= 7;
                     }
                     else
                     {
