@@ -1156,6 +1156,7 @@ namespace TP
 
                 if (!OnlyBotExsist)
                 {
+
                     APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex, ps.BetId, 0, ps.CurrentGameSpend, gameState.totalPot, val, null, ps.playerData.playerID, true, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission, gameState.currentMatchToken, gameController.domainURL, ps.playerData.session_token, ps.playerData.currency_type, ps.playerData.platform, ps.playerData.token, gameController.environment, ps.playerData.money.ToString());
                 }
 
@@ -1186,6 +1187,7 @@ namespace TP
                     if (x)
                     {
                         JObject jsonObject = JObject.Parse(y);
+                        Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> ");
                         ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
 
 
@@ -1855,6 +1857,7 @@ namespace TP
         {
             if (APIController.instance.authentication.Id == playerIDData)
             {
+                Debug.Log("Teenpatti Game Balance ==========> " + Amount + " <============>");
                 APIController.instance.UpdateAmount(Amount);
             }
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -3192,7 +3195,7 @@ namespace TP
                     {
 
                         JObject jsonObject = JObject.Parse(y);
-                        Debug.Log("Ludo Game Balance ==========> " + jsonObject["balance"].ToString());
+                        Debug.Log("Teenpatti Game Balance ==========> " + jsonObject["balance"].ToString() + " <============> ");
                         ClientUpdateBalance(jsonObject["balance"].ToString(), ps.playerData.playerID);
 
                     }

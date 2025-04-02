@@ -278,7 +278,7 @@ namespace TP
         public void SetPlayerAmountOnUpdateActionCall()
         {
 
-            DebugHelper.Log("SetPlayerAmountOnUpdateActionCall ==============>  " + GameController.Instance.isInGame + " =========== " + (GameManager.localInstance != null));
+            DebugHelper.Log("SetPlayerAmountOnUpdateActionCall ==============>  " + GameController.Instance.isInGame + " =========== " + (GameManager.localInstance != null) + " ==========? " + APIController.instance.userDetails.balance);
             CurrentPlayerData.SetGold(APIController.instance.userDetails.balance);
             UIController.Instance.CurrenyType.text = APIController.instance.userDetails.currency_type;
             UIController.Instance.Type.text = APIController.instance.userDetails.currency_type;
