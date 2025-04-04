@@ -169,7 +169,9 @@ namespace TP
         public Color ActivePack;
         public Color ChaalTextandAmount;
         public Color PlusMinus;
+        public Color InactivePlusMinustxt;
         public Color InactiveButtonColor;
+        public Color InactivePlusMinusButtonColor;
         public Color InactiveButtonTXTColor;
         public Color activeButtonColor;
         public Color NormalTxtColor;
@@ -253,7 +255,9 @@ namespace TP
             chaalButton.image.color = activeButtonColor;
             increaseBet.image.color = activeButtonColor;
             decreaseBet.image.color = activeButtonColor;
-            GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
+            GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.InactivePlusMinusButtonColor;
+            GamePlayUI.instance.Minus.color = GamePlayUI.instance.InactivePlusMinustxt;
+
             //decreaseBet.image.sprite = InActivePlusMinus;
             allinButton.image.sprite = ActiveChalPic;
             Chaal.color = ChaalTextandAmount;
@@ -289,8 +293,11 @@ namespace TP
             packButton.image.color = activeButtonColor;
             packButton.image.sprite = ActivePackPic;
             chaalButton.image.color = InactiveButtonColor;
-            increaseBet.image.color = InactiveButtonColor;
-            decreaseBet.image.color = InactiveButtonColor;
+            increaseBet.image.color = InactivePlusMinusButtonColor;
+			decreaseBet.image.color = InactivePlusMinusButtonColor;
+            GamePlayUI.instance.Plus.color = GamePlayUI.instance.InactivePlusMinustxt;
+            GamePlayUI.instance.Minus.color = GamePlayUI.instance.InactivePlusMinustxt;
+
             //chaalButton.image.sprite = InActiveCommon;
             //increaseBet.image.sprite = InActivePlusMinus;
             //decreaseBet.image.sprite = InActivePlusMinus;
@@ -299,8 +306,8 @@ namespace TP
             Pack.color = ActivePack;
             AllInAmount.color = ChaalTextandAmount;
             AllIn.color = ChaalTextandAmount;
-            Plus.color = Inactive;
-            Minus.color = Inactive;
+            //Plus.color = InactivePlusMinustxt;
+            //Minus.color = InactivePlusMinustxt;
             ChaalAmount.color = Inactive;
         }
 
@@ -331,8 +338,11 @@ namespace TP
 			showButton.image.color = InactiveButtonColor;
 			packButton.image.color = InactiveButtonColor;
 			chaalButton.image.color = InactiveButtonColor;
-            increaseBet.image.color = InactiveButtonColor;
-            decreaseBet.image.color = InactiveButtonColor;
+            increaseBet.image.color = InactivePlusMinusButtonColor;
+            decreaseBet.image.color = InactivePlusMinusButtonColor;
+            GamePlayUI.instance.Plus.color = GamePlayUI.instance.InactivePlusMinustxt;
+            GamePlayUI.instance.Minus.color = GamePlayUI.instance.InactivePlusMinustxt;
+
             Chaal.color = Inactive;
             Show.color = Inactive;
             Pack.color = Inactive;

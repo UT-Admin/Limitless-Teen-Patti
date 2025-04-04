@@ -3377,7 +3377,9 @@ namespace TP
             GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.activeButtonColor;
             GamePlayUI.instance.increaseBet.image.sprite = GamePlayUI.instance.ActivePlusMinus;
             GamePlayUI.instance.Plus.color = GamePlayUI.instance.PlusMinus;
-            GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
+            GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.InactivePlusMinusButtonColor;
+            GamePlayUI.instance.Minus.color = GamePlayUI.instance.InactivePlusMinustxt;
+
             //  GamePlayUI.instance.decreaseBet.image.sprite = GamePlayUI.instance.InActivePlusMinus;
             GamePlayUI.instance.Minus.color = GamePlayUI.instance.Inactive;
             GamePlayUI.instance.increaseBet.interactable = true;
@@ -3397,8 +3399,8 @@ namespace TP
             {
                 GamePlayUI.instance.GlowPlusButton.SetActive(false);
                 GamePlayUI.instance.GlowMinusButton.SetActive(true);
-                GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
-                //GamePlayUI.instance.increaseBet.image.sprite = GamePlayUI.instance.InActivePlusMinus;
+                GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactivePlusMinusButtonColor;
+                GamePlayUI.instance.Plus.color = GamePlayUI.instance.InactivePlusMinustxt;
                 GamePlayUI.instance.Plus.color = GamePlayUI.instance.PlusMinus;
                 GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.activeButtonColor;
                 GamePlayUI.instance.decreaseBet.image.sprite = GamePlayUI.instance.ActivePlusMinus;
@@ -3421,11 +3423,14 @@ namespace TP
             {
                 GamePlayUI.instance.GlowPlusButton.SetActive(false);
                 GamePlayUI.instance.GlowMinusButton.SetActive(false);
-                GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
+                GamePlayUI.instance.decreaseBet.image.color = GamePlayUI.instance.InactivePlusMinusButtonColor;
+                GamePlayUI.instance.Minus.color = GamePlayUI.instance.InactivePlusMinustxt;
+
                 //    GamePlayUI.instance.decreaseBet.image.sprite = GamePlayUI.instance.InActivePlusMinus;
-                GamePlayUI.instance.Minus.color = GamePlayUI.instance.Inactive;
-                GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
-                //   GamePlayUI.instance.increaseBet.image.sprite = GamePlayUI.instance.InActivePlusMinus;
+              //  GamePlayUI.instance.Minus.color = GamePlayUI.instance.Inactive;
+                GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactivePlusMinusButtonColor;
+                GamePlayUI.instance.Plus.color = GamePlayUI.instance.InactivePlusMinustxt;
+
                 GamePlayUI.instance.Plus.color = GamePlayUI.instance.PlusMinus;
                 GamePlayUI.instance.increaseBet.interactable = false;
                 GamePlayUI.instance.decreaseBet.interactable = false;

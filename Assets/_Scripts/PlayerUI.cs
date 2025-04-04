@@ -368,18 +368,20 @@ namespace TP
                             GamePlayUI.instance.Minus.color = GamePlayUI.instance.PlusMinus;
                             GamePlayUI.instance.decreaseBet.interactable = true;
                             GamePlayUI.instance.GlowPlusButton.SetActive(false);
-                            GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
+                            GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactivePlusMinusButtonColor;
                             
                             GamePlayUI.instance.increaseBet.interactable = false;
-                           
-                            // GamePlayUI.instance.Plus.color = 
+
+                            GamePlayUI.instance.Plus.color = GamePlayUI.instance.InactivePlusMinustxt;
                         }
                     }
                     else
                     {
                         GamePlayUI.instance.GlowPlusButton.SetActive(false);
-                        GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactiveButtonColor;
+                        GamePlayUI.instance.increaseBet.image.color = GamePlayUI.instance.InactivePlusMinusButtonColor;
                         GamePlayUI.instance.increaseBet.interactable = false;
+                            GamePlayUI.instance.Plus.color = GamePlayUI.instance.InactivePlusMinustxt;
+
                         
                     }
 
@@ -653,17 +655,19 @@ namespace TP
                     {
                         playerStatus.text = "Blind";
                         playerStatus.color = Color.white;
-                        playerStatus.enableVertexGradient = true;
+                       playerStatus.enableVertexGradient = false;           
 
-                        VertexGradient gradient = new VertexGradient(
-              new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-              new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-              new Color32(153, 153, 153, 255), // Bottom color: #6FF881FF
-              new Color32(153, 153, 153, 255)  // Bottom color: #6FF881FF
-          );
+                        //              playerStatus.enableVertexGradient = true;           
 
+                        //              VertexGradient gradient = new VertexGradient(
+                        //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                        //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                        //    new Color32(153, 153, 153, 255), // Bottom color: #6FF881FF
+                        //    new Color32(153, 153, 153, 255)  // Bottom color: #6FF881FF
+                        //);
 
-                        playerStatus.colorGradient = gradient;
+                        // playerStatus.colorGradient = gradient;
+
 
 
 
