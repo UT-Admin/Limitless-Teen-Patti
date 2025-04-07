@@ -1166,7 +1166,7 @@ namespace TP
 
         }
 
-        public void LossGamePlayerServer(double Amount, string PlayerId)
+        public void LossGamePlayerServer(double Amount, string PlayerId,bool _playerAllin)
         {
 
             DebugHelper.Log("LossGamePlayerServer Called");
@@ -1183,7 +1183,7 @@ namespace TP
                 val.Info = "LossGamePlayer";
 
                 // ShowServerAnimation(0, ps.playerData.money, ps.playerData.playerID);
-                APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex, ps.BetId, 0, ps.CurrentGameSpend, gameState.totalPot, val, (x, c, y) => {
+                APIController.instance.WinningsBetMultiplayerAPI(ps.BetIndex, ps.BetId, 0, ps.CurrentGameSpend, 0, val, (x, c, y) => {
                     if (x)
                     {
                         JObject jsonObject = JObject.Parse(y);
@@ -1198,7 +1198,7 @@ namespace TP
                         UpdateGameStateToServer();
                     }
                 }
-                , ps.playerData.playerID, false, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission, gameState.currentMatchToken, gameController.domainURL, ps.playerData.session_token, ps.playerData.currency_type, ps.playerData.platform, ps.playerData.token, gameController.environment, ps.playerData.money.ToString());
+                , ps.playerData.playerID, false, true, gameController.gameName, gameController.operatorName, gameController.gameId, gameController.Commission, gameState.currentMatchToken, gameController.domainURL, ps.playerData.session_token, ps.playerData.currency_type, ps.playerData.platform, ps.playerData.token, gameController.environment, (_playerAllin ? 0: ps.playerData.money).ToString()); ;
 
             }
 
@@ -3729,9 +3729,13 @@ namespace TP
             if (gameState.players[currentPlayerIndex].playerData.money <= (gameState.players[currentPlayerIndex].hasSeenCard ? gameState.currentStake : (gameState.currentStake / 2)))
             {
                 AllinMaster(playerID);
+            DebugHelper.Log("Chaal "+1);
+
             }
             else
             {
+                DebugHelper.Log("Chaal " + 2);
+
                 double newStake = 0;
                 if (gameState.players[currentPlayerIndex].playerData.isBot)
                 {
@@ -4656,7 +4660,9 @@ namespace TP
                         else
                         {
                             DebugHelper.Log("############################################ Check Losser " + gameState.players[i].playerData.playerName + " ======= > " + gameState.players[i].disconnectTime);
-                            LossGamePlayerServer(gameState.totalPot, gameState.players[i].playerData.playerID);
+                            LossGamePlayerServer(gameState.totalPot, gameState.players[i].playerData.playerID,false);
+                            Debug.Log(" LossGamePlayerServer " + 0);
+
                         }
                     }
 
@@ -4698,7 +4704,8 @@ namespace TP
                         }
                         else
                         {
-                            LossGamePlayerServer(gameState.totalPot, ps.playerData.playerID);
+                            LossGamePlayerServer(gameState.totalPot, ps.playerData.playerID,ps.hasAllin);
+                            Debug.Log(" LossGamePlayerServer "+1);
                         }
                     }
 
@@ -4781,7 +4788,8 @@ namespace TP
                             }
                             else
                             {
-                                LossGamePlayerServer(totalAmount, ps.playerData.playerID);
+                                LossGamePlayerServer(totalAmount, ps.playerData.playerID, false);
+                                Debug.Log(" LossGamePlayerServer " + 2);
 
                             }
 

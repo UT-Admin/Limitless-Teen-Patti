@@ -59,6 +59,7 @@ namespace TP
         [SerializeField] private Color color1;
         [SerializeField] private Color color2;
         [SerializeField] private Color color3;
+        [SerializeField] private Color color4;
 
 
 
@@ -538,18 +539,18 @@ namespace TP
                     playerStatusShow();
                     profilePictureGlow.SetActive(true);
                     playerStatus.text = "Seen";
-                    playerStatus.color = Color.white;
-                    playerStatus.enableVertexGradient = true;
+                    playerStatus.color = color1;
+                   // playerStatus.enableVertexGradient = true;
 
-                    VertexGradient gradient = new VertexGradient(
-          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-          new Color32(114, 255, 242, 255), // Bottom color: #6FF881FF
-          new Color32(114, 255, 242, 255)  // Bottom color: #6FF881FF
-      );
+      //              VertexGradient gradient = new VertexGradient(
+      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+      //    new Color32(114, 255, 242, 255), // Bottom color: #6FF881FF
+      //    new Color32(114, 255, 242, 255)  // Bottom color: #6FF881FF
+      //);
 
 
-                    playerStatus.colorGradient = gradient;
+                //    playerStatus.colorGradient = gradient;
 
 
 
@@ -571,18 +572,18 @@ namespace TP
 
                     playerStatus.text = "All in";
 
-                    playerStatus.color = Color.white;
-                    playerStatus.enableVertexGradient = true;
+                    playerStatus.color = color4;
+      //              playerStatus.enableVertexGradient = true;
 
-                    VertexGradient gradient = new VertexGradient(
-          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-          new Color32(135, 175, 254, 255), // Bottom color: #6FF881FF
-          new Color32(135, 175, 254, 255)  // Bottom color: #6FF881FF
-      );
+      //              VertexGradient gradient = new VertexGradient(
+      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+      //    new Color32(135, 175, 254, 255), // Bottom color: #6FF881FF
+      //    new Color32(135, 175, 254, 255)  // Bottom color: #6FF881FF
+      //);
 
 
-                    playerStatus.colorGradient = gradient;
+                  //  playerStatus.colorGradient = gradient;
 
 
 
@@ -596,18 +597,18 @@ namespace TP
                     playerStatusShow();
                     profilePictureGlow.SetActive(true);
                     playerStatus.text = "Chaal";
-                    playerStatus.color = Color.white;
-                    playerStatus.enableVertexGradient = true;
+                    playerStatus.color = color2;
+      //              playerStatus.enableVertexGradient = true;
 
-                    VertexGradient gradient = new VertexGradient(
-          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-          new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-          new Color32(111, 248, 129, 255), // Bottom color: #6FF881FF
-          new Color32(111, 248, 129, 255)  // Bottom color: #6FF881FF
-      );
+      //              VertexGradient gradient = new VertexGradient(
+      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+      //    new Color32(111, 248, 129, 255), // Bottom color: #6FF881FF
+      //    new Color32(111, 248, 129, 255)  // Bottom color: #6FF881FF
+      //);
 
 
-                    playerStatus.colorGradient = gradient;
+      //              playerStatus.colorGradient = gradient;
                     ImageStatusColor.gameObject.SetActive(true);
                     //ImageStatusColor.color = color1;
                 }
@@ -632,17 +633,17 @@ namespace TP
                         playerStatus.text = "Boot";
 
                         playerStatus.color = Color.white;
-                        playerStatus.enableVertexGradient = true;
+          //              playerStatus.enableVertexGradient = true;
 
-                        VertexGradient gradient = new VertexGradient(
-              new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-              new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-              new Color32(254, 155, 133, 255), // Bottom color: #6FF881FF
-              new Color32(254, 155, 133, 255)  // Bottom color: #6FF881FF
-          );
+          //              VertexGradient gradient = new VertexGradient(
+          //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+          //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+          //    new Color32(254, 155, 133, 255), // Bottom color: #6FF881FF
+          //    new Color32(254, 155, 133, 255)  // Bottom color: #6FF881FF
+          //);
 
 
-                        playerStatus.colorGradient = gradient;
+                      //  playerStatus.colorGradient = gradient;
 
 
                         ImageStatusColor.gameObject.SetActive(true);
@@ -655,7 +656,7 @@ namespace TP
                     {
                         playerStatus.text = "Blind";
                         playerStatus.color = Color.white;
-                       playerStatus.enableVertexGradient = false;           
+                     //  playerStatus.enableVertexGradient = false;           
 
                         //              playerStatus.enableVertexGradient = true;           
 
@@ -697,18 +698,18 @@ namespace TP
 
                 playerStatusShow();
                 profilePictureGlow.SetActive(true);
-                playerStatus.color = Color.white;
-                playerStatus.enableVertexGradient = true;
+                playerStatus.color = color3;
+  //              playerStatus.enableVertexGradient = true;
 
-                VertexGradient gradient = new VertexGradient(
-      new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-      new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-      new Color32(255, 114, 119, 255), // Bottom color: #6FF881FF
-      new Color32(255, 114, 119, 255)  // Bottom color: #6FF881FF
-  );
+  //              VertexGradient gradient = new VertexGradient(
+  //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+  //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+  //    new Color32(255, 114, 119, 255), // Bottom color: #6FF881FF
+  //    new Color32(255, 114, 119, 255)  // Bottom color: #6FF881FF
+  //);
 
 
-                playerStatus.colorGradient = gradient;
+               // playerStatus.colorGradient = gradient;
                 playerStatus.text = "Packed";
                 ImageStatusColor.gameObject.SetActive(false);
                 if (isMine)
