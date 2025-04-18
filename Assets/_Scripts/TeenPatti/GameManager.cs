@@ -2459,6 +2459,8 @@ namespace TP
                     GamePlayUI.instance.challText.text = "blind";
                     // GamePlayUI.instance.challText.colorGradient = new TMPro.VertexGradient() { topLeft = new Color(1,0.96f,0.9f,1), topRight = new Color(1, 0.96f, 0.9f, 1), bottomLeft = new Color(0, 1, 0.58f, 1), bottomRight = new Color(0, 1, 0.58f, 1) };
                     GamePlayUI.instance.challAmountText.text = "0.00";
+                    GamePlayUI.instance.challAmountCurrencyText.text = APIController.instance.authentication.currency_type;
+
                     CountTemp = 0;
                     PackSound = false;
                     BackGroundMusic = true;

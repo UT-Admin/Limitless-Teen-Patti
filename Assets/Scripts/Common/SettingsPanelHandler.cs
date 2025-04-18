@@ -203,7 +203,7 @@ public class SettingsPanelHandler : MonoBehaviour
         playerNameTxt.text = APIController.instance.userDetails.name;
         wholeExit.gameObject.SetActive(true);
         PanelTransform.GetComponent<CanvasGroup>().DOFade(1, 0.1f).OnComplete(() => { MenuButton.interactable = true; });
-        PanelTransform.DOAnchorPosX(647, 0.1f);
+        PanelTransform.DOAnchorPosX(558, 0.1f);
     }
     public void HideSettings()
     {
@@ -211,7 +211,7 @@ public class SettingsPanelHandler : MonoBehaviour
       //  PanelTransform.GetComponent<RectTransform>().anchoredPosition = new Vector3(-647, -855, 0);
         MenuButton.interactable = false;
         wholeExit.gameObject.SetActive(false);
-        PanelTransform.DOAnchorPosX(-647, 0.3f);
+        PanelTransform.DOAnchorPosX(-558, 0.3f);
         PanelTransform.GetComponent<CanvasGroup>().DOFade(0, 0.3f).OnComplete(() => { gameObject.SetActive(false); PanelTransform.gameObject.SetActive(false); MenuButton.interactable = true; });
     }
 

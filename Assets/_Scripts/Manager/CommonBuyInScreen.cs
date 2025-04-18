@@ -200,7 +200,7 @@ public class CommonBuyInScreen : MonoBehaviour
         ChangeTextColor(toggleIndex);
         SelectedAmountData dataToSet = GameController.Instance.BuyScreenData.selectedAmountData[toggleIndex];
         platformInfo.text = $"Platform Fee ({APIController.instance.authentication.entryAmountDetails.commission * 100}% of total Pot Amount)";
-        entryFee.text = dataToSet.entryFee.ToString() + " " + APIController.instance.userDetails.currency_type;
+        entryFee.text = dataToSet.entryFee.ToString() + " " +$"<size=32>{APIController.instance.userDetails.currency_type}</size>";
         //chaalLimit.text = dataToSet.ChaalAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
         //potLimit.text = dataToSet.potAmount.ToString() + " " + APIController.instance.userDetails.currency_type;
         APIController.instance.userDetails.potLimit = dataToSet.potAmount;

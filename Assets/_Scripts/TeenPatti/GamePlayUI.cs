@@ -56,7 +56,8 @@ namespace TP
         //============================================================================================//
         [Header("=======TMP_TEXT=========")]
         public TMP_Text challAmountText;
-	    public TMP_Text allinAmountText;
+        public TMP_Text challAmountCurrencyText;
+        public TMP_Text allinAmountText;
 		public TMP_Text strengthMeterText;
 		public TMP_Text hukamCardRank;
 		public TMP_Text showButtonText;
@@ -889,6 +890,7 @@ namespace TP
 
             }
             ChaalIncrease = finalBoot;
+			challAmountCurrencyText.text = APIController.instance.authentication.currency_type;
         }
 
         public void ExitGame()
