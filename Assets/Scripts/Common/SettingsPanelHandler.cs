@@ -261,7 +261,7 @@ public class SettingsPanelHandler : MonoBehaviour
         DebugHelper.Log("How  to Play 1");
         wholeExit.gameObject.SetActive(false);
         DebugHelper.Log("How  to Play 2");
-        PanelTransform.anchoredPosition = new Vector2(-533f, -714f);
+        PanelTransform.DOAnchorPosX(-558, 0.3f);
         DebugHelper.Log("How  to Play 3");
         gameObject.SetActive(false);
         DebugHelper.Log("How  to Play 4");

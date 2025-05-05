@@ -2542,7 +2542,7 @@ public class AuthenticationData
     public string token;
     public string session_token;
     public double balance;
-    public string currency_type;
+    public string currency_type   ;
     public string gamename;
     public string operatorname;
     public string operatorDomainUrl;

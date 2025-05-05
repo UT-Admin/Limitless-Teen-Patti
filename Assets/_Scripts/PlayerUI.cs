@@ -48,6 +48,8 @@ namespace TP
         [SerializeField] private GameObject _chatContainerPrivate;
         [SerializeField] private GameObject[] emojiList;
         [SerializeField] private Transform emojiPoint;
+        [SerializeField] private GameObject ProfileGlow; 
+        [SerializeField] private GameObject ProfileShine;
         [SerializeField] private int idOrder;
         [SerializeField] private bool IsInitialized = false;
         [SerializeField] private Color colorPacked = new Color(.2f, .2f, .2f);
@@ -69,6 +71,9 @@ namespace TP
         public Image playerAvatar;
         public TextMeshProUGUI playerName;
         //public GameObject winnerBanner;
+        public GameObject BlindIcon;
+        public GameObject SeenIcon;
+
         public GameObject winnerBannerGlow;
         public GameObject winnerBannerGlow2;
         public TextMeshProUGUI playerAmount;
@@ -156,8 +161,8 @@ namespace TP
             StopCoroutine(nameof(StartTimer));
             StopCoroutine(nameof(StartCountdown));
             avatharTimer.enabled = false;
-
-
+            ProfileGlow.SetActive(false);
+            ProfileShine.SetActive(false);
             BackCardGlowAnim(false);
             DebugHelper.Log("======================> StartTimer Check222");
             TimerCountDown.SetActive(false);
@@ -195,6 +200,8 @@ namespace TP
         IEnumerator StartTimer()
         {
             avatharTimer.enabled = true;
+            ProfileGlow.SetActive(true);
+            ProfileShine.SetActive(true);
             BackCardGlowAnim(true);
 
             avatharTimer.color = new Color(0f, 1f, 0f, .6f);
@@ -216,6 +223,8 @@ namespace TP
                     timerVal = (float)((NetworkTime.time - (myTurnTime)) / 15f);
                     timerVal = Mathf.Clamp(timerVal, 0, 1);
                     avatharTimer.enabled = true;
+                    ProfileGlow.SetActive(true);
+                    ProfileShine.SetActive(true);
                     avatharTimer.fillAmount = 1 - timerVal;
                     BackCardGlowAnim(true);
 
@@ -540,17 +549,23 @@ namespace TP
                     profilePictureGlow.SetActive(true);
                     playerStatus.text = "Seen";
                     playerStatus.color = color1;
-                   // playerStatus.enableVertexGradient = true;
+                    if (BlindIcon != null && SeenIcon !=null)
+                    {
+                        BlindIcon.SetActive(false);
+                        SeenIcon.SetActive(true);
 
-      //              VertexGradient gradient = new VertexGradient(
-      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-      //    new Color32(114, 255, 242, 255), // Bottom color: #6FF881FF
-      //    new Color32(114, 255, 242, 255)  // Bottom color: #6FF881FF
-      //);
+                    }
+                    // playerStatus.enableVertexGradient = true;
+
+                    //              VertexGradient gradient = new VertexGradient(
+                    //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                    //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                    //    new Color32(114, 255, 242, 255), // Bottom color: #6FF881FF
+                    //    new Color32(114, 255, 242, 255)  // Bottom color: #6FF881FF
+                    //);
 
 
-                //    playerStatus.colorGradient = gradient;
+                    //    playerStatus.colorGradient = gradient;
 
 
 
@@ -573,17 +588,23 @@ namespace TP
                     playerStatus.text = "All in";
 
                     playerStatus.color = color4;
-      //              playerStatus.enableVertexGradient = true;
+                    if (BlindIcon != null && SeenIcon != null)
+                    {
+                        BlindIcon.SetActive(false);
+                        SeenIcon.SetActive(false);
 
-      //              VertexGradient gradient = new VertexGradient(
-      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-      //    new Color32(135, 175, 254, 255), // Bottom color: #6FF881FF
-      //    new Color32(135, 175, 254, 255)  // Bottom color: #6FF881FF
-      //);
+                    }
+                    //              playerStatus.enableVertexGradient = true;
+
+                    //              VertexGradient gradient = new VertexGradient(
+                    //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                    //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                    //    new Color32(135, 175, 254, 255), // Bottom color: #6FF881FF
+                    //    new Color32(135, 175, 254, 255)  // Bottom color: #6FF881FF
+                    //);
 
 
-                  //  playerStatus.colorGradient = gradient;
+                    //  playerStatus.colorGradient = gradient;
 
 
 
@@ -598,17 +619,22 @@ namespace TP
                     profilePictureGlow.SetActive(true);
                     playerStatus.text = "Chaal";
                     playerStatus.color = color2;
-      //              playerStatus.enableVertexGradient = true;
+                    //              playerStatus.enableVertexGradient = true;
 
-      //              VertexGradient gradient = new VertexGradient(
-      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-      //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-      //    new Color32(111, 248, 129, 255), // Bottom color: #6FF881FF
-      //    new Color32(111, 248, 129, 255)  // Bottom color: #6FF881FF
-      //);
+                    //              VertexGradient gradient = new VertexGradient(
+                    //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                    //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                    //    new Color32(111, 248, 129, 255), // Bottom color: #6FF881FF
+                    //    new Color32(111, 248, 129, 255)  // Bottom color: #6FF881FF
+                    //);
+                    if (BlindIcon != null && SeenIcon != null)
+                    {
+                        BlindIcon.SetActive(false);
+                        SeenIcon.SetActive(false);
 
+                    }
 
-      //              playerStatus.colorGradient = gradient;
+                    //              playerStatus.colorGradient = gradient;
                     ImageStatusColor.gameObject.SetActive(true);
                     //ImageStatusColor.color = color1;
                 }
@@ -633,17 +659,23 @@ namespace TP
                         playerStatus.text = "Boot";
 
                         playerStatus.color = Color.white;
-          //              playerStatus.enableVertexGradient = true;
+                        if (BlindIcon != null && SeenIcon != null)
+                        {
+                            BlindIcon.SetActive(false);
+                            SeenIcon.SetActive(false);
 
-          //              VertexGradient gradient = new VertexGradient(
-          //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-          //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
-          //    new Color32(254, 155, 133, 255), // Bottom color: #6FF881FF
-          //    new Color32(254, 155, 133, 255)  // Bottom color: #6FF881FF
-          //);
+                        }
+                        //              playerStatus.enableVertexGradient = true;
+
+                        //              VertexGradient gradient = new VertexGradient(
+                        //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                        //    new Color32(255, 255, 255, 255), // Top color: #FFFFFFFF
+                        //    new Color32(254, 155, 133, 255), // Bottom color: #6FF881FF
+                        //    new Color32(254, 155, 133, 255)  // Bottom color: #6FF881FF
+                        //);
 
 
-                      //  playerStatus.colorGradient = gradient;
+                        //  playerStatus.colorGradient = gradient;
 
 
                         ImageStatusColor.gameObject.SetActive(true);
@@ -656,7 +688,13 @@ namespace TP
                     {
                         playerStatus.text = "Blind";
                         playerStatus.color = Color.white;
-                     //  playerStatus.enableVertexGradient = false;           
+                        if (BlindIcon != null && SeenIcon != null)
+                        {
+                            BlindIcon.SetActive(true);
+                            SeenIcon.SetActive(false);
+
+                        }
+                        //  playerStatus.enableVertexGradient = false;           
 
                         //              playerStatus.enableVertexGradient = true;           
 
@@ -712,6 +750,12 @@ namespace TP
                // playerStatus.colorGradient = gradient;
                 playerStatus.text = "Packed";
                 ImageStatusColor.gameObject.SetActive(false);
+                if (BlindIcon != null && SeenIcon != null)
+                {
+                    BlindIcon.SetActive(false);
+                    SeenIcon.SetActive(false);
+
+                }
                 if (isMine)
                 {
                     GamePlayUI.instance.SeeButtonActive(false);
@@ -734,6 +778,12 @@ namespace TP
                 profilePictureGlow.SetActive(true);
                 playerStatus.text = "Waiting";
                 playerStatus.color = Color.white;
+                if (BlindIcon != null && SeenIcon != null)
+                {
+                    BlindIcon.SetActive(false);
+                    SeenIcon.SetActive(false);
+
+                }
                 ImageStatusColor.gameObject.SetActive(false);
                 ResetCard(true);
 
@@ -817,6 +867,8 @@ namespace TP
 
             avatharTimer.enabled = true;
             avatharTimer.fillAmount = 1 - value;
+            ProfileGlow.SetActive(true);
+            ProfileShine.SetActive(true);
             BackCardGlowAnim(true);
             DebugHelper.Log("======================> StartTimer Check444");
         }
@@ -926,6 +978,8 @@ namespace TP
                 MasterAudioController.instance.PlayAudio(AudioEnum.CHIPSOUND);
             isTimerRunning = false;
             avatharTimer.enabled = false;
+            ProfileGlow.SetActive(false);
+            ProfileShine.SetActive(false);
             BackCardGlowAnim(false);
             DebugHelper.Log("======================> StartTimer Check555");
             string valAmount = CommonFunctions.Instance.TpvAmountSeparator(betAmountVal, true);
@@ -1225,18 +1279,18 @@ namespace TP
                         /*  GamePlayUI.instance.PotHolderGlow.SetActive(true);*/
 
                         GamePlayUI.instance.PotGlowAnim();
-                        GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
-                        .SetEase(Ease.OutQuad)
-                        .OnComplete(() =>
-                        {
+                        //GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
+                        //.SetEase(Ease.OutQuad)
+                        //.OnComplete(() =>
+                        //{
 
-                            /* GamePlayUI.instance.GlowPotAmount.SetActive(false);*/
-                            GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
-                                .SetEase(Ease.InQuad);
-                            /* GamePlayUI.instance.PotGlowAnim();*/
-                            /*GamePlayUI.instance.PotHolderGlow.SetActive(false);*/
+                        //    /* GamePlayUI.instance.GlowPotAmount.SetActive(false);*/
+                        //    GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
+                        //        .SetEase(Ease.InQuad);
+                        //    /* GamePlayUI.instance.PotGlowAnim();*/
+                        //    /*GamePlayUI.instance.PotHolderGlow.SetActive(false);*/
 
-                        }).OnStart(() => { /*GamePlayUI.instance.GlowPotAmount.SetActive(true);*/ });
+                        //}).OnStart(() => { /*GamePlayUI.instance.GlowPotAmount.SetActive(true);*/ });
 
                         double pot = GameManager.localInstance.gameState.totalPot;
                         string val = CommonFunctions.Instance.TpvAmountSeparator(APIController.instance.userDetails.balance, true);
@@ -1385,39 +1439,39 @@ namespace TP
                           PotChipImage.gameObject.SetActive(false);
                           StartCoroutine(PotChipAssign());
                           GamePlayUI.instance.PotGlowAnim();
-                          GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
-                                    .SetEase(Ease.OutQuad)
-                                    .OnComplete(() =>
-                                    {
-                                                DebugHelper.Log("PotAmount Val________1");
-                                        /*GamePlayUI.instance.PotGlowAnim();*/
-                                        // Fade out GlowPotAmount
-                                        /*var glowImage = GamePlayUI.instance.GlowPotAmount.GetComponent<Image>();
-                                        if (glowImage != null)
-                                        {
-                                            glowImage.DOFade(0, 0.3f).OnComplete(() =>
-                                            {
-                                                *//*GamePlayUI.instance.GlowPotAmount.SetActive(false);*//* // Optionally deactivate after fade
-                                            });
-                                        }*/
+                          //GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f)
+                          //          .SetEase(Ease.OutQuad)
+                          //          .OnComplete(() =>
+                          //          {
+                          //                      DebugHelper.Log("PotAmount Val________1");
+                          //              /*GamePlayUI.instance.PotGlowAnim();*/
+                          //              // Fade out GlowPotAmount
+                          //              /*var glowImage = GamePlayUI.instance.GlowPotAmount.GetComponent<Image>();
+                          //              if (glowImage != null)
+                          //              {
+                          //                  glowImage.DOFade(0, 0.3f).OnComplete(() =>
+                          //                  {
+                          //                      *//*GamePlayUI.instance.GlowPotAmount.SetActive(false);*//* // Optionally deactivate after fade
+                          //                  });
+                          //              }*/
 
-                                        // Scale back potAmount
-                                        GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
-                                            .SetEase(Ease.InQuad);
+                          //              // Scale back potAmount
+                          //              GamePlayUI.instance.potAmount.transform.DOScale(new Vector3(1f, 1f, 1f), 0.3f)
+                          //                  .SetEase(Ease.InQuad);
 
-                                    })
-                                    .OnStart(() =>
-                                    {
-                                        DebugHelper.Log("PotAmount Val________2");
+                          //          })
+                          //          .OnStart(() =>
+                          //          {
+                          //              DebugHelper.Log("PotAmount Val________2");
 
-                                        // Activate and fade in GlowPotAmount
-                                        /* GamePlayUI.instance.GlowPotAmount.SetActive(true);*/
-                                       /* var glowImage = GamePlayUI.instance.GlowPotAmount.GetComponent<Image>();
-                                        if (glowImage != null)
-                                        {
-                                            glowImage.DOFade(1, 0.3f);
-                                        }*/
-                                    });
+                          //              // Activate and fade in GlowPotAmount
+                          //              /* GamePlayUI.instance.GlowPotAmount.SetActive(true);*/
+                          //             /* var glowImage = GamePlayUI.instance.GlowPotAmount.GetComponent<Image>();
+                          //              if (glowImage != null)
+                          //              {
+                          //                  glowImage.DOFade(1, 0.3f);
+                          //              }*/
+                          //          });
 
 
                           /*if (UIIndex == 1)

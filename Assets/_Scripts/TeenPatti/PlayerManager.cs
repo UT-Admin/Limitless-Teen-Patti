@@ -237,7 +237,9 @@ namespace TP
             }
             catch
             {
-                UIController.Instance.Loading.SetActive(false);
+                //UIController.Instance.Loading.SetActive(false);
+                UIController.Instance.Connecting.SetActive(false);
+
                 DebugHelper.Log(" Check this level 3a ");
             }
 
@@ -346,7 +348,9 @@ namespace TP
             if (isMine)
             {
                 UIController.Instance.teenPattiGameUIPanel.ShowMe();
-                UIController.Instance.Loading.SetActive(false);
+                //  UIController.Instance.Loading.SetActive(false);
+                UIController.Instance.Connecting.SetActive(false);
+
             }
             if (isMine)
             {
@@ -743,12 +747,16 @@ namespace TP
                     if (APIController.instance.userDetails.isBlockApiConnection)
                     {
                         UIController.Instance.InsufficientDemo.SetActive(true);
-                        UIController.Instance.Loading.SetActive(false);
+                        //  UIController.Instance.Loading.SetActive(false);
+                        UIController.Instance.Connecting.SetActive(false);
+
                     }
                     else
                     {
                         UIController.Instance.Insufficient.SetActive(true);
-                        UIController.Instance.Loading.SetActive(false);
+                        // UIController.Instance.Loading.SetActive(false);
+                        UIController.Instance.Connecting.SetActive(false);
+
                     }
 
                     GamePlayUI.instance.ClearAllUI();

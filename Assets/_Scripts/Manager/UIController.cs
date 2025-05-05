@@ -161,7 +161,8 @@ namespace TP
 		public void FindGameWEBGL()
         {
 			DebugHelper.Log("Find wbegl game Called");
-			Loading.SetActive(true);
+			//Loading.SetActive(true);
+			Connecting.SetActive(true);
 			if(TeenpattiGameUIHandler.instance.HowToplay.activeSelf)
             {
 				TeenpattiGameUIHandler.instance.HowToplay.SetActive(false);
@@ -188,7 +189,8 @@ namespace TP
         public void FindGameWEBGLRejoin()
         {
 			DebugHelper.Log("=================> REJOIN CALLED");
-            Loading.SetActive(true);
+           // Loading.SetActive(true);
+			Connecting.SetActive(true) ;
 			StartGameAfterShutDown();
 
 //#if !UNITY_SERVER
@@ -417,9 +419,11 @@ namespace TP
 		}
 		public void ShowMainMenu()
 		{
-			Loading.SetActive(false);
-		}
-		public void ShowRoomClosed()
+            //Loading.SetActive(false);
+            UIController.Instance.Connecting.SetActive(false);
+
+        }
+        public void ShowRoomClosed()
 		{
 
 		}

@@ -278,7 +278,7 @@ namespace TP
         public void SetPlayerAmountOnUpdateActionCall()
         {
 
-            DebugHelper.Log("SetPlayerAmountOnUpdateActionCall ==============>  " + GameController.Instance.isInGame + " =========== " + (GameManager.localInstance != null) + " ==========? " + APIController.instance.userDetails.balance);
+            DebugHelper.Log("SetPlayerAmountOnUpdateActionCall ==============>  " + GameController.Instance.isInGame + " =========== " + (GameManager.localInstance != null) + " ==========? " + APIController.instance.userDetails.balance + " ==========\\ "+ APIController.instance.userDetails.bootAmount);
             CurrentPlayerData.SetGold(APIController.instance.userDetails.balance);
             UIController.Instance.CurrenyType.text = APIController.instance.userDetails.currency_type;
             UIController.Instance.Type.text = APIController.instance.userDetails.currency_type;
@@ -299,11 +299,13 @@ namespace TP
                     UIController.Instance.NewGamePopUp.SetActive(true);
                     UIController.Instance.PlayAgain.SetActive(false);
                     UIController.Instance.Insufficient.SetActive(false);
-                    UIController.Instance.Loading.SetActive(false);
+                    // UIController.Instance.Loading.SetActive(false);
+                    UIController.Instance.Connecting.SetActive(false);
+
                     UIController.Instance.IsRejoin = false;
                     //StartPopUp.SetActive(false);
                     UIController.Instance.ByInPage.SetActive(false);
-                    DebugHelper.Log("SetPlayerAmountOnUpdateActionCall ==============> 1");
+                    DebugHelper.Log("SetPlayerAmountOnUpdateActionCall 2 ==============> 1");
                 }
 
                 if (MoneyFlowCheck)
@@ -363,7 +365,9 @@ namespace TP
                 //StartPopUp.SetActive(false);
                 UIController.Instance.ByInPage.SetActive(false);
                 UIController.Instance.Insufficient.SetActive(true);
-                UIController.Instance.Loading.SetActive(false);
+                //  UIController.Instance.Loading.SetActive(false);
+                UIController.Instance.Connecting.SetActive(false);
+
                 UIController.Instance.NewGamePopUp.SetActive(false);
                 DebugHelper.Log("OnCancelDepositPopupBool case 2 ==============> " + APIController.instance.userDetails.balance);
             }
@@ -385,7 +389,9 @@ namespace TP
         /// </summary>
         public void EnableStartPopupAfterDelay()
         {
-            UIController.Instance.Loading.SetActive(false);
+            // UIController.Instance.Loading.SetActive(false);
+            UIController.Instance.Connecting.SetActive(false);
+
             //StartPopUp.SetActive(true);
             if (APIController.instance.authentication.entryAmountDetails.entryAmounts.Count == 1)
             {

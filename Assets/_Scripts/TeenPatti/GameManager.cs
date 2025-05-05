@@ -2408,7 +2408,9 @@ namespace TP
                                         UIController.Instance.InternetPopNew.SetActive(false);
                                         UIController.Instance.InternetPopInSufficient.SetActive(false);
                                         UIController.Instance.InsufficientDemo.SetActive(true);
-                                        UIController.Instance.Loading.SetActive(false);
+                                       // UIController.Instance.Loading.SetActive(false);
+                                        UIController.Instance.Connecting.SetActive(false);
+
                                     }
                                 }
                                 else
@@ -2420,7 +2422,9 @@ namespace TP
                                         UIController.Instance.InternetPopNew.SetActive(false);
                                         UIController.Instance.InternetPopInSufficient.SetActive(false);
                                         UIController.Instance.Insufficient.SetActive(true);
-                                        UIController.Instance.Loading.SetActive(false);
+                                        //  UIController.Instance.Loading.SetActive(false);
+                                        UIController.Instance.Connecting.SetActive(false);
+
                                     }
 
                                 }
@@ -2487,7 +2491,9 @@ namespace TP
                                         UIController.Instance.InternetPopNew.SetActive(false);
                                         UIController.Instance.InternetPopInSufficient.SetActive(false);
                                         UIController.Instance.InsufficientDemo.SetActive(true);
-                                        UIController.Instance.Loading.SetActive(false);
+                                        // UIController.Instance.Loading.SetActive(false);
+                                        UIController.Instance.Connecting.SetActive(false);
+
                                     }
                                 }
                                 else
@@ -2499,7 +2505,9 @@ namespace TP
                                         UIController.Instance.InternetPopNew.SetActive(false);
                                         UIController.Instance.InternetPopInSufficient.SetActive(false);
                                         UIController.Instance.Insufficient.SetActive(true);
-                                        UIController.Instance.Loading.SetActive(false);
+                                        // UIController.Instance.Loading.SetActive(false);
+                                        UIController.Instance.Connecting.SetActive(false);
+
 
                                     }
 
@@ -4338,7 +4346,7 @@ namespace TP
                     StateSeven = false;
                     showResultOnce = false;
                     gameState.ShowAnimationEffect = false;
-                    CheckSideShowRequestServer();
+                    StartCoroutine(nameof(CheckSideShowRequestServer));
                     break;
                 case 4:
                     CallThisOnce = false;
@@ -5330,6 +5338,7 @@ namespace TP
 
         public void OnDeclineSideShowServer(int currentPlayer, int myPlayerId)
         {
+            StopCoroutine(nameof(CheckSideShowRequestServer));
             StopCoroutine("ResetSideShowServer");
             gameState.players[currentPlayer].isMyTurn = false;
             gameState.isSideShowRequestSend = false;
@@ -5343,14 +5352,14 @@ namespace TP
             NextPlayerTurn(currentPlayer);
         }
 
-        void CheckSideShowRequestServer()
+        private IEnumerator CheckSideShowRequestServer()
         {
             if (IsSideShowChecked == false)
             {
                 IsSideShowChecked = true;
-
                 if (gameState.players[gameState.sideShowRequestReceiver].playerData.isBot)
                 {
+                    yield return new WaitForSeconds(UnityEngine.Random.Range(1, 4));
                     if (UnityEngine.Random.Range(1, 2) == 1)
                     {
                         OnAcceptSideShowServer(gameState.sideShowRequestSender, gameState.sideShowRequestReceiver);
@@ -5359,13 +5368,12 @@ namespace TP
                     {
                         OnDeclineSideShowServer(gameState.sideShowRequestSender, gameState.sideShowRequestReceiver);
                     }
-                    return;
+                    yield break;
                 }
 
-                StartCoroutine("ResetSideShowServer");
+                StartCoroutine(nameof(ResetSideShowServer));
             }
         }
-
         IEnumerator ResetSideShowServer()
         {
             double currCountdownValue = (gameState.sideShowRequestTime + 10) - NetworkTime.time;
@@ -5386,6 +5394,7 @@ namespace TP
 
         public void OnAcceptSideShowServer(int firstPlayerId, int botPlayerId)
         {
+            StopCoroutine(nameof(CheckSideShowRequestServer));
             StopCoroutine("ResetSideShowServer");
             isSideshow = true;
             DebugHelper.Log("sideshow::: change state:::" + firstPlayerId);
